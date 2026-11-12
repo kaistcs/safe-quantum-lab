@@ -374,6 +374,8 @@ button,select,input,textarea{font-family:inherit}
 /* 문제 풀기 번호와 설명 / quiz numbers and explanations */
 .dqno{display:inline-block;min-width:20px;color:#003087} .dqn small{color:#6d5e55;font-size:11px}
 .dqxs{margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:5px} .dqxs>p{grid-column:1/-1;margin:2px 0} .dqx{font-size:12px;line-height:1.45;padding:5px 8px;border-radius:6px;display:flex;flex-direction:column;background:#eef6ef;border-left:4px solid #2e7d32} .dqx.ng{background:#fbeeee;border-left-color:#c62828} .dqx b{font-size:12.5px}
+/* 지시봉을 눈송이 위에, 흰 테두리로 또렷하게 / pointer stick above Snowflake with a white halo */
+.stick{z-index:93!important} .stick line{stroke:#c62828!important;stroke-width:5!important;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 1px #fff)} .stick polygon{filter:drop-shadow(0 0 2px #fff)}
 
 </style>                    <!-- 디자인 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet"> <!-- 한글: 본명조 계열 Noto Serif KR(인터넷이 없으면 바탕으로 대신 표시) / Korean font -->
@@ -1299,7 +1301,7 @@ window.QP_I18N_EN = {
 "사건 종류": "Event type",
 "사건과 경보(#/#)": "events and alarms (#/#)",
 "사고, 아차사고, 경보 확인/무시, # 신고": "accidents, near misses, alarm acknowledged/ignored, # reports",
-"사과, 상태벡터 읽기.": "Lesson, reading the state vector.",
+"#과, 상태벡터 읽기.": "Lesson #, reading the state vector.",
 "사용 안 함(일반 AI만)": "Not used (classical AI only)",
 "사용 안내": "Guide",
 "사용 안내와 실행 방법": "User guide and how to run",
@@ -1325,7 +1327,7 @@ window.QP_I18N_EN = {
 "산행 횟수(근거) / 행 수(규칙)": "Hikes (evidence) / rows (rule)",
 "산행에서는 비의 세기를 이 기울기로 바꿔 넣습니다.": "On a hike, rain intensity is converted into this tilt.",
 "산행자": "Hiker",
-"삼과, 게이트 카드.": "Lesson three, gate cards.",
+"#과, 게이트 카드.": "Lesson #, gate cards.",
 "상": "hard",
 "상태": "State",
 "상태 =": "state =",
@@ -1686,7 +1688,7 @@ window.QP_I18N_EN = {
 "오경보": "False alarm",
 "오경보 예산": "False-alarm budget",
 "오경보율": "False-alarm rate",
-"오과, 회로도 읽는 법.": "Lesson five, reading a circuit diagram.",
+"#과, 회로도 읽는 법.": "Lesson #, reading a circuit diagram.",
 "오대산": "Odaesan",
 "오대산 비로봉 #m": "Odaesan Birobong # m",
 "오르는 중 #%": "climbing #%",
@@ -1766,7 +1768,7 @@ window.QP_I18N_EN = {
 "이 회로는 회전 후 바로 측정하므로 통계가 ‘독립 동전 + XOR’과 같음 → 일반 수식으로 똑같이 계산됨(‘왜 대조군과 같나’ 화면 참고)": "this circuit measures right after rotation, so its statistics equal \"independent coins + XOR\" → computed identically by an ordinary formula (see \"why it equals the control\")",
 "이것이 비트입니다.": "This is a bit.",
 "이것이 씨낫 게이트입니다.": "This is the CNOT gate.",
-"이과, 진폭과 확률.": "Lesson two, amplitude and probability.",
+"#과, 진폭과 확률.": "Lesson #, amplitude and probability.",
 "이면 휴대폰에서도)": "also works on phones)",
 "이번 산행자 #명": "this round's # hikers",
 "이벤트 즉시": "immediately on events",
@@ -1777,8 +1779,8 @@ window.QP_I18N_EN = {
 "인증 시": "at checkpoint",
 "인증 지점 도착 시각, 산, 코스": "checkpoint arrival time, mountain, course",
 "일 #회": "# per day",
-"일과, 비트와 큐비트.": "Lesson one, bits and qubits.",
-"일과에서는 비트와 큐비트의 차이, 이과에서는 화살표의 그림자 길이인 진폭과 그 제곱인 확률, 삼과에서는 엑스, 알와이, 하다마드, 씨낫 게이트 카드, 사과에서는 두 큐비트의 진폭 네 개 목록인 상태벡터, 오과에서는 회로도를 읽는 법을 배웁니다.": "Lesson one covers the difference between bits and qubits; lesson two, amplitude (the arrow's shadow length) and its square, probability; lesson three, the X, RY, Hadamard and CNOT gate cards; lesson four, the state vector listing the four amplitudes of two qubits; lesson five, how to read a circuit diagram.",
+"#과, 비트와 큐비트.": "Lesson #, bits and qubits.",
+"#과에서는 비트와 큐비트의 차이, #과에서는 화살표의 그림자 길이인 진폭과 그 제곱인 확률, #과에서는 엑스, 알와이, 하다마드, 씨낫 게이트 카드, #과에서는 두 큐비트의 진폭 네 개 목록인 상태벡터, #과에서는 회로도를 읽는 법을 배웁니다.": "Lesson # covers the difference between bits and qubits; lesson #, amplitude (the arrow's shadow length) and its square, probability; lesson #, the X, RY, Hadamard and CNOT gate cards; lesson #, the state vector listing the four amplitudes of two qubits; lesson #, how to read a circuit diagram.",
 "일몰 × 지연": "Sunset × delay",
 "일몰 압박": "Sunset pressure",
 "일몰 여유": "Sunset margin",
@@ -2215,7 +2217,7 @@ window.QP_I18N_EN = {
 "놓침과 헛경보를 함께 보는 한 숫자임.": "One number that considers both misses and false alarms.",
 "눈송이입니다.": "I am Snowflake.",
 "는 심박 공식, 기온 감률, 보행 속도 같은 근거 점검을 모두 통과한 데이터입니다.": "means data that passed all evidence checks such as heart-rate formulas, lapse rate and walking speed.",
-"다섯 과 수업을 모두 마쳤습니다.": "All five lessons are finished.",
+"#과부터 #과까지 수업을 모두 마쳤습니다.": "All five lessons are finished.",
 "다시 들으려면 #과 자동 수업을 누르시기 바랍니다.": "To hear them again, press lesson # auto class.",
 "다음을 누르면 실험을 실행하고, 위쪽 여덟 단계 상자가 차례로 켜집니다.": "Press next to run the experiment; the eight stage boxes at the top light up in turn.",
 "대청봉 인증 지점": "Daecheongbong checkpoint",
@@ -2391,7 +2393,7 @@ window.QP_I18N_EN = {
 "전체 안내를 종료했습니다. 다른 화면을 고르시거나 설명 듣기를 누르면 다시 말합니다.": "The full guide has ended. Choose another screen or press a listen button to hear narration again.",
 "실행 창(run)이 종료되어 실험실을 멈췄습니다. 다시 쓰려면 run을 실행하시기 바랍니다.": "The run window was closed, so the lab stopped. Start run again to use it.",
 "서버 저장은 run.bat으로 연 화면에서만 됨(지금은 CSV 내보내기를 쓰시기 바랍니다).": "Saving to the server works only when opened with run.bat (please use CSV export now).",
-"다섯 과 수업을 모두 마쳤습니다. 다시 들으려면 #과 자동 수업을 누르시기 바랍니다.": "All five lessons are finished. To hear them again, press lesson # auto class.",
+"#과부터 #과까지 수업을 모두 마쳤습니다. 다시 들으려면 #과 자동 수업을 누르시기 바랍니다.": "All five lessons are finished. To hear them again, press lesson # auto class.",
 "전체 자동 안내를 마쳤습니다.": "The full automatic guide is finished.",
 "들어 주셔서 감사합니다.": "Thank you for listening.",
 "숙명여자대학교 에이지아이 연구실이었습니다.": "This was the AGI Lab., Sookmyung Women's University.",
@@ -4072,7 +4074,7 @@ window.QP_I18N_EN = {
     howto: function () { return { short: "실행 방법과 화면 사용법입니다. 전체 자동 투어 버튼을 누르면 모든 화면을 차례로 설명해 드립니다.", long: "설치 폴더는 어디든 됩니다. 파이썬 3.10 이상을 준비한 뒤, 받은 폴더에서 윈도우는 셋업 배치 파일, 맥과 리눅스는 셋업 셸 파일을 처음 한 번 실행하시기 바랍니다. 그다음부터는 런 파일을 실행하면 비어 있는 포트를 찾아 브라우저가 열립니다. 목소리를 더 자연스럽게 들으려면 열린 주소를 마이크로소프트 엣지 브라우저에서 여시기 바랍니다. 왼쪽 메뉴 그룹을 누르면 펼쳐지고, 결과 옆의 근거를 누르면 계산 과정과 문헌이 보입니다. 동그란 아이 표시를 누르면 용어 설명이 나옵니다." }; },
     kid: function () { return { short: "동전 놀이로 큐비트를 배웁니다. 자동 시연을 누르면 손대지 않아도 진행됩니다.", long: "탁자 위 동전은 앞 아니면 뒤, 영 아니면 일입니다. 이것이 비트입니다. 큐비트는 돌고 있는 동전 같습니다. 아직 정해지지 않았지만, 얼마나 기울어 도는지에 따라 일이 나올 가능성이 정해져 있습니다. 잡는 순간, 즉 측정하는 순간 하나로 정해집니다. 한 번으로는 가능성을 알 수 없으니 만 번 측정해 보시기 바랍니다. 점 하나가 측정 한 번이고, 노란 점의 비율이 정확한 가능성에 점점 가까워집니다. 산행에서는 비의 세기를 이 기울기로 바꿔 넣습니다. 비가 많이 올수록 비 큐비트가 일 쪽으로 더 기웁니다." }; },
     entangle: function () { return { short: "얽힘 짝꿍 실험입니다. 비 동전이 일이면 경사 동전을 뒤집고, 영이면 그대로 둡니다.", long: "질문하신 그대로입니다. 비 동전이 일이면 짝꿍인 경사 동전을 뒤집고, 영이면 그대로 둡니다. 이것이 씨낫 게이트입니다. 뒤집기를 하고 나면 경사 동전 하나만 읽어도 두 동전이 같았는지 달랐는지를 알 수 있습니다. 비도 많고 경사도 급하면 두 동전이 같을 때가 많아져서 점수가 다시 올라가고, 한쪽만 높으면 달라서 점수가 내려갑니다. 인공지능은 이 겹침 점수와 원래 신호를 함께 보고, 비와 경사가 함께 높은 위험한 순간을 알아챕니다. 자동 시연을 누르면 조건을 바꿔 가며 계속 보여 드립니다." }; },
-    basics: function () { return { short: "큐비트 용어 교실입니다. 위의 과를 눌러 하나씩 보거나, 5과 자동 수업을 누르면 1과부터 5과까지 차례로 설명해 드립니다.", long: "일과에서는 비트와 큐비트의 차이, 이과에서는 화살표의 그림자 길이인 진폭과 그 제곱인 확률, 삼과에서는 엑스, 알와이, 하다마드, 씨낫 게이트 카드, 사과에서는 두 큐비트의 진폭 네 개 목록인 상태벡터, 오과에서는 회로도를 읽는 법을 배웁니다. 자동 수업을 누르면 십사 초마다 다음 과로 넘어갑니다." }; },
+    basics: function () { return { short: "큐비트 용어 교실입니다. 위의 과를 눌러 하나씩 보거나, 5과 자동 수업을 누르면 1과부터 5과까지 차례로 설명해 드립니다.", long: "1과에서는 비트와 큐비트의 차이, 2과에서는 화살표의 그림자 길이인 진폭과 그 제곱인 확률, 3과에서는 엑스, 알와이, 하다마드, 씨낫 게이트 카드, 4과에서는 두 큐비트의 진폭 네 개 목록인 상태벡터, 5과에서는 회로도를 읽는 법을 배웁니다. 자동 수업을 누르면 십사 초마다 다음 과로 넘어갑니다." }; },
     lab2q: function () { return { short: "두 큐비트 실험대입니다. 자동 진행을 누르면 회전, 얽기, 측정을 차례로 보여 줍니다.", long: "회전 단계에서 비와 경사 값만큼 두 화살표가 돌아갑니다. 얽기 단계에서 비 큐비트가 일일 가능성만큼 노란 연결선이 진해지며 경사 큐비트를 뒤집습니다. 측정 단계에서 경사 큐비트를 읽어 겹침 점수를 얻습니다. 샷 횟수를 바꾸면 실제 장비처럼 측정값이 흔들리는 모습도 볼 수 있습니다." }; },
     sim: function () { return { short: "산행 관제실입니다. 출발을 누르면 눈송이가 산을 오르며 위험 지점을 감지하고, 큐비트와 인공지능이 실시간으로 반응합니다.", long: QP.State.simNarr ? QP.State.simNarr() + " 오른쪽 위의 지금 이 순간의 의미 상자는 매 순간 상황, 양자 표현, 의미, 인공지능 판단, 행동 권고를 쉬운 말로 알려 줍니다." : "산행 관제실입니다." }; },
     stamp: function () { return { short: "아이나비 백대 명산 스탬프 투어입니다. 산을 고르면 양자 안전 코스 분석이 바로 나오고, 관제실에서 오르기를 누르면 그 산을 직접 오릅니다.", long: "스탬프 여권에서 산을 고르면, 그 산의 가상 코스를 즉시 시뮬레이션해서 위험 사건마다 두 인공지능이 몇 분 먼저 알렸는지 비교합니다. 그림의 자두색 점은 양자 특징 인공지능이 경보를 낸 위치, 청색 점은 일반 인공지능의 경보 위치입니다. 관제실에서 하산까지 마치면 여권에 스탬프가 찍힙니다." }; },
@@ -4096,7 +4098,7 @@ window.QP_I18N_EN = {
     dev: function () { return { short: "어느 피씨에서나 같은 방법으로 설치하고 실행하는 개발 환경 안내입니다.", long: "설치 폴더는 어디든 됩니다. 파이썬 3.10 이상을 준비한 뒤, 윈도우는 셋업 배치 파일, 맥과 리눅스는 셋업 셸 파일을 한 번 실행하고, 그다음부터는 런 파일로 실행합니다. 배포 전에는 저작권 머리말 도구로 모든 프로그램 파일 맨 위에 숙명여자대학교 에이지아이 연구실 박영호 교수의 저작권을 확인하고, 깃허브에 올리면 웹 실험실이 자동으로 게시됩니다. 각 기능은 레고 블럭처럼 파일 하나씩 나뉘어 있습니다." }; },
     glossary: function () { return { short: "모르는 단어를 찾아보시기 바랍니다.", long: "검색창에 단어를 입력하면 바로 걸러집니다." }; }
   };
-  const SUBS = { basics: ["일과, 비트와 큐비트. 비트는 영 아니면 일만 기억하고, 큐비트는 화살표 방향으로 영과 일의 가능성을 함께 가집니다. 화살표가 천천히 돌아가는 동안 일이 나올 확률이 함께 바뀝니다.", "이과, 진폭과 확률. 화살표를 세로축과 가로축에 비춘 그림자 길이가 진폭이고, 진폭을 제곱하면 확률입니다. 두 확률을 더하면 언제나 일입니다.", "삼과, 게이트 카드. 엑스는 뒤집기, 알와이는 돌리기, 하다마드는 반반 섞기, 씨낫은 제어 큐비트가 일일 때 대상 큐비트를 뒤집는 조건부 뒤집기입니다.", "사과, 상태벡터 읽기. 두 큐비트는 영영, 일영, 영일, 일일 네 결과의 진폭 목록으로 표현됩니다. 큐비트가 엔 개면 이의 엔제곱 개가 필요합니다.", "오과, 회로도 읽는 법. 가로선이 큐비트이고 왼쪽에서 오른쪽으로 시간이 흐릅니다. 네모는 회전, 점과 동그라미 십자를 잇는 선은 씨낫, 계기판은 측정입니다."] }; // 하위 단계 대본임 / sub-step script
+  const SUBS = { basics: ["1과, 비트와 큐비트. 비트는 영 아니면 일만 기억하고, 큐비트는 화살표 방향으로 영과 일의 가능성을 함께 가집니다. 화살표가 천천히 돌아가는 동안 일이 나올 확률이 함께 바뀝니다.", "2과, 진폭과 확률. 화살표를 세로축과 가로축에 비춘 그림자 길이가 진폭이고, 진폭을 제곱하면 확률입니다. 두 확률을 더하면 언제나 일입니다.", "3과, 게이트 카드. 엑스는 뒤집기, 알와이는 돌리기, 하다마드는 반반 섞기, 씨낫은 제어 큐비트가 일일 때 대상 큐비트를 뒤집는 조건부 뒤집기입니다.", "4과, 상태벡터 읽기. 두 큐비트는 영영, 일영, 영일, 일일 네 결과의 진폭 목록으로 표현됩니다. 큐비트가 엔 개면 이의 엔제곱 개가 필요합니다.", "5과, 회로도 읽는 법. 가로선이 큐비트이고 왼쪽에서 오른쪽으로 시간이 흐릅니다. 네모는 회전, 점과 동그라미 십자를 잇는 선은 씨낫, 계기판은 측정입니다."] }; // 하위 단계 대본임 / sub-step script
   QP.Narration = { sub: function (id, k) { return (SUBS[id] || [])[k - 1] || ""; }, get: function (id, r) { return (T[id] || T.home)(r || QP.State.results); } }; // 대본 찾기 함수를 공개함 / publish the script lookup function
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace
 
@@ -4879,7 +4881,7 @@ window.QP_I18N_EN = {
         autoT = setTimeout(function () {            // 잠시 쉬고 / pause briefly
           if (!QP.State.basicsAuto || !bA.isConnected) return; // 그 사이 멈췄으면 끝냄 / end if stopped meanwhile
           if (tab < 5) QP.App.go("basics-" + (tab + 1)); // 다음 과로 넘어감 / go to the next lesson
-          else { QP.State.basicsAuto = false; bA.textContent = "▶ 5과 자동 수업"; QP.Voice.speak("다섯 과 수업을 모두 마쳤습니다. 다시 들으려면 5과 자동 수업을 누르시기 바랍니다.", true); } // 마지막 과면 끝냄 / end at the last lesson
+          else { QP.State.basicsAuto = false; bA.textContent = "▶ 5과 자동 수업"; QP.Voice.speak("1과부터 5과까지 수업을 모두 마쳤습니다. 다시 들으려면 5과 자동 수업을 누르시기 바랍니다.", true); } // 마지막 과면 끝냄 / end at the last lesson
         }, 1500);
       };
       autoT = setTimeout(wait, 1200);               // 읽기가 시작된 뒤부터 확인함 / check only after reading has started
@@ -5969,7 +5971,7 @@ window.QP_I18N_EN = {
     zone4q: [[/산길|걸어가|거리/, ".z4in"], [/신뢰도|헛경보/, ".zwhy"], [/씨낫|보조 큐비트|한 번에/, ".z4c"], [/안심|통제|갈림길/, "#zAct"]],
     kid: [[/탁자|비트|돌고 있는 동전|큐비트/, "#kc"], [/기울/, "#kDial"], [/만 번|점 하나/, "#kGrid"], [/노란 점의 비율|가까워/, "#kConv"], [/산행|비의 세기/, "#kT"]],
     entangle: [[/뒤집|씨낫/, ".ent-stage"], [/같았는지|달랐는지|표/, "#eT"], [/겹침 점수|인공지능은/, ".tint-plum"], [/자동 시연/, "#eAuto"]],
-    basics: [[/일과|비트와 큐비트|화살표/, ".bbody canvas"], [/진폭|그림자|제곱/, ".bbody canvas"], [/게이트|엑스|하다마드/, ".bbody .gates"], [/상태벡터|목록/, ".bbody table"], [/회로도|가로선|계기판/, ".bbody canvas"]],
+    basics: [[/1과|일과|비트와 큐비트|화살표/, ".bbody canvas"], [/진폭|그림자|제곱/, ".bbody canvas"], [/게이트|엑스|하다마드/, ".bbody .gates"], [/상태벡터|목록/, ".bbody table"], [/회로도|가로선|계기판/, ".bbody canvas"]],
     lab2q: [[/회전|화살표/, "#lD"], [/얽기|연결선|뒤집/, "#lD"], [/측정|겹침 점수/, "#lZ"], [/샷|흔들/, "#lH"]],
     compare: [[/돌계단|떠올려/, ".steps4 .card:nth-child(1)"], [/일반 인공지능은|따로 더|판단 지도|가로는|진한 색|흰 동그라미가 진한/, "#cML"], [/흰 동그라미는/, "#cMQ"], [/양자 특징 인공지능은|엮어|휘어/, "#cMQ"], [/탐지율|퍼센트/, ".v-cmp table"], [/산행 따라/, "#cWalk"]],
     overlap: [[/한 가지/, ".lesson3 .card:nth-child(1)"], [/같은 순간|겹칠 때/, ".lesson3 .card:nth-child(2)"], [/시간에 따라|쌓이는/, ".lesson3 .card:nth-child(3)"], [/표는|스물네/, "#oT"]],
@@ -6010,8 +6012,8 @@ window.QP_I18N_EN = {
     if (!$("pImg").getAttribute("src")) { $("pImg").src = BR.local("guide"); $("pImg").onerror = function () { this.onerror = null; this.src = BR.files.guide; }; } // 안내 자세 이미지를 씀 / use the guide pose image
     let left = r.left > 360, gx, gy;                // 대상 왼쪽에 설 자리가 있는지임 / whether there is room to the left of the target
     if (r.width > W * .45 && r.top > 150) { left = true; gx = Math.max(265, r.left + 20); gy = r.top - 74; } // 넓은 대상은 위쪽 바깥에 서서 내용을 가리지 않음 / for wide targets stand above so the content is not covered
-    else if (left) { gx = Math.max(265, r.left - 70); gy = Math.min(H - 140, Math.max(60, r.top + 6)); } // 왼쪽 바깥에 섬 / stand outside on the left
-    else if (W - r.right > 80) { gx = r.right + 8; gy = Math.min(H - 140, Math.max(60, r.top + 6)); } // 오른쪽 바깥에 섬 / stand outside on the right
+    else if (left) { gx = Math.max(265, r.left - 120); gy = Math.min(H - 140, Math.max(60, r.top + 6)); } // 왼쪽 바깥에 섬 / stand outside on the left
+    else if (W - r.right > 130) { gx = r.right + 50; gy = Math.min(H - 140, Math.max(60, r.top + 6)); } // 오른쪽 바깥에 섬 / stand outside on the right
     else { gx = Math.max(265, r.left + 6); gy = Math.min(H - 140, r.bottom - 70); } // 자리가 없으면 대상 왼쪽 아래 귀퉁이에 섬 / if there is no room, stand at the target's lower-left corner
     pt.style.left = gx + "px"; pt.style.top = gy + "px"; pt.classList.toggle("flip", gx > r.left + r.width / 2); // 위치를 옮기고 방향을 정함(CSS로 걸어가듯 이동) / move and set direction (walks via CSS)
     aim = { el: target }; // 지시봉 끝은 대상 안쪽이 아니라 테두리에 닿게 함(내용과 답을 가리지 않음), 위치는 매 프레임 다시 계산 / the tip touches the target's border, not its inside (never covers content or answers); recomputed every frame
@@ -6026,7 +6028,8 @@ window.QP_I18N_EN = {
       const tx = ax + wob, ty = ay + wob / 2, ang = Math.atan2(ty - hy, tx - hx), len = 24, half = 11; // 화살촉 끝 위치, 방향, 길이, 반폭임 / arrowhead tip position, direction, length, half-width
       const bx = tx - Math.cos(ang) * len, by = ty - Math.sin(ang) * len; // 화살촉 밑변 가운데임 / center of the arrowhead base
       const C0 = $("stickC"); if (C0) { C0.setAttribute("cx", tx); C0.setAttribute("cy", ty); } // 끝 지점에 퍼지는 고리로 정확한 위치를 표시 / a pulsing ring marks the exact tip point
-      L.setAttribute("x1", hx); L.setAttribute("y1", hy); L.setAttribute("x2", bx); L.setAttribute("y2", by); // 지시봉 막대는 화살촉 밑변까지 그림 / draw the stick shaft up to the arrowhead base
+      const SL = Math.max(dist, 90), sx = tx - Math.cos(ang) * SL, sy = ty - Math.sin(ang) * SL; /* 막대는 늘 90px 이상으로 그리고 눈송이 위에 그려서 가려지지 않게 함 / the shaft is always at least 90 px and drawn above Snowflake so it is never hidden */
+      L.setAttribute("x1", sx); L.setAttribute("y1", sy); L.setAttribute("x2", bx); L.setAttribute("y2", by); // 지시봉 막대는 화살촉 밑변까지 그림 / draw the stick shaft up to the arrowhead base
       T.setAttribute("points", tx + "," + ty + " " + (bx + Math.sin(ang) * half) + "," + (by - Math.cos(ang) * half) + " " + (bx - Math.sin(ang) * half) + "," + (by + Math.cos(ang) * half)); } // 끝을 뾰족한 화살촉(삼각형)으로 그려 정확한 지점을 가리킴(살짝 흔들며 가리킴) / draw the tip as a sharp arrowhead (triangle) to point precisely (with a slight wiggle)
     requestAnimationFrame(stickLoop);               // 다음 프레임임 / next frame
   })();
@@ -6099,7 +6102,7 @@ window.QP_I18N_EN = {
     QP.Voice.speak(W, true, true); alert0("에뮬레이팅 실험 자동 안내: 소개 뒤 ③ 첫 화면부터 시작합니다."); const dl = Date.now() + estimate(W), t0 = Date.now(), wt = TB.token = (TB.token || 0) + 1;
     (function waitB() { if (TB.token !== wt) return; if ((QP.Voice.isActive() || Date.now() - t0 < 1500) && Date.now() < dl) { setTimeout(waitB, 400); return; } setTimeout(function () { if (TB.token === wt) tourGo(k); }, 600); })(); // 소개가 끝나면 B의 첫 단계로 / after the intro, go to the first step of B
   }
-  function tour() { QP.Voice.wake(); interacted = true; TB.steps = tourSteps(); tourGo(tourOn ? TB.i : 0); } // 처음부터(또는 진행 중인 단계부터) 시작함 / start from the beginning (or the step in progress)
+  function tour() { QP.Voice.wake(); interacted = true; State.basicsAuto = false; if (tourOn) tourEnd(true, true); QP.Voice.stop(); QP.Voice.hush(false); TB.steps = tourSteps(); tourGo(0); } /* 누를 때마다 무조건 1단계(양자 기초 첫 화면)부터 시작 / always starts from step 1 on every click */ // 처음부터(또는 진행 중인 단계부터) 시작함 / start from the beginning (or the step in progress)
   function tourEnd(done, silent) { if (silent) { clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); tourDraw(); return; } clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); if (!done) { QP.Voice.hush(true); hidePointer(); alert0("전체 안내를 종료했습니다. 다른 화면을 고르시거나 설명 듣기를 누르면 다시 말합니다."); } tourDraw(); if (done) QP.Voice.speak("전체 자동 안내를 마쳤습니다. 들어 주셔서 감사합니다. 숙명여자대학교 에이지아이 연구실이었습니다.", true, true); } // 끝냄(막대는 계속 보임) / end (the bar stays visible)
   $("tourBtn").onclick = tour;                      // 왼쪽 위 원클릭 버튼임 / one-click button at the top left
   $("tPrev").onclick = function () { QP.Voice.wake(); tourGo(TB.i - 1); }; $("tNext").onclick = function () { QP.Voice.wake(); tourGo(TB.i + 1); }; // 이전, 다음임 / previous and next

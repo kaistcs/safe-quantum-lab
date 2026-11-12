@@ -204,7 +204,7 @@
         autoT = setTimeout(function () {            // 잠시 쉬고 / pause briefly
           if (!QP.State.basicsAuto || !bA.isConnected) return; // 그 사이 멈췄으면 끝냄 / end if stopped meanwhile
           if (tab < 5) QP.App.go("basics-" + (tab + 1)); // 다음 과로 넘어감 / go to the next lesson
-          else { QP.State.basicsAuto = false; bA.textContent = "▶ 5과 자동 수업"; QP.Voice.speak("다섯 과 수업을 모두 마쳤습니다. 다시 들으려면 5과 자동 수업을 누르시기 바랍니다.", true); } // 마지막 과면 끝냄 / end at the last lesson
+          else { QP.State.basicsAuto = false; bA.textContent = "▶ 5과 자동 수업"; QP.Voice.speak("1과부터 5과까지 수업을 모두 마쳤습니다. 다시 들으려면 5과 자동 수업을 누르시기 바랍니다.", true); } // 마지막 과면 끝냄 / end at the last lesson
         }, 1500);
       };
       autoT = setTimeout(wait, 1200);               // 읽기가 시작된 뒤부터 확인함 / check only after reading has started

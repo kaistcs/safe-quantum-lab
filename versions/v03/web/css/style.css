@@ -358,3 +358,5 @@ button,select,input,textarea{font-family:inherit}
 /* 문제 풀기 번호와 설명 / quiz numbers and explanations */
 .dqno{display:inline-block;min-width:20px;color:#003087} .dqn small{color:#6d5e55;font-size:11px}
 .dqxs{margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:5px} .dqxs>p{grid-column:1/-1;margin:2px 0} .dqx{font-size:12px;line-height:1.45;padding:5px 8px;border-radius:6px;display:flex;flex-direction:column;background:#eef6ef;border-left:4px solid #2e7d32} .dqx.ng{background:#fbeeee;border-left-color:#c62828} .dqx b{font-size:12.5px}
+/* 지시봉을 눈송이 위에, 흰 테두리로 또렷하게 / pointer stick above Snowflake with a white halo */
+.stick{z-index:93!important} .stick line{stroke:#c62828!important;stroke-width:5!important;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 1px #fff)} .stick polygon{filter:drop-shadow(0 0 2px #fff)}

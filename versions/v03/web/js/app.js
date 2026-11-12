@@ -138,7 +138,7 @@
     zone4q: [[/산길|걸어가|거리/, ".z4in"], [/신뢰도|헛경보/, ".zwhy"], [/씨낫|보조 큐비트|한 번에/, ".z4c"], [/안심|통제|갈림길/, "#zAct"]],
     kid: [[/탁자|비트|돌고 있는 동전|큐비트/, "#kc"], [/기울/, "#kDial"], [/만 번|점 하나/, "#kGrid"], [/노란 점의 비율|가까워/, "#kConv"], [/산행|비의 세기/, "#kT"]],
     entangle: [[/뒤집|씨낫/, ".ent-stage"], [/같았는지|달랐는지|표/, "#eT"], [/겹침 점수|인공지능은/, ".tint-plum"], [/자동 시연/, "#eAuto"]],
-    basics: [[/일과|비트와 큐비트|화살표/, ".bbody canvas"], [/진폭|그림자|제곱/, ".bbody canvas"], [/게이트|엑스|하다마드/, ".bbody .gates"], [/상태벡터|목록/, ".bbody table"], [/회로도|가로선|계기판/, ".bbody canvas"]],
+    basics: [[/1과|일과|비트와 큐비트|화살표/, ".bbody canvas"], [/진폭|그림자|제곱/, ".bbody canvas"], [/게이트|엑스|하다마드/, ".bbody .gates"], [/상태벡터|목록/, ".bbody table"], [/회로도|가로선|계기판/, ".bbody canvas"]],
     lab2q: [[/회전|화살표/, "#lD"], [/얽기|연결선|뒤집/, "#lD"], [/측정|겹침 점수/, "#lZ"], [/샷|흔들/, "#lH"]],
     compare: [[/돌계단|떠올려/, ".steps4 .card:nth-child(1)"], [/일반 인공지능은|따로 더|판단 지도|가로는|진한 색|흰 동그라미가 진한/, "#cML"], [/흰 동그라미는/, "#cMQ"], [/양자 특징 인공지능은|엮어|휘어/, "#cMQ"], [/탐지율|퍼센트/, ".v-cmp table"], [/산행 따라/, "#cWalk"]],
     overlap: [[/한 가지/, ".lesson3 .card:nth-child(1)"], [/같은 순간|겹칠 때/, ".lesson3 .card:nth-child(2)"], [/시간에 따라|쌓이는/, ".lesson3 .card:nth-child(3)"], [/표는|스물네/, "#oT"]],
@@ -179,8 +179,8 @@
     if (!$("pImg").getAttribute("src")) { $("pImg").src = BR.local("guide"); $("pImg").onerror = function () { this.onerror = null; this.src = BR.files.guide; }; } // 안내 자세 이미지를 씀 / use the guide pose image
     let left = r.left > 360, gx, gy;                // 대상 왼쪽에 설 자리가 있는지임 / whether there is room to the left of the target
     if (r.width > W * .45 && r.top > 150) { left = true; gx = Math.max(265, r.left + 20); gy = r.top - 74; } // 넓은 대상은 위쪽 바깥에 서서 내용을 가리지 않음 / for wide targets stand above so the content is not covered
-    else if (left) { gx = Math.max(265, r.left - 70); gy = Math.min(H - 140, Math.max(60, r.top + 6)); } // 왼쪽 바깥에 섬 / stand outside on the left
-    else if (W - r.right > 80) { gx = r.right + 8; gy = Math.min(H - 140, Math.max(60, r.top + 6)); } // 오른쪽 바깥에 섬 / stand outside on the right
+    else if (left) { gx = Math.max(265, r.left - 120); gy = Math.min(H - 140, Math.max(60, r.top + 6)); } // 왼쪽 바깥에 섬 / stand outside on the left
+    else if (W - r.right > 130) { gx = r.right + 50; gy = Math.min(H - 140, Math.max(60, r.top + 6)); } // 오른쪽 바깥에 섬 / stand outside on the right
     else { gx = Math.max(265, r.left + 6); gy = Math.min(H - 140, r.bottom - 70); } // 자리가 없으면 대상 왼쪽 아래 귀퉁이에 섬 / if there is no room, stand at the target's lower-left corner
     pt.style.left = gx + "px"; pt.style.top = gy + "px"; pt.classList.toggle("flip", gx > r.left + r.width / 2); // 위치를 옮기고 방향을 정함(CSS로 걸어가듯 이동) / move and set direction (walks via CSS)
     aim = { el: target }; // 지시봉 끝은 대상 안쪽이 아니라 테두리에 닿게 함(내용과 답을 가리지 않음), 위치는 매 프레임 다시 계산 / the tip touches the target's border, not its inside (never covers content or answers); recomputed every frame
@@ -195,7 +195,8 @@
       const tx = ax + wob, ty = ay + wob / 2, ang = Math.atan2(ty - hy, tx - hx), len = 24, half = 11; // 화살촉 끝 위치, 방향, 길이, 반폭임 / arrowhead tip position, direction, length, half-width
       const bx = tx - Math.cos(ang) * len, by = ty - Math.sin(ang) * len; // 화살촉 밑변 가운데임 / center of the arrowhead base
       const C0 = $("stickC"); if (C0) { C0.setAttribute("cx", tx); C0.setAttribute("cy", ty); } // 끝 지점에 퍼지는 고리로 정확한 위치를 표시 / a pulsing ring marks the exact tip point
-      L.setAttribute("x1", hx); L.setAttribute("y1", hy); L.setAttribute("x2", bx); L.setAttribute("y2", by); // 지시봉 막대는 화살촉 밑변까지 그림 / draw the stick shaft up to the arrowhead base
+      const SL = Math.max(dist, 90), sx = tx - Math.cos(ang) * SL, sy = ty - Math.sin(ang) * SL; /* 막대는 늘 90px 이상으로 그리고 눈송이 위에 그려서 가려지지 않게 함 / the shaft is always at least 90 px and drawn above Snowflake so it is never hidden */
+      L.setAttribute("x1", sx); L.setAttribute("y1", sy); L.setAttribute("x2", bx); L.setAttribute("y2", by); // 지시봉 막대는 화살촉 밑변까지 그림 / draw the stick shaft up to the arrowhead base
       T.setAttribute("points", tx + "," + ty + " " + (bx + Math.sin(ang) * half) + "," + (by - Math.cos(ang) * half) + " " + (bx - Math.sin(ang) * half) + "," + (by + Math.cos(ang) * half)); } // 끝을 뾰족한 화살촉(삼각형)으로 그려 정확한 지점을 가리킴(살짝 흔들며 가리킴) / draw the tip as a sharp arrowhead (triangle) to point precisely (with a slight wiggle)
     requestAnimationFrame(stickLoop);               // 다음 프레임임 / next frame
   })();
@@ -268,7 +269,7 @@
     QP.Voice.speak(W, true, true); alert0("에뮬레이팅 실험 자동 안내: 소개 뒤 ③ 첫 화면부터 시작합니다."); const dl = Date.now() + estimate(W), t0 = Date.now(), wt = TB.token = (TB.token || 0) + 1;
     (function waitB() { if (TB.token !== wt) return; if ((QP.Voice.isActive() || Date.now() - t0 < 1500) && Date.now() < dl) { setTimeout(waitB, 400); return; } setTimeout(function () { if (TB.token === wt) tourGo(k); }, 600); })(); // 소개가 끝나면 B의 첫 단계로 / after the intro, go to the first step of B
   }
-  function tour() { QP.Voice.wake(); interacted = true; TB.steps = tourSteps(); tourGo(tourOn ? TB.i : 0); } // 처음부터(또는 진행 중인 단계부터) 시작함 / start from the beginning (or the step in progress)
+  function tour() { QP.Voice.wake(); interacted = true; State.basicsAuto = false; if (tourOn) tourEnd(true, true); QP.Voice.stop(); QP.Voice.hush(false); TB.steps = tourSteps(); tourGo(0); } /* 누를 때마다 무조건 1단계(양자 기초 첫 화면)부터 시작 / always starts from step 1 on every click */ // 처음부터(또는 진행 중인 단계부터) 시작함 / start from the beginning (or the step in progress)
   function tourEnd(done, silent) { if (silent) { clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); tourDraw(); return; } clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); if (!done) { QP.Voice.hush(true); hidePointer(); alert0("전체 안내를 종료했습니다. 다른 화면을 고르시거나 설명 듣기를 누르면 다시 말합니다."); } tourDraw(); if (done) QP.Voice.speak("전체 자동 안내를 마쳤습니다. 들어 주셔서 감사합니다. 숙명여자대학교 에이지아이 연구실이었습니다.", true, true); } // 끝냄(막대는 계속 보임) / end (the bar stays visible)
   $("tourBtn").onclick = tour;                      // 왼쪽 위 원클릭 버튼임 / one-click button at the top left
   $("tPrev").onclick = function () { QP.Voice.wake(); tourGo(TB.i - 1); }; $("tNext").onclick = function () { QP.Voice.wake(); tourGo(TB.i + 1); }; // 이전, 다음임 / previous and next
