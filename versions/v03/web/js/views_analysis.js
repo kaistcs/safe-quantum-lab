@@ -123,7 +123,8 @@
   function overlap(el) {
     el.innerHTML = '<div class="grid two-1"><div class="stack"><div class="card"><h3>질문: 양자는 겹쳐지는 순간의 위험을 더 잘 잡습니까?</h3><p class="qa"><b>답: “같은 순간에 두 위험이 겹치는 것”은 네, 이 실험에서 더 잘 잡습니다.</b> 하지만 “시간이 흐르며 계속 나빠지는 것(연속)”은 다른 능력입니다. 아래 세 종류로 나눠 실제 산행 시뮬레이션 결과로 확인합니다.</p></div>' +
       '<div class="lesson3"><div class="card tint-dusk"><b>① 한 가지 위험</b><p>비만 많이 옴, 경사만 급함. 신호 하나만 보면 되므로 <b>일반 AI도 잘 잡음</b>.</p><canvas id="o1"></canvas></div><div class="card tint-plum"><b>② 같은 순간 겹침</b><p>젖은 돌계단 + 비, 일몰 + 하산 지연. 따로는 ‘조금’인데 함께라서 위험. <b>양자 특징 AI의 강점</b>(겹침 점수).</p><canvas id="o2"></canvas></div><div class="card tint-ochre"><b>③ 시간에 따라 쌓이는 위험</b><p>피로 누적, 배터리 감소. 지금 값보다 <b>변화 추세</b>가 중요. 현재 회로는 한 순간만 봄 → 시간 창 특징, LSTM이 필요(다음 버전 과제).</p><canvas id="o3"></canvas></div></div><div id="oB"></div></div>' +
-      '<div class="card stack"><h3>실제 확인: 근거 기반 산행 24회의 위험 사건</h3><table id="oT" class="ct"></table><p id="oS"></p></div></div>';
+      '<div class="stack"><div class="card stack"><h3>실제 확인: 근거 기반 산행 24회의 위험 사건</h3><table id="oT" class="ct"></table><p id="oS"></p></div>' +
+      '<div class="card stack lstmc"><h3>③ 시간 누적형을 잡는 방법: LSTM이 기억을 쌓는 과정</h3><div id="oL"></div><div id="oLB"></div></div></div></div>';
     const mini = function (cv, f) { const P = A.canvas(cv, 150), g = P.g; const xs = []; for (let k = 0; k <= 60; k++) xs.push(f(k / 60)); [["l", "#4d6b8c"], ["q", "#6e4c82"]].forEach(function (p) { g.strokeStyle = p[1]; g.lineWidth = 2; g.beginPath(); xs.forEach(function (v, k) { const x = 4 + k / 60 * (P.w - 8), y = P.h - 6 - v[p[0]] * (P.h - 14); if (k) g.lineTo(x, y); else g.moveTo(x, y); }); g.stroke(); }); g.setLineDash([3, 3]); g.strokeStyle = "#999"; g.beginPath(); g.moveTo(4, P.h - 6 - .45 * (P.h - 14)); g.lineTo(P.w - 4, P.h - 6 - .45 * (P.h - 14)); g.stroke(); g.setLineDash([]); }; // 두 AI 점수 미니 그래프임 / mini graph of the two AI scores
     const Lm = R("linear"), Qm = R("quantum"), sc = function (x) { return { l: Lm.predict(x), q: Qm.predict(x) }; }; // 점수 함수임 / score function
     const ex = function (pairs) { return function (t) { const x = new Array(20).fill(0); pairs.forEach(function (p) { x[p[0]] = p[1](t); }); return sc(x); }; }; // 시나리오 함수 만들기임 / build scenario functions
@@ -137,7 +138,10 @@
       const lo = stat(groups.overlap, "lin"), qo = stat(groups.overlap, "q"); // 겹침 사건 통계임 / overlap event statistics
       $("#oS", el).innerHTML = "같은 순간 겹침 사건에서 양자 특징 AI는 " + qo.early + "/" + qo.n + "건을 미리 알렸고(일반 " + lo.early + "건), 평균 " + qo.lead.toFixed(1) + "분 앞섰음. 즉 <b>‘겹치는 순간’에 강하다는 말은 이 실험에서 맞음</b>. 다만 같은 겹침 특징을 일반 수식으로 만들어도 같은 결과이며(‘왜 대조군과 같나’), 시간 누적형은 시간 특징이 더 필요함." + B.box({ data: "mountain.js 근거 기반 산행 24회(산 16개, 산행자 3명, 날씨 4종 순환)", method: "사건 시작 순간 가장 겹친 신호 쌍의 작은 쪽 값 > 0.55이면 ‘겹침’, 심박×피로, 통신×배터리는 ‘시간 누적형’, 나머지 ‘한 가지’", formula: "사전 경보 = 사건 시작 15분 전~시작 사이 첫 경보, 선행 시간 상한 15분", code: "views_analysis.js overlap()", note: "분류 규칙은 설명용 단순 기준임" }, "사건 분류"); // 결론임 / conclusion
     }, 50);
+    const lstmStop = QP.LSTMViz.mount($("#oL", el)); // LSTM 셀 애니메이션(lstmviz.js) / LSTM cell animation
+    $("#oLB", el).innerHTML = B.box({ data: "산행 200분(10분 × 20단계) 예시 시계열: 피로는 서서히 오르고 90~100분 쉼터에서 잠깐 내려감, 배터리 부족은 꾸준히 오름", method: "LSTM 셀 1개: f = σ(W_f[x, h] + b_f), i = σ(W_i[x, h] + b_i), g = tanh(W_g[x, h] + b_g), o = σ(W_o[x, h] + b_o), c_t = f × c_(t−1) + i × g, h_t = o × tanh(c_t), 누적 위험 = σ(5h − 2.6). 비교선은 지금 값만 쓰는 σ(2.2(피로 + 배터리 부족) − 2.4)", code: "lstmviz.js run(), mount()", ref: "Hochreiter & Schmidhuber 1997(LSTM), Gers, Schmidhuber & Cummins 2000(망각 게이트)", note: "가중치는 동작을 보여 주기 위해 손으로 정한 교육용 값임. 실제 시간 누적형 모델은 아이나비 워치 시계열로 학습하고, 양자 겹침 점수를 LSTM 입력에 더하는 것이 다음 버전 과제임" }, "LSTM 근거");
     $("#oB", el).innerHTML = B.box({ method: "미니 그래프: 청 = 일반 AI 점수, 자두 = 양자 특징 AI 점수, 점선 ≈ 경보 기준. ②에서 두 신호가 함께 오를 때 자두 선이 더 일찍 기준을 넘음", code: "views_analysis.js overlap() mini()" }, "그래프 읽는 법"); // 근거임 / evidence
+    return function () { lstmStop(); };
   }
 
   /* ===== 비교 성적표 / Benchmark report  ===== */

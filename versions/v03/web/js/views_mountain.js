@@ -62,7 +62,7 @@
       '<label class="tog"><input type="checkbox" id="mF"> 낙상 사건 포함</label><button id="mPlay" data-autoplay="1" class="primary">▶ 출발</button><button id="mReset">처음</button>' +
       '<select id="mS"><option value="30">30배속</option><option value="60">60배속</option><option value="120">120배속</option><option value="240">240배속</option><option value="480">480배속</option></select>' +
       '<label class="tog"><input type="checkbox" id="mV" checked> 사건 음성</label><span id="mClock" class="clock"></span></div>' +
-      '<div class="card mtn"><canvas id="mCv"></canvas></div>' +
+      '<div class="card mtn"><canvas id="mCv"></canvas><div id="mCap" class="mcap">▶ 출발을 누르면 눈송이가 정상까지 오르고 하산을 마칠 때까지 상황마다 멈춰 설명합니다.</div></div>' +
       '<div class="card stat" id="mStat"></div>' +
       '<div class="card qub"><canvas id="mQ"></canvas><div id="mQx" class="qx6"></div></div>' +
       '<div class="card nn"><canvas id="mN"></canvas></div>' +
@@ -71,7 +71,7 @@
     ["mM", "mP", "mW", "mS"].forEach(function (id, k) { $("#" + id, el).value = [cfg.mountain, cfg.persona, cfg.weather, cfg.speed][k]; }); // 현재 설정을 선택 상자에 표시함 / show the current settings in the selects
     $("#mF", el).checked = cfg.fall;                // 낙상 체크 상태임 / fall checkbox state
     let run = runFor(cfg), simT = 0, playing = false, shownA = new Array(6).fill(0), shownB = new Array(6).fill(0), lastI = -1, frame = 0; // 결과, 시뮬 시각, 재생, 다이얼 표시값, 직전 위치임 / result, sim time, playing, dial values, previous position
-    let said = {}, log = [], focus = null, focusT = 0; // 이미 말한 사건, 사건 기록, 지금 설명 중인 지점과 그 시각임 / already-announced events, event log, point being explained and its time
+    let said = {}, log = [], focus = null, focusT = 0, doneHold = false; // 이미 말한 사건, 사건 기록, 지금 설명 중인 지점과 그 시각임 / already-announced events, event log, point being explained and its time
     function flash(level) {                         // 위험 경보 번쩍임(화면 테두리 + 관제실 깜빡임 + 경고 띠) / risk alarm flash (screen border + control-room blink + warning band)
       const room = el.querySelector(".ctrl-room"); if (!room) return; room.classList.remove("flash-r", "flash-y"); void room.offsetWidth; room.classList.add(level === "red" ? "flash-r" : "flash-y"); // 애니메이션을 다시 시작함 / restart the animation
       const w = document.getElementById("warnflash"); if (w) { w.className = "warnflash on " + (level === "red" ? "r" : "y"); clearTimeout(w._t); w._t = setTimeout(function () { w.className = "warnflash"; }, 2600); } // 화면 전체 가장자리를 번쩍임 / flash the whole screen edge
@@ -79,7 +79,24 @@
     const cv = $("#mCv", el), qv = $("#mQ", el), nv = $("#mN", el); // 캔버스들임 / canvases
     const drops = Array.from({ length: 140 }, function () { return [Math.random(), Math.random()]; }); // 빗방울 위치임 / raindrop positions
     function reset() { run = runFor(cfg); simT = 0; lastI = -1; said = {}; log = []; drawCharts(0); } // 처음으로 되돌림 / reset to the start
-    function say(key, text) { if (said[key]) return; said[key] = 1; const poi = run.course.pois.find(function (q) { return text.indexOf(q.name) >= 0; }); if (poi) { focus = poi; focusT = performance.now(); } if (/경보|사건|안전 규칙|낙상/.test(text)) flash(/사건|규칙|낙상/.test(text) ? "red" : "yellow"); log.unshift(hhmm(run.steps[Math.min(run.steps.length - 1, Math.floor(simT / 10))].min) + " " + text); if ($("#mV", el).checked && !QP.State.touring) QP.Voice.speak(text, true); } // 사건을 한 번만 기록하고 읽음(자동 안내 중에는 안내 음성을 끊지 않음) / record and read an event only once (does not cut the guide voice during the auto guide)
+    // 단계 안내: 설명할 일이 생기면 시뮬레이션을 잠시 세우고, 설명을 끝까지 읽은 뒤 다시 걷게 함(정상, 하산까지 모든 상황) / guided steps: pause the sim for each explanation, resume after it is read (all the way to summit and descent)
+    let gq = [], gcur = null, gno = 0;             // 설명 대기열, 지금 설명, 설명 번호 / queue, current item, step number
+    const GN = "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳";
+    function kindText(key, text) {                  // 사건 종류별로 친절한 설명을 덧붙임 / add a kind, detailed explanation per kind
+      const i = Math.min(run.steps.length - 1, Math.floor(simT / 10)), st0 = run.steps[i], mn = meaning(st0, run);
+      if (/^near/.test(key)) return text + " 지금 상황은 " + mn.sit + "입니다. 아래 큐비트 다이얼 가운데 이 위험과 관련된 쌍이 1 쪽으로 기울기 시작하고, 오른쪽 위 상자에 그 의미가 나타납니다. " + mn.eff + ". 권고 드립니다. " + mn.act;
+      if (key === "stamp") return text + " 여기까지 오르는 동안 지난 위험 지점들의 신호는 모두 내려갔습니다. 이제 하산을 시작합니다. 내려갈 때는 무릎 부담과 미끄러짐 위험이 커지므로, 눈송이가 같은 지점을 다시 지날 때 신호가 어떻게 바뀌는지 함께 보시기 바랍니다.";
+      if (/^ev/.test(key)) return text + " 분홍 띠가 실제 위험 사건 구간이고, 위쪽 삼각형이 각 AI가 처음 경보한 시점입니다. " + mn.mean + "입니다. 권고 드립니다. " + mn.act;
+      if (/^q/.test(key)) return text + " 양자 특징 AI는 " + mn.risk + " 쪽 두 신호가 함께 오르는 것을 겹침 점수로 읽었습니다. " + mn.act;
+      return text;
+    }
+    function guideTick() {                          // 매 프레임: 설명을 하나씩 읽고, 다 읽으면 다음으로 / each frame: read one explanation at a time
+      const talk = QP.Voice.isActive && QP.Voice.isActive();
+      if (gcur) { const dt = performance.now() - gcur.t; if (dt > 5500 && (!talk || dt > 70000)) gcur = null; else return; }
+      if (gq.length) { if (talk && QP.State.touring) return; gcur = gq.shift(); gcur.t = performance.now(); gno++; const c = $("#mCap", el); if (c) { c.innerHTML = "<b>" + (gno <= 20 ? GN[gno - 1] : gno + ".") + "</b> " + gcur.text; c.className = "mcap on"; } QP.Voice.speak(gcur.text, true, true); return; }
+    }
+    const gpaused = function () { return !!gcur || gq.length > 0; };
+    function say(key, text) { if (said[key]) return; said[key] = 1; const poi = run.course.pois.find(function (q) { return text.indexOf(q.name) >= 0; }); if (poi) { focus = poi; focusT = performance.now(); } if (/사건|규칙|낙상/.test(text)) flash("red"); log.unshift(hhmm(run.steps[Math.min(run.steps.length - 1, Math.floor(simT / 10))].min) + " " + text); if ($("#mV", el).checked && playing) gq.push({ text: kindText(key, text) }); else if ($("#mV", el).checked && !QP.State.touring) QP.Voice.speak(text, true); } // 사건을 한 번만 기록하고, 재생 중이면 단계 안내 대기열에 넣음 / record once; while playing, queue for guided narration
 
     function drawMountain(i, frac) {                // 산 단면과 산행자를 그림 / draws the mountain profile and hiker
       const P = A.canvas(cv, cv.parentNode.clientHeight - 16), g = P.g, W = P.w, H = P.h; // 캔버스 준비임 / prepare the canvas
@@ -209,15 +226,16 @@
       const mn = meaning(s, run); if (mn.hot) say("hot" + mn.risk + Math.floor(i / 90), "지금 " + mn.sit + "입니다. " + mn.mean + "입니다. " + mn.eff + ". " + mn.act); // 위험이 겹치는 순간의 의미를 읽어 줌 / read out the meaning of overlapping-risk moments
     }
     const stop = A.loop(function (dt) {             // 매 프레임 실행됨 / runs every frame
-      if (playing) simT += dt * cfg.speed;          // 재생 중이면 시뮬레이션 시각을 진행함 / advance sim time while playing
+      guideTick(); if (playing && !gpaused()) simT += dt * cfg.speed;          // 재생 중이면(설명 중이 아닐 때) 시뮬레이션 시각을 진행함 / advance sim time while playing
       const maxT = (run.steps.length - 1) * 10;     // 마지막 시각임 / last time
-      if (simT >= maxT) { simT = maxT; if (playing) { playing = false; $("#mPlay", el).textContent = "▶ 다시"; QP.State.stamps[run.course.mi] = new Date().toLocaleDateString("ko-KR"); say("done", "하산을 마쳤습니다. 스탬프 투어 기록에 저장했습니다."); } } // 끝나면 멈추고 스탬프를 기록함 / stop at the end and record the stamp
+      if (simT >= maxT) { simT = maxT; if (playing) { playing = false; $("#mPlay", el).textContent = "▶ 다시"; QP.State.stamps[run.course.mi] = new Date().toLocaleDateString("ko-KR"); playing = true; const evs = run.events, qe = evs.filter(function (e) { return e.q >= 0 && e.q <= e.s; }).length, le = evs.filter(function (e) { return e.lin >= 0 && e.lin <= e.s; }).length; say("done", "하산을 마쳤습니다. 이번 산행에서 위험 사건은 " + evs.length + "번 있었고, 양자 특징 AI는 그중 " + qe + "번, 일반 AI는 " + le + "번을 사건 전에 미리 알렸습니다. 아래 오른쪽 그래프의 삼각형이 각 AI가 처음 경보한 시점입니다. 스탬프 투어 기록에 저장했습니다."); playing = false; doneHold = true; } }
+      if (doneHold && !gpaused()) { doneHold = false; QP.Pace.hold(false); } // 끝나면 멈추고 스탬프를 기록함 / stop at the end and record the stamp
       const i = Math.floor(simT / 10), frac = (simT / 10) - i; // 현재 단계와 단계 사이 비율임 / current step and fraction between steps
       drawMountain(i, frac); drawQubits(i);         // 산과 큐비트는 매 프레임 그림 / mountain and qubits drawn every frame
       if (++frame % 6 === 0 || i !== lastI) { if (frame % 6 === 0) { drawNet(i); drawCharts(i); drawStat(i); } if (i !== lastI) events(i); lastI = i; } // 나머지는 6프레임마다 그림 / the rest every 6 frames
       $("#mClock", el).textContent = hhmm(run.steps[i].min) + ", " + Math.round(simT / 60) + "분 경과";
     });
-    $("#mPlay", el).onclick = function () { QP.Voice.wake(); if (simT >= (run.steps.length - 1) * 10) reset(); playing = !playing; this.textContent = playing ? "❚❚ 멈춤" : "▶ 계속"; if (playing && !QP.State.touring) QP.Voice.speak(run.course.name + " " + run.course.peak + " 코스를 " + G.personas[cfg.persona].name.split(" ")[0] + "과 함께 출발합니다. 날씨는 " + G.weathers[cfg.weather].name + "입니다.", true); }; // 출발, 멈춤 버튼임 / start/stop button
+    $("#mPlay", el).onclick = function () { QP.Voice.wake(); if (simT >= (run.steps.length - 1) * 10) reset(); playing = !playing; this.textContent = playing ? "❚❚ 멈춤" : "▶ 계속"; QP.Pace.hold(playing); if (playing && simT < 1 && $("#mV", el).checked) { gno = 0; gq.push({ text: run.course.name + " " + run.course.peak + " 코스를 " + G.personas[cfg.persona].name.split(" ")[0] + "과 함께 출발합니다. 날씨는 " + G.weathers[cfg.weather].name + "입니다. 눈송이가 정상까지 올랐다가 하산을 마칠 때까지, 위험 지점이 나타날 때마다 잠시 멈춰 무엇이 바뀌었는지 차례로 설명해 드립니다. 왼쪽 산 그림의 노란 원은 감지 레이더이고, 아래 다이얼은 위험 신호를 큐비트 회전으로 바꾼 모습입니다." }); } }; // 출발, 멈춤 버튼(출발하면 끝까지 단계 안내, 전체 안내도 기다림) / start/stop (guided to the end; the tour waits)
     $("#mReset", el).onclick = function () { playing = false; $("#mPlay", el).textContent = "▶ 출발"; reset(); }; // 처음 버튼임 / reset button
     ["mM", "mP", "mW"].forEach(function (id) { $("#" + id, el).onchange = function (e) { cfg[{ mM: "mountain", mP: "persona", mW: "weather" }[id]] = Number(e.target.value); playing = false; $("#mPlay", el).textContent = "▶ 출발"; reset(); }; }); // 설정이 바뀌면 다시 계산함 / recompute when settings change
     $("#mF", el).onchange = function (e) { cfg.fall = e.target.checked; reset(); }; // 낙상 체크임 / fall checkbox
@@ -225,7 +243,7 @@
     $("#mS", el).onchange = function (e) { cfg.speed = Number(e.target.value); }; // 배속임 / playback speed
     requestAnimationFrame(function () { drawCharts(0); drawStat(0); drawNet(0); }); // 처음 그림임 / first drawing
     QP.State.simNarr = function () { return "지금 " + run.course.name + " " + run.course.peak + " 코스 관제 화면입니다. 산 그림 위의 눈송이가 등산로를 따라 움직이고, 앞쪽 위험 지점이 감지 거리 안에 들어오면 그 신호가 올라갑니다. 아래의 다이얼은 각 신호를 큐비트 회전으로 바꾼 모습이고, 노란 연결선은 씨낫 게이트가 작동하는 정도입니다. 오른쪽 끝의 막대가 겹침 점수입니다. 맨 아래 그래프에서 분홍 띠는 실제 위험 사건이고, 자두색 선이 양자 특징 인공지능, 청색 선이 일반 인공지능 점수입니다. 삼각형은 처음 경보를 낸 시점입니다."; }; // 이 화면의 설명 대본임 / narration script of this screen
-    return function () { stop(); };                 // 화면을 떠나면 루프를 멈춤 / stop the loop when leaving the screen
+    return function () { stop(); QP.Pace.hold(false); };                 // 화면을 떠나면 루프를 멈춤 / stop the loop when leaving the screen
   }
 
   /* ===== iNavi 100대 명산 스탬프 투어 / iNavi top-100 mountains stamp tour  ===== */
