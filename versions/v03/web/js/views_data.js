@@ -70,7 +70,7 @@
     let pos = 0, cur = -1, wait = 0, wx = "", lastSay = "", stayT = 0, spoken = true, lapDone = false, poiMark = { done: true };
     function sayPOI(t) {                            // 지점 설명을 읽음(투어 중이면 투어 설명이 끝난 뒤 이어서) / read the POI explanation (after the tour narration when touring)
       const av = $("#autoVoice"); spoken = false; poiMark = { pending: true }; if (av && !av.checked) { spoken = true; poiMark = { done: true }; return; }
-      setTimeout(function q() { if (!document.body.contains(el)) return; if (QP.State.welcoming || (QP.Voice.isActive && QP.Voice.isActive())) { setTimeout(q, 400); return; } poiMark = QP.Voice.speak(t, true, true); spoken = true; }, cur <= 0 ? 1500 : 0);
+      setTimeout(function q() { if (!document.body.contains(el)) return; if (QP.Voice.busy()) { setTimeout(q, 400); return; } poiMark = QP.Voice.speak(t, true, true); spoken = true; }, cur <= 0 ? 1500 : 0);
     } /* 머문 시각(실제 시간) / dwell start (real time) */     // 날씨: rain, snow, sunset / weather                // 등산로 위치, 지금 POI, 머무는 시간 / trail position, current POI, dwell time
     const stop = A.loop(function (dt, now) {
       if (wait > 0) { const talk = QP.Voice.isActive && QP.Voice.isActive(); if (performance.now() - stayT > 8000 && spoken && QP.Voice.finished(poiMark)) { wait = 0; if (cur === POI.length - 1 && !lapDone) { lapDone = true; sayPOI("열두 지점을 모두 지나 정상에 도착했습니다. 정리하면, 위험 신호가 하나뿐인 곳에서는 두 인공지능이 비슷하지만, 비와 급경사, 일몰과 하산 지연처럼 두 위험이 겹치는 곳에서 양자 특징 인공지능이 겹침 점수로 더 강하게 경보했습니다. 눈송이는 처음부터 다시 오르며 같은 변화를 반복해서 보여 드립니다."); wait = 1; stayT = performance.now(); } else if (lapDone && QP.State.hold) QP.Pace.hold(false); } } /* POI마다 7초 이상 머물고, 설명을 다 읽은 뒤에야 다음으로 감 / stay at least 7 s at each POI and move on only after the explanation finishes */

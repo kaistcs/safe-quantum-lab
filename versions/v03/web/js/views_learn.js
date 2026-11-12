@@ -200,7 +200,7 @@
       QP.Voice.speak(QP.Narration.sub("basics", tab), true); // 이 과의 설명을 읽음(화면 그림과 함께) / read this lesson's explanation (with the screen)
       const wait = function () {                    // 다 읽었는지 확인함 / check whether reading is finished
         if (!QP.State.basicsAuto || !bA.isConnected) return; // 멈췄거나 화면을 떠났으면 끝냄 / end if stopped or the screen was left
-        if (QP.Voice.isActive() || QP.Voice.isPaused()) { autoT = setTimeout(wait, 500); return; } // 읽는 중(또는 멈춤)이면 기다림 / wait while reading (or paused)
+        if (QP.Voice.isActive() || QP.Voice.isPaused() || QP.State.hold) { autoT = setTimeout(wait, 500); return; } // 읽는 중(또는 멈춤)이면 기다림 / wait while reading (or paused)
         autoT = setTimeout(function () {            // 잠시 쉬고 / pause briefly
           if (!QP.State.basicsAuto || !bA.isConnected) return; // 그 사이 멈췄으면 끝냄 / end if stopped meanwhile
           if (tab < 5) QP.App.go("basics-" + (tab + 1)); // 다음 과로 넘어감 / go to the next lesson

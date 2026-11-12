@@ -100,13 +100,14 @@
     const m = /^(.*?)(?:-(\d+))?$/.exec(hash || "home"); // id와 하위 번호를 나눔 / split id and sub number
     const v = QP.ViewDefs.find(function (x) { return x.id === m[1]; }) || QP.ViewDefs.find(function (x) { return x.id === "home"; }); // 화면 정의임 / screen definition
     if (cleanup) { try { cleanup(); } catch (e) { } cleanup = null; } if ($("view")._cleanup) { try { $("view")._cleanup(); } catch (e) { } $("view")._cleanup = null; } QP.Anim.stopAll(); // 이전 화면 정리임 / clean up the previous screen
-    State.hold = false;                             // 화면 시연 붙잡기를 풂(새 화면) / release the demo hold on a new screen
+    State.hold = false; if (QP.Demo) QP.Demo.stop(); if (!tourOn) State.stepNarrPending = false; // 화면 시연 붙잡기를 풂(새 화면) / release the demo hold on a new screen
     if (!tourOn) QP.Voice.stop();                   // 투어가 아니면 음성을 멈춤 / stop the voice unless touring
     if (State.basicsAuto && m[1] !== "basics") State.basicsAuto = false; // 다른 화면으로 가면 자동 수업을 끝냄 / leaving the screen ends the auto class
     current = v; sub = m[2] || null;                // 현재 화면 기록임 / record the current screen
     $("viewGroup").textContent = icons[v.group] + " " + v.group; $("viewTitle").textContent = v.title + (sub && v.subs ? ", " + v.subs[sub - 1] : ""); // 제목임 / title
     const el = $("view"); el.innerHTML = ""; el.scrollTop = 0; // 내용 영역을 비움 / clear the content area
     try { cleanup = v.render(el, sub) || null; } catch (e) { el.innerHTML = '<div class="banner">화면 오류: ' + e.message + "</div>"; console.error(e); } // 화면을 그림 / draw the screen
+    if (QP.Demo) { const dk = m[1] + (m[2] ? "-" + m[2] : ""); setTimeout(function () { if (current === v) QP.Demo.start(el, dk); }, 900); } // 화면 시연 해설(설명이 끝날 때까지 안내를 붙잡음) / screen walkthrough
     setTimeout(function () { QP.Basis.attachReaders(el); if (!tourOn) { const a = el.querySelector("[data-autoplay]"); if (a && !/멈춤|❚❚|■/.test(a.textContent)) a.click(); } }, 400); // 카드마다 읽기 버튼을 붙이고, 움직이는 시연을 자동으로 켬(멈춘 화면이 없도록) / add read buttons to each card and start moving demos automatically (no static screens)
     document.title = v.title + ", 숙명 AGI 산행안전 양자 실험실"; menu(); // 탭 제목과 메뉴 강조임 / tab title and menu highlight
     if ($("autoVoice").checked && interacted && !tourOn && !(v.id === "basics" && State.basicsAuto)) setTimeout(readShort, 300); // 자동 해설이면 짧은 안내를 읽음(자동 수업 중에는 수업이 직접 읽음) / with auto narration, read the short guide (during the auto class the class reads itself)
@@ -249,14 +250,14 @@
   function estimate(text) { return 6000 + 270 * text.length / QP.Voice.getRate(); } // 한 단계 예상 낭독 시간(감시용)임 / expected reading time of a step (watchdog)
   function tourGo(k) {                              // k번째 단계를 실행함 / runs step k
     QP.Voice.hush(false); clearTimeout(TB.timer); TB.i = (k + TB.steps.length) % TB.steps.length; TB.paused = false; TB.token = (TB.token || 0) + 1; const tok = TB.token; // 위치를 정함(이전 단계의 기다림은 무효화) / set the position (cancels waiting of the previous step)
-    const st = TB.steps[TB.i]; State.touring = true; tourOn = true; // 안내 중 표시임 / mark as guiding
+    const st = TB.steps[TB.i]; State.touring = true; tourOn = true; State.stepNarrPending = true; // 안내 중 표시임, 단계 설명이 시작되기 전에는 화면 해설이 먼저 말하지 않게 함 / mark as guiding; screen narration waits for the step narration
     const v = QP.ViewDefs.find(function (x) { return x.id === st.id; }); State.open[v.group] = true; State.secOpen[SECTIONS.findIndex(function (x) { return x[1].indexOf(v.group) >= 0; })] = true; // 메뉴 그룹을 자동으로 펼침 / expand the menu group automatically
     go(st.hash); tourDraw();                        // 화면을 열고 막대를 갱신함 / open the screen and update the bar
     setTimeout(function () {                        // 화면이 그려진 뒤 / after the screen is drawn
       if (tok !== TB.token) return;                 // 그 사이 다른 단계로 이동했으면 무시함 / ignore if moved to another step meanwhile
       const auto = $("view").querySelector("[data-autoplay]"); if (auto && !/멈춤|❚❚/.test(auto.textContent)) auto.click(); // 자동 시연 버튼이 있으면 눌러 움직이게 함 / click the auto-demo button if there is one
       const sc = QP.Narration.get(st.id), text = "단계 " + (TB.i + 1) + ". " + st.title + ". " + (st.sub ? QP.Narration.sub(st.id, st.sub) : sc.long); // 이 단계의 설명임 / explanation of this step
-      if (State.dataId === "D002" && !st.sub && st.id !== "sim") QP.Voice.play("tour_" + st.id, text); else QP.Voice.speak(text, true, true); // 녹음이 있으면 사람 목소리 녹음으로 읽음 / read with a human-voice recording if available
+      State.stepNarrPending = false; if (State.dataId === "D002" && !st.sub && st.id !== "sim") QP.Voice.play("tour_" + st.id, text); else QP.Voice.speak(text, true, true); // 녹음이 있으면 사람 목소리 녹음으로 읽음 / read with a human-voice recording if available
       const deadline = Date.now() + estimate(text); // 감시 장치: 이 시간이 지나면 음성이 끊겨도 다음으로 감 / watchdog: move on after this time even if the voice stalls
       const wait = function () {                    // 다 읽었는지 확인함 / check whether reading is finished
         if (tok !== TB.token || !tourOn) return;    // 다른 단계로 옮겼거나 종료했으면 끝냄 / stop if moved to another step or ended
@@ -287,7 +288,7 @@
       setTimeout(function () { State.welcoming = false; if (TB.token === wt) cb(); }, 900); })();
   }
   function tour() { QP.Voice.wake(); interacted = true; State.basicsAuto = false; if (tourOn) tourEnd(true, true); QP.Voice.stop(); QP.Voice.hush(false); welcomeThen(function () { TB.steps = tourSteps(); tourGo(0); }); } /* 누를 때마다 환영 인사를 끝까지 한 뒤 무조건 1단계(양자 기초 첫 화면)부터 시작 / welcome first, then always step 1 */ // 처음부터(또는 진행 중인 단계부터) 시작함 / start from the beginning (or the step in progress)
-  function tourEnd(done, silent) { if (silent) { clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); tourDraw(); return; } clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); if (!done) { QP.Voice.hush(true); hidePointer(); alert0("전체 안내를 종료했습니다. 다른 화면을 고르시거나 설명 듣기를 누르면 다시 말합니다."); } tourDraw(); if (done) QP.Voice.speak("전체 자동 안내를 마쳤습니다. 들어 주셔서 감사합니다. 숙명여자대학교 에이지아이 연구실이었습니다.", true, true); } // 끝냄(막대는 계속 보임) / end (the bar stays visible)
+  function tourEnd(done, silent) { if (silent) { clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; State.stepNarrPending = false; QP.Voice.stop(); tourDraw(); return; } clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; State.stepNarrPending = false; QP.Voice.stop(); if (!done) { QP.Voice.hush(true); hidePointer(); alert0("전체 안내를 종료했습니다. 다른 화면을 고르시거나 설명 듣기를 누르면 다시 말합니다."); } tourDraw(); if (done) QP.Voice.speak("전체 자동 안내를 마쳤습니다. 들어 주셔서 감사합니다. 숙명여자대학교 에이지아이 연구실이었습니다.", true, true); } // 끝냄(막대는 계속 보임) / end (the bar stays visible)
   $("tourBtn").onclick = tour;                      // 왼쪽 위 원클릭 버튼임 / one-click button at the top left
   $("tPrev").onclick = function () { QP.Voice.wake(); tourGo(TB.i - 1); }; $("tNext").onclick = function () { QP.Voice.wake(); tourGo(TB.i + 1); }; // 이전, 다음임 / previous and next
   $("tPause").onclick = function () { if (!tourOn) { tour(); return; } if (TB.paused) { TB.paused = false; QP.Voice.resume(); if (!QP.Voice.isActive()) tourGo(TB.i); tourDraw(); } else { TB.paused = true; QP.Voice.pause(); tourDraw(); } }; // 멈춤과 이어 듣기(안내 중이 아니면 시작)임 / pause and resume (start if not guiding)

@@ -151,5 +151,5 @@
     hush: function (b) { hushed = !!b; if (b) { stop(); try { if (keep) { keep.stop(); keep = null; } } catch (e) { } } }, shutdown: shutdown, isHushed: function () { return hushed; }, setAlternate: function (n) { alt = n; spoken = 0; }, speaker: function () { return speaker; }, log: function () { return log; }, // 남녀 교대(문장 n개마다, 0은 끄기)와 현재 화자임 / male/female alternation (every n sentences, 0 = off) and current speaker
     genders: function () { return { f: genderVoice(false), m: genderVoice(true) }; }, // 사용 가능한 여성, 남성 음성임 / available female and male voices
     setVoice: function (n) { chosen = n; }, onSubtitle: function (f) { onSub = f; }, onStateChange: function (f) { onState = f; }, // 설정 함수임 / setter functions
-    isActive: function () { return active; }, finished: finished, onVoices: null }; // 상태 확인 함수임 / state query functions
+    isActive: function () { return active; }, busy: function () { const St = QP.State || {}; return active || !!St.stepNarrPending || !!St.welcoming; }, finished: finished, onVoices: null }; // 상태 확인 함수임 / state query functions
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace
