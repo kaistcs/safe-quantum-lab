@@ -1,0 +1,215 @@
+/* Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved.
+ * 행정안전부 재난안전연구개발사업 산행안전 과제 결과물. 이용 조건은 프로젝트 루트의 LICENSE를 따름. */
+/* [English] Data and reference screens: home, guide, data center, evidence, data store, field-data spec, memory, development, glossary. */
+/* =====================================================================
+ * views_data.js : 대문, 사용 안내, 데이터 관리 센터, 데이터 근거와 검증,
+ *                 실측을 위한 필요 데이터 명세, 큐비트와 메모리, 개발 환경, 용어 사전
+ * ===================================================================== */
+(function (QP) {                                    // QP 이름공간에 화면을 추가함 / adds screens to the QP namespace
+  "use strict";                                     // 엄격 모드를 켬 / turn on strict mode
+  const S = QP.Sim, D = QP.Data, M = QP.Models, C = QP.Charts, A = QP.Anim, B = QP.Basis, G = QP.Mountain, DS = QP.Datasets, BR = QP.Brand; // 모듈임 / modules
+  const $ = function (s, r) { return (r || document).querySelector(s); }; // 요소 찾기임 / find an element
+  const pct = function (v) { return (v * 100).toFixed(1) + "%"; }; // 백분율임 / percentage
+
+  /* ===== 대문 / Home  ===== */
+  function home(el) {
+    const L = QP.State.results.find(function (m) { return m.key === "linear"; }), Q = QP.State.results.find(function (m) { return m.key === "quantum"; }); // 두 결과임 / the two results
+    el.innerHTML = '<div class="homev"><div class="hero2"><svg id="hS" viewBox="0 0 1000 420" preserveAspectRatio="xMidYMax slice"></svg><div class="hero-copy"><p class="eyebrow">' + BR.univ + " " + BR.lab + ' × 산행안전 연구</p><h2>눈송이와 함께 오르는 <span>100대 명산</span><br>양자 에뮬레이팅 AI가 위험을 <span>더 일찍, 더 분명하게</span></h2><p>비와 급경사, 일몰과 하산 지연처럼 <b>겹치는 위험</b>을 큐비트로 묶어 읽고, 일반 AI보다 먼저 알려 주는지 직접 확인하는 실험실</p><div class="btns"><button class="primary" data-go="sim">▶ 산행 관제실 바로 보기</button><button data-go="kid">처음이라면: 동전으로 배우기</button><button data-go="howto">사용 안내</button></div></div>' + BR.img("emblem", "hero-emblem", "숙명여자대학교 엠블럼") + '</div>' +
+      '<div class="cards4"><div class="card tint-dusk"><h3>무엇을 하나요</h3><p>산 단면 위를 걷는 눈송이 앞의 위험 지점(젖은 돌계단, 낙석, 절벽 등)을 몇 m 전부터 감지하고, 큐비트가 돌아가며 AI가 판단하는 과정을 애니메이션으로 보여 줍니다.</p></div><div class="card tint-plum"><h3>얼마나 좋아졌나</h3><p class="kpi"><span class="c-dusk">' + pct(L.recall) + '</span> → <span class="c-plum">' + pct(Q.recall) + '</span></p><p class="small">같은 오경보 예산에서 위험 탐지율(데이터: ' + QP.State.dataName + ')</p></div><div class="card tint-ochre"><h3>정직한 한계</h3><p>지금의 2큐비트 회로는 일반 수식과 같은 값을 만듭니다. 좋아진 이유는 “겹침을 함께 보는 특징”이며, 양자 장비만의 이점은 앞으로 검증할 질문입니다.</p></div><div class="card tint-rose"><h3>누가 만들었나</h3><p>' + BR.maker + '</p><p class="small">' + BR.funding + '</p></div></div></div>';
+    el.querySelectorAll("[data-go]").forEach(function (b) { b.onclick = function () { QP.App.go(b.dataset.go); }; }); // 이동 버튼임 / navigation buttons
+    const chars = ["go", "cheer", "joy", "alert", "welcome"]; // 등산로에 세울 공식 눈송이 이미지들임 / official Snowflake images placed on the trail
+    const snowman = '<g transform="translate(905,330)"><circle r="26" fill="#fff" stroke="#c9d6ee"/><circle cy="-36" r="17" fill="#fff" stroke="#c9d6ee"/><circle cx="-6" cy="-39" r="2" fill="#1d2a4d"/><circle cx="6" cy="-39" r="2" fill="#1d2a4d"/><path d="M0,-34 l10,3 -10,2z" fill="#e8892b"/><rect x="-13" y="-58" width="26" height="8" fill="#003087"/><rect x="-9" y="-72" width="18" height="16" fill="#003087"/><path d="M-12,-22 q12,8 24,0" stroke="#ffb500" stroke-width="5" fill="none"/></g>'; // 직접 그린 일반 눈사람 장식임 / hand-drawn snowman decoration
+    const trail = "M60,394 L250,352 L420,324 L560,304 L622,172 L740,152 L792,84 L880,64"; // 등산로(완만 → 중간의 깔딱 급경사 → 능선 → 정상 직전 급경사)임 / trail (gentle → steep pass midway → ridge → steep just before the summit)
+    $("#hS", el).innerHTML = '<defs><linearGradient id="hsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe0f7"/><stop offset="1" stop-color="#fdf6ec"/></linearGradient><linearGradient id="hm1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5f7fbf"/><stop offset="1" stop-color="#003087"/></linearGradient><linearGradient id="hm2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9db3dd"/><stop offset="1" stop-color="#5f7fbf"/></linearGradient></defs>' +
+      '<rect width="1000" height="420" fill="url(#hsky)"/><circle cx="965" cy="48" r="34" fill="#ffb500" opacity=".85"/>' +
+      '<path d="M0,300 L140,170 L230,240 L360,120 L470,220 L560,150 L700,260 L820,140 L1000,280 L1000,420 L0,420Z" fill="url(#hm2)" opacity=".7"/>' +
+      '<path d="M340,140 L360,120 L380,140 L370,150 L360,140 L350,152Z M800,160 L820,140 L840,160 L830,168 L820,158 L810,170Z" fill="#fff"/>' +
+      '<path d="M0,420 L0,368 L250,356 L420,328 L560,308 L622,176 L740,156 L792,88 L880,68 L940,120 L1000,170 L1000,420Z" fill="url(#hm1)"/>' +
+      '<path d="M560,304 L622,172 M740,152 L792,84" stroke="#c62828" stroke-width="8" stroke-linecap="round"/><path d="M560,304 L622,172" stroke="#fff" stroke-width="2" stroke-dasharray="4 6"/>' +
+      '<g><rect x="630" y="214" width="150" height="24" rx="6" fill="#c62828"/><text x="705" y="231" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">⚠ 깔딱고개 급경사</text><rect x="800" y="98" width="128" height="22" rx="6" fill="#c62828"/><text x="864" y="114" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">⚠ 정상 직전 암릉</text></g>' +
+      '<path d="M850,72 L880,68 L910,94 L892,100 L878,88 L862,102Z" fill="#fff"/>' +
+      '<path d="' + trail + '" stroke="#ffd47a" stroke-width="5" fill="none" stroke-dasharray="10 8"/>' +
+      '<g class="qshield"><circle cx="520" cy="200" r="40" fill="none" stroke="#ffb500" stroke-width="2"/><circle cx="520" cy="200" r="60" fill="none" stroke="#ffb500" stroke-width="1.5" opacity=".6"/><circle cx="520" cy="200" r="80" fill="none" stroke="#ffb500" stroke-width="1" opacity=".35"/></g>' +
+      '<g><circle cx="598" cy="252" r="11" fill="#c76b67"/><text x="598" y="256" text-anchor="middle" font-size="12" fill="#fff">!</text><rect x="630" y="244" width="132" height="22" rx="11" fill="#fff" opacity=".92"/><text x="696" y="259" text-anchor="middle" font-size="12" fill="#7d2c22">젖은 돌계단 + 비</text></g>' +
+      '<g><rect x="640" y="182" width="170" height="26" rx="13" fill="#6e4c82"/><text x="725" y="200" text-anchor="middle" font-size="13" fill="#fff">양자 특징 AI 조기 경보</text></g>' +
+      snowman + '<g id="hChars"></g><g id="hFx"></g>';
+    const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path"); pathEl.setAttribute("d", trail); // 길이 계산용 경로임 / path used to compute lengths
+    const total = pathEl.getTotalLength();          // 등산로 전체 길이임 / total trail length
+    $("#hChars", el).innerHTML = chars.map(function (k, i) { return '<image href="' + BR.local(k) + '" data-remote="' + BR.files[k] + '" width="46" height="58" id="hc' + i + '"/>'; }).join(""); // 공식 눈송이 이미지들을 배치함 / place the official Snowflake images
+    el.querySelectorAll("#hChars image").forEach(function (im) { im.addEventListener("error", function () { if (im.getAttribute("href") !== im.dataset.remote) im.setAttribute("href", im.dataset.remote); else im.replaceWith(document.createElementNS("http://www.w3.org/2000/svg", "g")); }); }); // 실패하면 공식 주소, 그래도 실패면 숨김 / official URL on failure, hide if it still fails
+    const fx = $("#hFx", el), parts = Array.from({ length: 34 }, function (_, i) { return { x: Math.random() * 1000, y: Math.random() * 420, k: i % 3, s: .5 + Math.random(), r: Math.random() * 6 }; }); // 낙엽, 벚꽃, 눈 입자임 / leaf, cherry blossom and snow particles
+    const stop = A.loop(function (dt, now) {        // 대문 애니메이션임 / home animation
+      for (let i = 0; i < chars.length; i++) { const im = $("#hc" + i, el); if (!im) continue; const f = ((now / 70000) + i / chars.length) % 1, p = pathEl.getPointAtLength(f * total); im.setAttribute("x", p.x - 23); im.setAttribute("y", p.y - 56 - Math.abs(Math.sin(now / 200 + i)) * 3); } // 눈송이들이 등산로를 따라 오름 / Snowflakes climb along the trail
+      const sh = el.querySelector(".qshield"), lead = $("#hc0", el); if (sh && lead) sh.setAttribute("transform", "translate(" + (Number(lead.getAttribute("x")) + 23 - 520) + "," + (Number(lead.getAttribute("y")) + 30 - 200) + ")"); // 양자 방패가 앞선 눈송이를 따라감 / the quantum shield follows the leading Snowflake
+      fx.innerHTML = parts.map(function (p) { p.y += dt * 30 * p.s; p.x += Math.sin(now / 900 + p.r) * .4; if (p.y > 430) { p.y = -10; p.x = Math.random() * 1000; } return p.k === 0 ? '<path d="M0,0 q6,-6 12,0 q-6,6 -12,0z" fill="#c8722e" opacity=".85" transform="translate(' + p.x + "," + p.y + ") rotate(" + (now / 20 * p.s % 360) + ')"/>' : p.k === 1 ? '<ellipse rx="4" ry="2.6" fill="#f7c6d0" opacity=".9" transform="translate(' + p.x + "," + p.y + ") rotate(" + (now / 15 * p.s % 360) + ')"/>' : '<circle r="2.4" fill="#fff" opacity=".95" cx="' + p.x + '" cy="' + p.y + '"/>'; }).join(""); // 낙엽, 벚꽃잎, 눈송이 입자가 내림 / leaves, petals and snowflakes fall
+    });
+    return stop;                                    // 떠날 때 멈춤 / stop when leaving
+  }
+
+  /* ===== 사용 안내 / User guide  ===== */
+  function howto(el) {
+    el.innerHTML = '<div class="grid two"><div class="card stack"><h3>설치와 실행 (어느 PC, 어느 폴더에서나 같음)</h3><ol class="steps-ol"><li><b>준비</b>: Python 3.10 이상 설치, 브라우저는 Microsoft Edge 권장</li><li><b>받기</b>: <code>git clone https://github.com/&lt;계정&gt;/&lt;저장소&gt;.git</code> 또는 배포 zip을 원하는 폴더에 풀기</li><li><b>처음 한 번</b>: 받은 폴더(프로젝트 루트)에서 Windows는 <code>setup.bat</code>, macOS, Linux는 <code>./setup.sh</code> 실행 (가상환경 .venv, 패키지 설치, 숙명 CI 이미지 내려받기, 자동 시험)</li><li><b>실행</b>: Windows <code>run.bat</code>, macOS, Linux <code>./run.sh</code> → 빈 포트를 찾아 브라우저가 자동으로 열림(주소 예: http://127.0.0.1:8765/)</li><li><b>음성 품질</b>: Edge로 열면 여성(SunHi), 남성(InJoon) 신경망 음성이 교대로 선택됨. MP3 녹음은 <code>make_voice.bat</code> 또는 <code>python tools/make_voice.py</code>(인터넷 필요)</li><li><b>끄기</b>: 실행 창에서 Ctrl+C 또는 창 닫기</li><li><b>휴대폰(같은 와이파이)</b>: <code>run.bat --lan</code> 또는 <code>./run.sh --lan</code></li><li><b>서버 없이</b>: <code>versions/v03/web/index.html</code>을 브라우저로 열기, 또는 한 파일 배포본 <code>versions/v03/산행안전_양자실험실_v03.html</code></ol></div>' +
+      '<div class="card stack"><h3>화면 사용법</h3><ol class="steps-ol"><li>왼쪽 메뉴 그룹을 눌러 펼치고(▸/▾) 항목을 고르면 오른쪽 한 화면이 바뀜</li><li>위쪽 <b>자세한 설명 듣기</b>, 카드마다 🔊 버튼, 아래 음성 막대(속도, 목소리)</li><li>왼쪽 아래 <b>자동 해설</b>을 켜면 화면을 열 때마다, 관제실 사건마다 자동으로 읽음</li><li>결과 옆 <b>근거</b>를 누르면 데이터, 처리 과정, 계산식, 코드 위치, 문헌이 펼쳐짐. <b>시험관 모드</b>는 모든 근거를 펼침</li><li>왼쪽 <b>③ 합성 데이터 생성과 실험 관제</b>에서 버튼 한 번으로 근거 기반 데이터를 만들고 AI를 다시 학습함</li><li><b>▶ 전체 자동 투어</b>: 모든 화면을 차례로 열며 설명함</li></ol><button class="primary" id="hT">▶ 전체 자동 투어 시작</button></div></div>';
+    $("#hT", el).onclick = function () { QP.App.tour(); }; // 자동 투어 시작임 / start the auto tour
+  }
+
+  /* ===== 데이터 관리 센터 / Data center  ===== */
+  function datamgr(el) {
+    let selId = QP.State.dataId;                    // 선택한 데이터셋임 / selected dataset
+    el.innerHTML = '<div class="grid dmv"><div class="card dmflow"><b>이 화면이 하는 일</b><span>AI가 공부할 <b>산행 기록 교과서</b>를 만들고 검사한 뒤 AI에게 공부시키는 곳입니다.</span><ol><li><b>① 만들기</b>: 시각, 성별, 나이, 산 난이도, 날씨, 계절, 환경을 섞어 가상 산행을 10초 단위로 기록</li><li><b>② 고르기</b>: 만든 교과서 목록에서 하나 선택</li><li><b>③ 검사</b>: 심박 공식, 보행 속도, 기온감률 같은 근거와 맞는지 자동 채점(등급 A~C)</li><li><b>④ AI 연결</b>: 🧠 버튼을 누르면 이 교과서로 일반 AI와 양자 특징 AI가 함께 다시 공부하고, 결과가 관제실, 성적표 등 모든 화면에 반영</li><li><b>⑤ 내보내기</b>: CSV, 근거 포함 JSON으로 저장해 다른 프로그램이나 보고서에 사용</li></ol></div><div class="card stack"><h3>① 데이터 만들기</h3><label>종류 <select id="gK"><option value="grounded">근거 기반 산행 시계열(신뢰도 높음)</option><option value="rule">규칙 균일 합성(기준선)</option></select></label><label>산 <select id="gM"><option value="">전체 무작위</option>' + G.mountains.map(function (m, i) { return '<option value="' + i + '">' + m[0] + '</option>'; }).join("") + '</select></label><label>날씨 <select id="gW"><option value="">전체 무작위</option>' + G.weathers.map(function (w, i) { return '<option value="' + i + '">' + w.name + '</option>'; }).join("") + '</select></label><label>산행 횟수(근거) / 행 수(규칙) <input id="gN" type="number" value="30"></label><label>씨앗 <input id="gS" type="number" value="' + (3000 + DS.list.length) + '"></label>' +
+      '<div class="btns"><button id="gGo" class="primary">⚡ 지금 생성</button><button id="gStream" data-autoplay="1">▶ 연속 생성</button></div><label class="tog"><input type="checkbox" id="gAuto" checked> 연속 생성 중 AI 자동 재학습(학습 곡선)</label><label class="tog"><input type="file" id="gF" accept=".csv"> CSV 가져오기</label><p id="gMsg" class="small"></p></div>' +
+      '<div class="card stack"><h3>② 교과서(데이터) 고르기 <span class="small">(누르면 오른쪽에 검사 결과)</span></h3><div id="gL" class="dslist"></div></div>' +
+      '<div class="card stack"><h3>③ 검사 결과 → ④ AI 연결 → ⑤ 내보내기</h3><div id="gD"></div><canvas id="gC"></canvas></div></div>';
+    function list() {                               // 목록을 그림 / draw the list
+      $("#gL", el).innerHTML = DS.list.map(function (d) { return '<button class="ds' + (d.id === selId ? " sel" : "") + (d.id === QP.State.dataId ? " use" : "") + '" data-id="' + d.id + '"><b>' + d.id + '</b> ' + d.name + '<span class="pill ' + (d.grade === "A" ? "plum" : d.grade === "B" ? "dusk" : "rose") + '">등급 ' + d.grade + '</span><small>' + d.stats.n.toLocaleString("ko-KR") + "행, 위험 " + pct(d.stats.rate) + (d.id === QP.State.dataId ? ", AI 학습에 사용 중" : "") + "</small></button>"; }).join(""); // 목록 버튼임 / list buttons
+      $("#gL", el).querySelectorAll(".ds").forEach(function (b) { b.onclick = function () { selId = b.dataset.id; list(); detail(); }; }); // 선택하면 상세를 보임 / show details when selected
+    }
+    function detail() {                             // 선택한 데이터셋 상세를 그림 / draws the details of the selected dataset
+      const d = DS.get(selId) || DS.list[0]; if (!d) return; selId = d.id; // 대상임 / target
+      $("#gD", el).innerHTML = "<p><b>" + d.id + " " + d.name + "</b><br><span class='small'>" + d.created + ", " + d.gradeText + "</span></p>" + '<div class="btns dmact"><button id="gT" class="primary">🧠 이 데이터로 AI 학습</button><button id="gX">⬇ 내보내기 CSV</button><button id="gXj">⬇ 근거 포함 JSON</button><button id="gXa">⬇ 전체 데이터 목록</button><button id="gSv">서버에 저장</button></div>' + "<table>" + d.checks.map(function (c) { return "<tr><td>" + (c.ok ? "✔" : "✖") + "</td><th>" + c.k + "</th><td>" + c.d + "</td></tr>"; }).join("") + "</table>" + (d.factors ? "<p class='small'><b>결합된 요인(균형 배치)</b><br>" + d.factors.map(function (f) { return "<b>" + f.factor + "</b>: " + f.levels.join(", "); }).join("<br>") + "</p>" : "") + "<p class='small'>근거: " + d.refs + "</p>" +
+        "" + (d.history ? "<p class='small'>학습 기록: " + d.history.map(function (h) { return h.at + " 양자 AUC " + h.qAUC.toFixed(3) + " / 일반 " + h.lAUC.toFixed(3); }).join(", ") + "</p>" : ""); // 상세 내용임 / detail content
+      $("#gT", el).onclick = function () { $("#gMsg", el).textContent = "학습 중…"; setTimeout(function () { DS.retrain(d.id); $("#gMsg", el).textContent = d.id + "로 다섯 방식 + DNN을 다시 학습함(" + Math.round(QP.State.trainMs) + "ms). 모든 화면이 이 결과를 씀."; QP.Voice.speak(d.name + " 데이터로 인공지능을 다시 학습했습니다. 관제실과 성적표가 이 결과를 씁니다.", true); }, 30); }; // AI 재학습 버튼임 / AI retrain button
+      $("#gX", el).onclick = function () { QP.App.download(d.id + ".csv", "\ufeff" + DS.toCSV(d.id)); $("#gMsg", el).textContent = d.id + ".csv 내보내기 완료(" + d.stats.n + "행)"; }; // CSV 내보내기임 / CSV export
+      $("#gXj", el).onclick = function () { QP.App.download(d.id + "_근거포함.json", DS.toJSON(d.id)); $("#gMsg", el).textContent = d.id + " 근거 포함 JSON 내보내기 완료"; }; // 검증 항목, 등급, 출처를 함께 담은 JSON임 / JSON with checks, grade and sources
+      $("#gXa", el).onclick = function () { QP.App.download("datasets_목록.json", DS.all()); $("#gMsg", el).textContent = "데이터 " + DS.list.length + "개 목록 내보내기 완료"; }; // 전체 목록임 / full list
+      $("#gSv", el).onclick = function () { QP.App.saveServer(d); }; // 서버 저장임 / save to server
+      const curve = d.curve && d.curve.length ? d.curve : null; // 학습 곡선임 / learning curve
+      if (curve) C.line($("#gC", el), [{ values: curve.map(function (c) { return c.q; }), color: "#6e4c82" }, { values: curve.map(function (c) { return c.l; }), color: "#4d6b8c" }], { height: Math.max(130, Math.round(el.clientHeight * .26)), xLabel: "데이터가 늘어남 → (자두=양자, 청=일반 AUC)" }); // 데이터 크기별 성능 곡선임 / performance curve by data size
+      else { const P = A.canvas($("#gC", el), Math.max(130, Math.round(el.clientHeight * .26))), g = P.g, n = Math.min(400, d.rows.length); for (let k = 0; k < n; k++) { const r = d.rows[k]; g.fillStyle = r.label ? "rgba(199,107,103,.8)" : "rgba(0,48,135,.25)"; g.beginPath(); g.arc(14 + r.x[3] * (P.w - 28), P.h - 12 - r.x[9] * (P.h - 24), 2.5, 0, 7); g.fill(); } g.fillStyle = "#1d2a4d"; g.fillText("앞 400행의 비(가로)×경사(세로), 빨강=위험", 14, 12); } // 분포 미리 보기임 / distribution preview
+    }
+    $("#gGo", el).onclick = function () {           // 지금 생성 버튼임 / generate-now button
+      const k = $("#gK", el).value, n = Number($("#gN", el).value), sd = Number($("#gS", el).value); // 입력값임 / input values
+      $("#gMsg", el).textContent = "생성 중…";      // 진행 표시임 / progress display
+      setTimeout(function () { const d = k === "rule" ? DS.makeRule(sd, Math.max(200, n)) : DS.makeGrounded(sd, Math.max(1, Math.min(200, n)), { mountain: $("#gM", el).value === "" ? null : Number($("#gM", el).value), weather: $("#gW", el).value === "" ? null : Number($("#gW", el).value) }); selId = d.id; $("#gS", el).value = sd + 1; $("#gMsg", el).textContent = d.id + " 생성 완료: " + d.stats.n + "행, 등급 " + d.grade; list(); detail(); QP.App.logRequest({ kind: k, n: n, seed: sd, id: d.id }); }, 30); // 만들고 목록을 갱신함 / create and refresh the list
+    };
+    $("#gStream", el).onclick = function () { if (DS.streaming()) { DS.stopStream(); this.textContent = "▶ 연속 생성"; } else { DS.startStream(4500, $("#gAuto", el).checked); this.textContent = "■ 연속 생성 멈춤"; selId = (DS.list.find(function (d) { return d.kind === "stream"; }) || {}).id; } }; // 연속 생성 켜기/끄기임 / continuous generation on/off
+    $("#gStream", el).textContent = DS.streaming() ? "■ 연속 생성 멈춤" : "▶ 연속 생성"; // 현재 상태 표시임 / current status display
+    $("#gF", el).onchange = function (e) { const f = e.target.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = function () { const d = DS.addCSV(f.name, rd.result); selId = d.id; list(); detail(); }; rd.readAsText(f, "utf-8"); }; // CSV 가져오기임 / CSV import
+    const off = function () { if (el.querySelector("#gL") && el.querySelector("#gD")) { list(); detail(); } }; DS.onChange(off); // 데이터가 바뀌면(이 화면이 열려 있을 때만) 다시 그림 / redraw when data changes (only while this screen is open)
+    list(); detail();                               // 처음 그림임 / first drawing
+  }
+
+  /* ===== 데이터 근거와 검증 / Data evidence and validation  ===== */
+  function grounded(el) {
+    const ds = DS.list.find(function (d) { return d.kind === "grounded"; }); // 근거 기반 데이터셋임 / evidence-based dataset
+    el.innerHTML = '<div class="grid gv"><div class="card stack"><h3>질문: 합성 데이터가 근거 있는 데이터라는 실증이 가능합니까?</h3><p class="qa"><b>답: 두 단계로 나눠야 정확합니다.</b> ① <b>생성 근거 검증</b>(지금 가능): 생성 규칙 하나하나가 공인 공식, 기준과 맞는지 자동 검사 → 아래 그래프와 데이터 관리 등급(A/B/C). ② <b>현실 타당성 검증</b>(실측 필요): 아이나비 실측 데이터와 분포를 비교(KS 검정)하고, 합성으로 학습해 실측으로 시험(TSTR)해야 “현실과 같다”고 말할 수 있습니다. 지금은 ②가 <b>미검증</b>입니다.</p>' +
+      '<table class="src"><tr><th>생성 요소</th><th>근거</th><th>상태</th></tr><tr><td>최대심박</td><td>208 − 0.7×나이 (Tanaka, Monahan, Seals, JACC 37:153, 2001)</td><td>✔ 공식</td></tr><tr><td>운동 강도</td><td>%HRR(Karvonen 1957), ACSM 강도 구분</td><td>✔ 공식</td></tr><tr><td>심박 표류</td><td>장시간 운동 시 심박 상승(Coyle & González-Alonso, ESSR 29:88, 2001)</td><td>△ 크기 가정</td></tr><tr><td>보행 속도</td><td>Tobler 등산 함수 v = 6e^(−3.5|s+0.05|) (1993)</td><td>✔ 공식</td></tr><tr><td>계획 시간</td><td>Naismith 규칙(5 km/h + 600 m 오름당 1시간)</td><td>✔ 공식</td></tr><tr><td>기온</td><td>기온감률 6.5 °C/km (ICAO 표준대기, ISO 2533)</td><td>✔ 표준</td></tr><tr><td>비, 바람, 폭염</td><td>기상청 특보 기준값으로 0~1 정규화</td><td>✔ 기준</td></tr><tr><td>POI 감지 거리</td><td>세미나 부록(120, 180, 100 m)</td><td>△ 제안값</td></tr><tr><td>코스 단면, POI 위치</td><td>가상 생성(실측 GPX로 교체 예정)</td><td>✖ 가상</td></tr><tr><td>위험 정답 라벨</td><td>신호 쌍 곱 > 0.46 규칙</td><td>✖ 가설(실측 사고로 대체 필요)</td></tr></table></div>' +
+      '<div class="card stack"><h3>근거 일치 그래프(데이터: ' + (ds ? ds.id : "-") + ') <button id="vRe" data-autoplay="1">▶ 새 산행으로 계속 확인</button></h3><div class="g2"><div><p class="small">보행 속도 vs 경사(점=생성, 선=Tobler)</p><canvas id="v1"></canvas></div><div><p class="small">기온 vs 고도(점=생성, 선=−6.5 °C/km)</p><canvas id="v2"></canvas></div><div><p class="small">%HRR 분포(띠=ACSM 중강도 40~59%, 격렬 60~89%)</p><canvas id="v3"></canvas></div><div><p class="small">개인 최대심박 vs 나이(점=생성 산행자, 선=Tanaka)</p><canvas id="v4"></canvas></div></div><div id="vB"></div></div></div>';
+    let vt = null, vs = 0; const drawV = function () {             // 그래프를 그림(새 산행 묶음으로 다시 그릴 수 있음) / draw the graphs (can redraw with a new batch of hikes)
+      const pts = [], tp = [], hr = [], ag = [];    // 그래프용 점 목록임 / points for the graphs
+      for (let k = 0; k < 6; k++) { const c = G.makeCourse((k * 2 + vs) % 16, 50 + k + vs * 7), p = { age: 30 + ((k * 9 + vs * 5) % 50), sex: (k + vs) % 2 ? "F" : "M", rest: 60 + k * 3, fit: .85 + ((k + vs) % 4) * .1 }, run = G.simulate(c, p, G.weathers[k % 4]); run.steps.forEach(function (s, i) { if (i % 9 === 0) { pts.push([s.grade, s.v]); tp.push([s.elev - c.start, s.T - (G.weathers[k % 4].t0)]); hr.push(s.pHRR); } }); ag.push([p.age, G.hrMax(p)]); } // 여러 산행에서 점을 모음 / collect points from several hikes
+      const GH = Math.max(130, Math.round((el.clientHeight - 175) / 2)); const sc = function (cv, P, xr, yr, fn, lab) { const Q = A.canvas(cv, GH), g = Q.g, X = function (x) { return 30 + (x - xr[0]) / (xr[1] - xr[0]) * (Q.w - 40); }, Y = function (y) { return Q.h - 15 - (y - yr[0]) / (yr[1] - yr[0]) * (Q.h - 25); }; g.strokeStyle = "#ccd3e4"; g.strokeRect(30, 10, Q.w - 40, Q.h - 25); P.forEach(function (p) { g.fillStyle = "rgba(0,48,135,.35)"; g.fillRect(X(p[0]) - 1.5, Y(p[1]) - 1.5, 3, 3); }); g.strokeStyle = "#ffb500"; g.lineWidth = 2.5; g.beginPath(); for (let k = 0; k <= 40; k++) { const x = xr[0] + (xr[1] - xr[0]) * k / 40; if (k) g.lineTo(X(x), Y(fn(x))); else g.moveTo(X(x), Y(fn(x))); } g.stroke(); g.fillStyle = "#1d2a4d"; g.font = "10px sans-serif"; g.fillText(lab, 32, Q.h - 2); }; // 산점도와 기준선 그리기 함수임 / scatter plot and reference line drawing function
+      sc($("#v1", el), pts, [-.5, .5], [0, 6], function (s) { return 6 * Math.exp(-3.5 * Math.abs(s + .05)); }, "경사(−50%~+50%) / 속도 km/h"); // Tobler 비교(체력, 젖음 감속 때문에 점이 선 아래로 퍼짐) / Tobler comparison (dots spread below the line due to fitness and wet slowdown)
+      sc($("#v2", el), tp, [0, 1300], [-12, 2], function (h) { return -6.5 * h / 1000; }, "출발 대비 고도 m / 기온 변화 °C"); // 기온감률 비교임 / lapse-rate comparison
+      const Q = A.canvas($("#v3", el), GH), g = Q.g, bins = new Array(20).fill(0); hr.forEach(function (v) { bins[Math.max(0, Math.min(19, Math.floor(v * 20)))]++; }); const mx = Math.max.apply(null, bins); g.fillStyle = "rgba(255,181,0,.2)"; g.fillRect(30 + (Q.w - 40) * .4, 10, (Q.w - 40) * .2, Q.h - 25); g.fillStyle = "rgba(199,107,103,.15)"; g.fillRect(30 + (Q.w - 40) * .6, 10, (Q.w - 40) * .3, Q.h - 25); bins.forEach(function (b, k) { g.fillStyle = "#6e4c82"; g.fillRect(30 + k * (Q.w - 40) / 20, Q.h - 15 - b / mx * (Q.h - 30), (Q.w - 40) / 20 - 2, b / mx * (Q.h - 30)); }); g.fillStyle = "#1d2a4d"; g.font = "10px sans-serif"; g.fillText("%HRR 0~100%", 32, Q.h - 2); // %HRR 히스토그램임 / %HRR histogram
+      sc($("#v4", el), ag, [20, 85], [140, 200], function (a) { return 208 - .7 * a; }, "나이 / 최대심박 bpm"); // Tanaka 비교임 / Tanaka comparison
+    }; requestAnimationFrame(drawV);
+    $("#vRe", el).onclick = function () { if (vt) { clearInterval(vt); vt = null; this.textContent = "▶ 새 산행으로 계속 확인"; return; } this.textContent = "■ 멈춤"; vt = setInterval(function () { vs++; drawV(); }, 6000); }; // 3초마다 다른 산, 사람으로 다시 생성해 근거 일치를 계속 확인함 / regenerate with another mountain and person every 3 s to keep checking evidence agreement
+    el._cleanup = function () { clearInterval(vt); }; // 화면을 떠나면 멈춤 / stop when leaving the screen
+    $("#vB", el).innerHTML = B.box({ data: "mountain.js로 6개 산 산행 시뮬레이션", method: "생성된 시계열을 문헌 공식, 표준과 겹쳐 그림. 점이 선 아래로 퍼진 것은 체력 계수, 젖은 노면 감속, 돌계단 감속, 한랭전선 효과를 더했기 때문임", ref: "Jordon et al., arXiv:2205.03257(2022) 합성 데이터 평가: 충실도, 유용성(TSTR), 프라이버시", note: "현실 타당성은 아이나비 실측(DTO-1, DTO-2, DTO-4) 수령 후 KS 검정, TSTR로 검증해야 함" }, "검증 방법"); // 근거임 / evidence
+  }
+
+  /* ===== 실측을 위한 필요 데이터 명세 / Data specification for field measurement  ===== */
+  function realdata(el) {
+    const rows = [                                  // [묶음, 항목, 주기, 출처(DTO), 쓰이는 신호, 왜 필요]임 / [group, item, period, source (DTO), signals used, why needed]
+      ["생체(워치)", "심박(bpm), 걸음 수, 케이던스", "1초~1분 묶음", "DTO-1", "심박 부담, 피로", "개인 %HRR, 심박 표류"],
+      ["생체(워치)", "3축 가속도(낙상), 무응답 시간", "이벤트 즉시", "DTO-1 긴급", "낙상과 미응답", "T-1 가속 >20 m/s², T-3 5분 무동작"],
+      ["생체(워치)", "SpO₂(지원 기종)", "5분", "DTO-1", "증상 보조", "고지대 저산소 경향"],
+      ["위치", "위도, 경도, 고도, GPS 정확도(m), 시각", "5~10초", "DTO-1/2", "경사, 경로 이탈, 위치 품질, 하산 지연", "POI 거리 계산의 기준"],
+      ["장치", "배터리 %, 통신 신호 세기, 오프라인 여부", "1분", "DTO-1", "배터리, 통신", "구조 요청 가능성"],
+      ["사용자", "나이, 성별, 안정시 심박, 측정 최대심박(선택), 산행 경험", "가입 시, 갱신", "프로필", "개인 기준선", "초개인화(동의 필수, 민감정보 최소화)"],
+      ["코스", "등산로 링크, 노드, GPX, 구간 경사, 난이도", "정적", "DTO-2", "급경사, 계획 시간", "실제 코스 단면으로 교체"],
+      ["POI", "낙석, 절벽, 야생동물 신고, 결빙, 통신 음영, 통제 구간 좌표", "정적+갱신", "DTO-3", "낙석, 야생동물, 절벽, 통제", "감지 거리 판정"],
+      ["기상", "기온, 강수량, 풍속(초단기실황/예보 5 km 격자), 특보", "1시간", "기상청 API", "강수, 강풍, 폭염, 결빙, 낙뢰", "날씨 신호"],
+      ["천문", "일출, 일몰 시각", "일 1회", "한국천문연구원 API", "일몰 여유", "하산 마감 계산"],
+      ["스탬프 투어", "인증 지점 도착 시각, 산, 코스", "인증 시", "DTO-4", "하산 지연, 개인 페이스", "개인 평소 속도, 메타학습 과제"],
+      ["정답(라벨)", "사고, 아차사고, 경보 확인/무시, 119 신고", "발생 시", "앱 신고, 운영 기록", "학습 정답", "합성 규칙 라벨을 실측으로 대체(가장 중요)"]
+    ];
+    el.innerHTML = '<div class="card"><h3>실제 데이터로 바꾸려면 산행에서 무엇을 얻어야 하나</h3><table class="spec"><tr><th>묶음</th><th>항목</th><th>주기</th><th>출처</th><th>→ 신호</th><th>왜 필요</th></tr>' + rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + '</table><p class="small">우선순위: ① 정답 라벨(사고, 아차사고) ② 심박+GPS 1분 묶음 ③ 실제 코스 GPX, POI. 개인정보는 가명 처리, 동의 범위 안에서만 사용(개인정보 보호법 제23조 민감정보 별도 동의).</p>' + B.box({ data: "S.A.F.E. DTO-1~5 설계(프로젝트 문서), 긴급 트리거 T-1~T-3", method: "각 항목이 20개 신호 중 어디에 들어가는지 연결함", ref: "유즈케이스 및 요구사항 명세서 v1.1, AI 모델 설계서 v1.2(아이나비 공동)" }, "명세") + '</div>';
+  }
+
+  /* ===== 큐비트와 메모리 / Qubits and memory  ===== */
+  function scale(el) {
+    const fmt = function (b) { const u = ["B", "KB", "MB", "GB", "TB", "PB"]; let i = 0; while (b >= 1024 && i < 5) { b /= 1024; i++; } return b.toFixed(b < 10 ? 1 : 0) + " " + u[i]; }; // 단위 변환임 / unit conversion
+    el.innerHTML = '<div class="grid two"><div class="card stack"><h3>큐비트 +1 = 메모리 ×2</h3><input id="sN" type="range" min="1" max="50" value="20"><p class="kpi c-plum" id="sK"></p><table>' + [4, 10, 20, 30, 40, 50].map(function (n) { return "<tr><td>" + n + "큐비트</td><td>진폭 " + Math.pow(2, n).toLocaleString("ko-KR") + "개</td><td><b>" + fmt(S.memoryBytes(n)) + "</b></td></tr>"; }).join("") + '</table></div><div class="card stack"><div class="row" style="justify-content:space-between"><h3>이 PC에서 직접 재기</h3><button id="sR" class="primary">↻ 재측정</button></div><canvas id="sC"></canvas><p id="sO" class="small"></p>' + B.box({ formula: "메모리 = 2ⁿ × 16바이트(복소수 1개)", code: "emulator.js memoryBytes()", ref: "Nielsen & Chuang(2010) 4.5절" }, "메모리") + '</div></div>';
+    const up = function () { const n = Number($("#sN", el).value); $("#sK", el).textContent = n + "큐비트 → " + fmt(S.memoryBytes(n)); }; $("#sN", el).oninput = up; up(); // 슬라이더 연결임 / wire the slider
+    $("#sR", el).onclick = function () { const ns = [4, 8, 12, 16, 18, 20, 22], t = []; let k = 0; (function run() { if (k >= ns.length) { C.line($("#sC", el), [{ values: t, color: "#a9482a" }], { height: Math.max(180, Math.round(el.clientHeight * .6)), xLabel: "4~22큐비트" }); $("#sO", el).textContent = ns.map(function (q, i) { return q + "q " + t[i].toFixed(1) + "ms"; }).join(", "); return; } const q = ns[k], st = S.createState(q), t0 = performance.now(); for (let i = 0; i < q; i++) S.ry(st, i, .3); for (let i = 0; i < q - 1; i++) S.cx(st, i, i + 1); t.push(performance.now() - t0); k++; setTimeout(run, 10); })(); }; // 측정임 / measure
+    $("#sR", el).onclick();                         // 화면에 들어오자마자 먼저 측정해 빈 칸이 보이지 않게 함 / measure as soon as the screen opens so no blank area shows
+  }
+
+
+  /* ===== 데이터 보관함 / Data store : 생성 데이터를 파일로 보관하고 목록, 미리보기, 불러오기, 내려받기 ===== */
+  function store(el) {
+    let items = [], sel = null, server = false;    // 보관 목록, 선택, 서버 연결 여부 / list, selection, server availability
+    el.innerHTML = '<div class="grid storev"><div class="card stack"><div class="row" style="justify-content:space-between"><h3>데이터 보관함 <span class="small" id="sDir"></span></h3><div class="btns"><button id="sRef">↻ 새로 고침</button><button id="sAll" class="primary">⬇ 지금 데이터 모두 보관함에 저장</button></div></div><label class="tog"><input type="checkbox" id="sAuto"> 새로 만든 데이터를 자동으로 보관함에 저장</label><div id="sList" class="slist"></div><p class="small" id="sMsg"></p></div>' +
+      '<div class="card stack"><h3 id="sTitle">미리보기</h3><div id="sMeta" class="small"></div><div class="btns" id="sAct"></div><div id="sPrev" class="sprev"></div></div></div>';
+    $("#sAuto", el).checked = !!QP.State.autoStore; $("#sAuto", el).onchange = function () { QP.State.autoStore = this.checked; }; // 자동 저장 설정 / auto-save toggle
+    function fmtB(b) { return b > 1048576 ? (b / 1048576).toFixed(1) + " MB" : (b / 1024).toFixed(0) + " KB"; } // 크기 표시 / size format
+    function list() {                               // 목록을 불러와 그림 / load and draw the list
+      fetch("api/datasets", { cache: "no-store" }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) { server = true; items = j.items || []; $("#sDir", el).textContent = "(" + j.dir + ")"; draw(); }).catch(function () { server = false; items = []; $("#sDir", el).textContent = ""; draw(); }); // 서버가 없으면 이 창의 데이터만 보여 줌 / without server, show session data
+    }
+    function draw() {                               // 목록 그리기 / draw list
+      const session = DS.list.map(function (d) { return '<button class="sit" data-s="' + d.id + '"><b>' + d.id + '</b> ' + d.name + '<small>' + d.stats.n.toLocaleString("ko-KR") + "행, 등급 " + d.grade + ", 이 창에만 있음</small></button>"; }).join(""); // 이 창의 데이터 / session data
+      const stored = items.map(function (it) { return '<button class="sit stored' + (sel && sel.file === it.file ? " sel" : "") + '" data-f="' + it.file + '"><b>' + (it.id || "?") + '</b> ' + (it.name || it.file) + '<small>' + it.rows.toLocaleString("ko-KR") + "행, 등급 " + (it.grade || "-") + ", " + fmtB(it.bytes) + ", 저장 " + (it.saved_at || "").replace(/(\d{4})(\d\d)(\d\d)_(\d\d)(\d\d)(\d\d)/, "$1-$2-$3 $4:$5") + "</small></button>"; }).join(""); // 보관된 파일 / stored files
+      $("#sList", el).innerHTML = (server ? "<p class='small'><b>보관함 파일 " + items.length + "개</b></p>" + (stored || "<p class='small'>아직 보관된 데이터가 없습니다. 위의 저장 버튼을 누르시기 바랍니다.</p>") : "<p class='small'>보관함(data_store 폴더)은 run.bat 또는 ./run.sh로 실행했을 때 쓸 수 있습니다. 지금은 이 창의 데이터만 보이며, 오른쪽에서 CSV, JSON으로 내려받을 수 있습니다.</p>") + "<p class='small'><b>이 창의 데이터 " + DS.list.length + "개</b></p>" + session; // 목록 / list
+      el.querySelectorAll(".sit").forEach(function (b) { b.onclick = function () { if (b.dataset.f) openFile(b.dataset.f); else openSession(b.dataset.s); }; }); // 누르면 미리보기 / click to preview
+      if (!sel && items[0]) openFile(items[0].file); else if (!sel && DS.list[0]) openSession(DS.list[0].id); // 처음 하나를 엶 / open first
+    }
+    function preview(csv) {                         // CSV 앞부분 표 / table of the first rows
+      const lines = String(csv).replace(/^﻿/, "").split(/\r?\n/).filter(Boolean), head = (lines[0] || "").split(","), rows = lines.slice(1, 13).map(function (l) { return l.split(","); }); // 머리줄과 12행 / header and 12 rows
+      $("#sPrev", el).innerHTML = '<table class="labtbl"><tr>' + head.map(function (h) { return "<th>" + h + "</th>"; }).join("") + "</tr>" + rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</table><p class='small'>전체 " + Math.max(0, lines.length - 1).toLocaleString("ko-KR") + "행 중 앞 " + rows.length + "행</p>"; // 표 / table
+    }
+    function actions(btns) { $("#sAct", el).innerHTML = btns.map(function (b) { return '<button id="' + b[0] + '"' + (b[2] ? ' class="primary"' : "") + ">" + b[1] + "</button>"; }).join(""); } // 버튼 줄 / action buttons
+    function openSession(id) {                      // 이 창의 데이터 미리보기 / preview session data
+      const d = DS.get(id); if (!d) return; sel = { session: id }; $("#sTitle", el).textContent = d.id + " " + d.name; // 선택 / select
+      $("#sMeta", el).innerHTML = d.stats.n.toLocaleString("ko-KR") + "행, 위험 비율 " + (d.stats.rate * 100).toFixed(1) + "%, 등급 " + d.grade + (d.factors ? "<br>" + d.factors.map(function (f) { return "<b>" + f.factor + "</b>: " + f.levels.join(", "); }).join("<br>") : ""); // 요약 / summary
+      actions([["sSave", "💾 보관함에 저장", true], ["sCsv", "⬇ CSV"], ["sJson", "⬇ 근거 포함 JSON"], ["sUse", "🧠 이 데이터로 AI 학습"]]); // 버튼 / buttons
+      $("#sSave", el).onclick = function () { if (!server) { $("#sMsg", el).textContent = "보관함 저장은 run.bat 또는 ./run.sh로 연 화면에서만 됩니다."; return; } saveOne(d).then(list); }; // 저장 / save
+      $("#sCsv", el).onclick = function () { QP.App.download(d.id + ".csv", "﻿" + DS.toCSV(d.id)); }; $("#sJson", el).onclick = function () { QP.App.download(d.id + "_근거포함.json", DS.toJSON(d.id)); }; // 내려받기 / download
+      $("#sUse", el).onclick = function () { DS.retrain(d.id); $("#sMsg", el).textContent = d.id + "로 AI를 다시 학습했습니다."; }; // 학습 / train
+      preview(DS.toCSV(d.id));                      // 표 / table
+    }
+    function openFile(f) {                          // 보관된 파일 미리보기 / preview a stored file
+      sel = { file: f }; fetch("api/dataset?file=" + encodeURIComponent(f), { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) { // 내용을 받음 / fetch content
+        const m = j.meta || {}; $("#sTitle", el).textContent = (m.id || "") + " " + (m.name || f); // 제목 / title
+        $("#sMeta", el).innerHTML = "파일: data_store/" + f + "<br>등급 " + (m.grade || "-") + (m.checks ? ", 검사 " + m.checks.filter(function (c) { return c.ok; }).length + "/" + m.checks.length + " 통과" : "") + (m.refs ? "<br>근거: " + m.refs : ""); // 요약 / summary
+        actions([["sLoad", "📂 불러와 AI 학습", true], ["sCsv", "⬇ CSV"], ["sJson", "⬇ 근거 JSON"]]); // 버튼 / buttons
+        $("#sLoad", el).onclick = function () { const d = DS.addCSV(f, j.csv); if (m.name) d.name = m.name + " (보관함)"; if (m.grade) d.grade = m.grade; if (m.checks) d.checks = m.checks; if (m.refs) d.refs = m.refs; DS.retrain(d.id); $("#sMsg", el).textContent = f + "를 " + d.id + "로 불러와 AI를 다시 학습했습니다."; draw(); }; // 불러오기 / load
+        $("#sCsv", el).onclick = function () { QP.App.download(f, "﻿" + j.csv.replace(/^﻿/, "")); }; $("#sJson", el).onclick = function () { QP.App.download(f.replace(/\.csv$/, ".json"), JSON.stringify(m, null, 1)); }; // 내려받기 / download
+        preview(j.csv); draw0();                    // 표 / table
+      }).catch(function () { $("#sMsg", el).textContent = "파일을 읽지 못했습니다."; });
+    }
+    function draw0() { el.querySelectorAll(".sit.stored").forEach(function (b) { b.classList.toggle("sel", !!(sel && sel.file === b.dataset.f)); }); } // 선택 표시 / selection mark
+    function saveOne(d) { return fetch("api/save-dataset", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: d.id, name: d.name, kind: d.kind, grade: d.grade, checks: d.checks, refs: d.refs, params: d.params, factors: d.factors || null, csv: DS.toCSV(d.id) }) }).then(function (r) { return r.json(); }).then(function (r) { $("#sMsg", el).textContent = "저장됨: data_store/" + r.file; QP.State.storedIds = QP.State.storedIds || {}; QP.State.storedIds[d.id] = true; }); } // 서버에 저장 / save via server
+    $("#sAll", el).onclick = function () { if (!server) { $("#sMsg", el).textContent = "보관함 저장은 run.bat 또는 ./run.sh로 연 화면에서만 됩니다. 오른쪽 CSV, JSON 내려받기를 쓰시기 바랍니다."; return; } Promise.all(DS.list.filter(function (d) { return d.stats.n > 0; }).map(saveOne)).then(list); }; // 모두 저장 / save all
+    $("#sRef", el).onclick = list; list();          // 새로 고침과 처음 불러오기 / refresh and first load
+  }
+
+  /* ===== 개발 환경 / Development environment  ===== */
+  function dev(el) {                                // 개발 환경: 어느 PC, 어느 폴더에서나 같은 방법으로 설치, 실행, 배포함 / development environment: install, run and deploy the same way on any PC, any folder
+    el.innerHTML = '<div class="grid devv"><div class="card stack"><h3>1. 설치 (Windows, macOS, Linux 공통 절차)</h3><table class="labtbl"><tr><th>필요한 것</th><td>Python 3.10 이상, 브라우저(Edge 권장), GitHub 사용 시 Git</td></tr><tr><th>받기</th><td><code>git clone https://github.com/&lt;계정&gt;/&lt;저장소&gt;.git</code> 또는 배포 zip을 원하는 폴더에 풀기</td></tr><tr><th>처음 1번</th><td>Windows <code>setup.bat</code>, macOS, Linux <code>./setup.sh</code> (가상환경 .venv, 패키지, CI 이미지, 음성 MP3, 자동 시험)</td></tr><tr><th>실행</th><td>Windows <code>run.bat</code>, macOS, Linux <code>./run.sh</code> (빈 포트 자동, 브라우저 자동, <code>--lan</code>이면 휴대폰에서도)</td></tr><tr><th>서버 없이</th><td><code>versions/v03/web/index.html</code> 직접 열기 또는 한 파일 배포본 <code>python tools/bundle.py v03</code></td></tr></table>' +
+      '<h3>2. 배포와 GitHub</h3><table class="labtbl"><tr><th>저작권 머리말</th><td><code>python tools/add_copyright.py</code>: 모든 프로그램 파일(.js .css .html .py .bat .sh .yml) 맨 위에 숙명여자대학교 AGI연구실 박영호 교수 저작권을 넣음, <code>--check</code>로 배포 전 점검</td></tr><tr><th>올리기</th><td><code>github_workflows/*.yml</code>을 <code>.github/workflows/</code>로 복사 → <code>git init -b main</code> → <code>git add -A</code> → <code>git commit</code> → <code>git push</code> (Windows는 <code>git_connect.bat</code> 한 번)</td></tr><tr><th>웹 게시</th><td>저장소 Settings › Pages › Source = GitHub Actions → <code>https://&lt;계정&gt;.github.io/&lt;저장소&gt;/</code></td></tr><tr><th>주간 데이터</th><td><code>synthetic-data.yml</code>이 매주 합성 데이터와 성적표를 자동 생성</td></tr><tr><th>이용 조건</th><td>루트의 <code>LICENSE</code> (All rights reserved, 평가, 연구, 교육 목적 열람 허용)</td></tr></table></div>' +
+      '<div class="card stack"><h3>3. 폴더 구조 (설치 폴더 이름은 자유)</h3><pre class="mono">&lt;설치 폴더&gt;/\n├─ setup.bat, setup.sh    처음 1번 설치\n├─ run.bat, run.sh        실행\n├─ LICENSE, README.md     저작권, 설치 안내\n├─ tools/   serve.py, bundle.py, add_copyright.py,\n│           fetch_brand.py, make_voice.py, new_version.py\n├─ github_workflows/      GitHub 자동화 설정 원본\n└─ versions/ v01 v02 v03(현재)\n   └─ v03/web/js/  emulator → data → models → meta →\n                   mountain → dataset → dnn → voice →\n                   views_* (ecolab, lab, …) → app</pre><h3>4. 부품(레고 블럭) 원칙</h3><p class="small">파일 하나 = 부품 하나. 새 화면은 views_*.js의 ViewDefs에 {id, group, title, render} 한 줄 + narration.js 대본 한 줄이면 메뉴, 전체 안내, 음성에 자동으로 들어갑니다.</p><h3>5. 버전 기록</h3><table class="labtbl"><tr><td>v01</td><td>원본</td></tr><tr><td>v02</td><td>좌측 메뉴, TTS, 샷, VQC, 파이썬 패키지</td></tr><tr><td><b>v03</b></td><td>양자AI 실험실(전체 사이클 실험, 안내형 실험), 메타학습, 3층 DNN, 요인 결합 합성 데이터, 숙명 브랜드, 산행 관제 애니메이션, 근거 펼치기, 음성 개선, 저작권 머리말</td></tr></table></div></div>';
+  }
+
+
+  /* ===== 용어 사전 / Glossary  ===== */
+  function glossary(el) {
+    const T = [["비트", "0 또는 1 하나만 기억하는 칸"], ["큐비트", "0과 1의 가능성을 함께 가진 계산 칸(돌고 있는 동전)"], ["중첩", "측정 전 0과 1의 가능성이 함께 있는 상태"], ["측정", "큐비트를 읽어 0 또는 1로 정함"], ["샷", "회로를 한 번 실행하고 측정하는 일"], ["진폭", "결과마다 붙은 숫자. 제곱하면 확률"], ["상태벡터", "모든 진폭 목록. n큐비트면 2ⁿ개"], ["RY", "큐비트 화살표를 돌리는 게이트. 신호를 각도로 넣음"], ["CNOT", "제어가 1이면 대상을 뒤집는 게이트"], ["얽힘", "두 큐비트 결과가 함께 움직이는 관계"], ["⟨Z⟩", "P(0)−P(1). 겹침 점수로 씀"], ["에뮬레이터", "양자 계산을 일반 PC로 흉내 내는 프로그램"], ["대조군", "같은 값을 일반 수식으로 만든 비교 대상"], ["ZZ 특징 맵", "Havlíček 2019의 다른 양자 회로 특징"], ["로지스틱 회귀", "특징×가중치 합을 0~1 점수로 바꾸는 AI"], ["DNN", "여러 층의 뉴런으로 된 신경망"], ["역전파", "오차를 뒤로 전달해 가중치를 고치는 학습법"], ["VQC", "회전 각도를 학습하는 양자 회로"], ["%HRR", "심박예비율. (HR−안정시)/(최대−안정시)"], ["POI", "등산로 위 관심, 위험 지점"], ["선행 시간", "사건 시작보다 경보가 앞선 시간"], ["TSTR", "합성으로 학습, 실측으로 시험하는 검증법"], ["FOMAML", "1차 근사 메타학습. 적은 데이터로 빠른 적응"]];
+    el.innerHTML = '<div class="stack"><input id="gq" type="text" placeholder="찾을 단어(예: 얽힘)" style="max-width:340px"><div id="gl" class="gloss"></div></div>'; // 검색과 목록임 / search and list
+    const draw = function () { const q = $("#gq", el).value.trim(); $("#gl", el).innerHTML = T.filter(function (t) { return !q || (t[0] + t[1]).indexOf(q) >= 0; }).map(function (t) { return '<div class="card"><b class="c-plum">' + t[0] + "</b> " + t[1] + "</div>"; }).join(""); }; // 걸러 그림 / draw filtered
+    $("#gq", el).oninput = draw; draw();            // 입력 연결임 / wire up inputs
+  }
+
+  QP.ViewDefs = (QP.ViewDefs || []).concat([        // 화면 정의를 등록함 / register the screen definitions
+    { id: "home", group: "시작하기", title: "대문", render: home },
+    { id: "howto", group: "시작하기", title: "사용 안내와 실행 방법", render: howto },
+    { id: "datamgr", group: "데이터 관리", title: "데이터 관리 센터(생성, 입출력, AI 연결)", render: datamgr },
+    { id: "grounded", group: "데이터 관리", title: "데이터 근거와 검증", render: grounded },
+    { id: "store", group: "데이터 관리", title: "데이터 보관함(생성 데이터 파일 관리)", render: store },
+    { id: "realdata", group: "데이터 관리", title: "실측을 위한 필요 데이터 명세", render: realdata },
+    { id: "scale", group: "개발과 참고", title: "큐비트와 메모리", render: scale },
+    { id: "dev", group: "개발과 참고", title: "개발 환경과 버전", render: dev },
+    { id: "glossary", group: "개발과 참고", title: "용어 사전", render: glossary }
+  ]);
+})(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace

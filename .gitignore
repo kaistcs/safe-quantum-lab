@@ -1,0 +1,10 @@
+# 가상환경, 캐시, 빌드 결과는 저장소에 올리지 않음
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+_site/
+# 원본 공개 데이터(용량 큼)는 제외하고 변환 결과만 올림
+versions/*/data/public/raw/
+# 자동 저장 기록 / auto-save log
+logs/

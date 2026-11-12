@@ -1,0 +1,143 @@
+/* Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved.
+ * 행정안전부 재난안전연구개발사업 산행안전 과제 결과물. 이용 조건은 프로젝트 루트의 LICENSE를 따름. */
+/* [English] Quantum AI lab: full-cycle experiment (stages 1-8) with pull-down choices and a follow-along guide. */
+/* =====================================================================
+ * views_ecolab.js : 양자AI 실험실 — 전체 사이클 실험(실험 실시와 관제)
+ * ---------------------------------------------------------------------
+ * 목적 : 생성한 데이터를 입력으로 넣고, 학습 에코 사이클 ①~⑧을 실제와 똑같은 순서로
+ *        한 화면에서 실행하고 결과를 확인함. 단계마다 풀다운 메뉴로 구체적인 선택을 함.
+ *   ① 데이터 수집    : 등록된 데이터 또는 요인 결합 합성 데이터 새로 생성
+ *   ② 신호화         : 20개 신호(0~1), 즉시 규칙 4개 제외, 학습/기준/시험 분할
+ *   ③ 양자 특징 변환 : 2큐비트 겹침 회로, ZZ 특징 맵, 또는 사용 안 함 / 판독(정확, 샷) / 잡음
+ *   ④ AI 학습        : 로지스틱 또는 심층 신경망(3층) / 같은 오경보 예산으로 공정 비교
+ *   ⑤ 배포(추론)     : 학습한 모델로 새 산행(산, 산행자, 날씨, 계절)을 실시간 채점
+ *   ⑥ 현장 경보      : 사건 전 경보, 평균 선행 시간, 불필요 경보 시간
+ *   ⑦ 사용자 피드백  : 배포 산행의 확인, 신고 기록을 정답 라벨로 학습 자료에 추가
+ *   ⑧ 재학습, 메타학습: 피드백 반영 재학습 전후 비교 + 메타러너 개인 적응
+ * ===================================================================== */
+(function (QP) {                                    // QP 이름공간에 화면을 붙임 / attaches screens to the QP namespace
+  "use strict";                                     // 엄격 모드를 켬 / turn on strict mode
+  const M = QP.Models, C = QP.Charts, B = QP.Basis, G = QP.Mountain, DS = QP.Datasets; // 모듈임 / modules
+  const $ = function (s, r) { return (r || document).querySelector(s); }; // 요소 찾기임 / find an element
+  const pct = function (v) { return (v * 100).toFixed(1) + "%"; }; // 백분율임 / percentage
+  const STG = ["① 데이터 수집", "② 신호화", "③ 양자 특징 변환", "④ AI 학습", "⑤ 배포(추론)", "⑥ 현장 경보", "⑦ 사용자 피드백", "⑧ 재학습, 메타학습"]; // 여덟 단계임 / eight stages
+  const opt = function (list, sel) { return list.map(function (o) { return '<option value="' + o[0] + '"' + (String(o[0]) === String(sel) ? " selected" : "") + ">" + o[1] + "</option>"; }).join(""); }; // 풀다운 선택지임 / pull-down options
+
+  function ecolab(el) {
+    let alive = true, runT = null, out = {};       // 화면 유지 여부, 실행 타이머, 단계별 결과임 / whether the screen is alive, run timer, results per stage
+    const dsList = function () { return [["new", "＋ 요인 결합 합성 데이터 새로 생성"]].concat(DS.list.map(function (d) { return [d.id, d.id + " " + d.name + " (" + d.stats.n + "행, 등급 " + d.grade + ")"]; })); }; // 데이터 선택지임 / dataset options
+    el.innerHTML = '<div class="grid ecolab"><div class="card stack ecoctl"><h3>실험 설정 (단계별 선택)</h3>' +
+      '<details open><summary>① 데이터 수집</summary><label>입력 데이터 <select id="xD">' + opt(dsList(), QP.State.dataId) + '</select></label><div id="xNew" class="xsub"><label>산행 수 <select id="xRuns">' + opt([[20, "20회"], [40, "40회"], [80, "80회"]], 40) + '</select></label><label>산 난이도 <select id="xDiff">' + opt([["", "전체(균형)"], ["하", "하"], ["중", "중"], ["상", "상"]], "") + '</select></label><label>날씨 <select id="xW0">' + opt([["", "전체(균형)"]].concat(G.weathers.map(function (w, i) { return [i, w.name]; })), "") + '</select></label><label>계절 <select id="xS0">' + opt([["", "전체(균형)"]].concat(G.seasons.map(function (x, i) { return [i, x.name]; })), "") + '</select></label><p class="small">출발 시각, 성별, 연령대, 환경은 항상 균형 결합됩니다.</p></div></details>' +
+      '<details><summary>② 신호화</summary><label>학습/기준/시험 분할 <select id="xSplit">' + opt([["50", "50 / 20 / 30 (기본)"], ["60", "60 / 20 / 20"], ["40", "40 / 20 / 40"]], "50") + '</select></label><p class="small">20개 신호를 0~1로 바꾸고, 즉시 안전 규칙 신호 4개(증상, 낙뢰, 낙상, 통제)는 학습에서 뺍니다.</p></details>' +
+      '<details open><summary>③ 양자 특징 변환</summary><label>회로 <select id="xQ">' + opt([["quantum", "2큐비트 겹침 회로(RY + CNOT)"], ["zz", "ZZ 특징 맵(Havlíček 2019)"], ["linear", "사용 안 함(일반 AI만)"]], "quantum") + '</select></label><label>판독 <select id="xShots">' + opt([[0, "정확 판독(에뮬레이터)"], [1000, "샷 1000번"], [100, "샷 100번"], [20, "샷 20번"]], 0) + '</select></label><label>장비 잡음 <select id="xNoise">' + opt([[0, "없음"], [.05, "5%"], [.15, "15%"]], 0) + '</select></label></details>' +
+      '<details open><summary>④ AI 학습</summary><label>모델 <select id="xM">' + opt([["logit", "로지스틱 회귀"], ["dnn", "심층 신경망(은닉 12, 8, 6)"]], "logit") + '</select></label><label>DNN 반복 <select id="xEp">' + opt([[15, "15회"], [30, "30회"]], 15) + '</select></label></details>' +
+      '<details><summary>⑤ 배포(추론) 산행</summary><label>산 <select id="xMt">' + opt(G.mountains.map(function (m, i) { return [i, m[0] + " " + m[1] + " " + m[2] + "m"]; }), 0) + '</select></label><label>산행자 <select id="xP">' + opt(G.personas.map(function (p, i) { return [i, p.name]; }), 0) + '</select></label><label>날씨 <select id="xW">' + opt(G.weathers.map(function (w, i) { return [i, w.name]; }), 1) + '</select></label><label>계절 <select id="xS">' + opt(G.seasons.map(function (x, i) { return [i, x.name]; }), 2) + '</select></label></details>' +
+      '<details><summary>⑥ 현장 경보</summary><label>오경보 예산 <select id="xFA">' + opt([[.05, "5%"], [.1, "10% (기본)"], [.2, "20%"]], .1) + '</select></label></details>' +
+      '<details><summary>⑦ 사용자 피드백</summary><label>피드백 반영 <select id="xFB">' + opt([["on", "배포 산행 기록을 정답 라벨로 추가"], ["off", "반영 안 함"]], "on") + '</select></label></details>' +
+      '<details><summary>⑧ 재학습, 메타학습</summary><label>방식 <select id="xMeta">' + opt([["both", "재학습 + 메타 개인 적응"], ["re", "재학습만"]], "both") + '</select></label></details>' +
+      '<div class="btns"><button id="xRun" class="primary" data-autoplay="1">▶ 전체 사이클 실험 실행</button><button id="xCsv">⬇ 결과 내보내기</button></div><p id="xMsg" class="small"></p></div>' +
+      '<div class="stack ecoout"><div class="card xguide" id="xG"><div class="xg-h"><span class="xg-snow">❄</span><b id="xGt">따라하기: 눈송이가 실험 순서를 하나씩 짚어 드립니다</b><span class="xg-n" id="xGn"></span></div><p id="xGx" class="xg-x">처음이시면 <b>▶ 따라하기 시작</b>을 누르시기 바랍니다. 데이터 고르기부터 결과 해석까지 무엇을 고르고 무엇을 보아야 하는지 차례로 안내합니다.</p><div class="xg-dots" id="xGd"></div><div class="btns"><button id="xGs" class="primary">▶ 따라하기 시작</button><button id="xGp">◀ 이전</button><button id="xGnx">다음 ▶</button><label class="tog"><input type="checkbox" id="xGa"> 자동으로 넘기기</label></div></div><div class="card"><div id="xPipe" class="xpipe">' + STG.map(function (s, i) { return '<div class="xst" id="xs' + i + '"><b>' + s + '</b><span>대기</span></div>'; }).join("") + '</div></div>' +
+      '<div class="xres"><div class="card"><h3>④ 학습 결과: 같은 오경보 예산에서 시험 성적</h3><table id="xT" class="labtbl"></table><canvas id="xBar"></canvas></div>' +
+      '<div class="card"><h3>⑤⑥ 배포 산행의 실시간 점수와 경보 <span class="small">(분홍 띠 = 실제 위험 사건)</span></h3><canvas id="xRun2"></canvas><p id="xDep" class="small"></p></div></div>' +
+      '<div class="card"><h3>⑦⑧ 피드백 반영 재학습과 메타 개인 적응</h3><div id="xRe" class="small">실행하면 결과가 표시됩니다.</div><div id="xB"></div></div></div></div>';
+    const v = function (id) { return $("#" + id, el).value; }; // 선택값 읽기임 / read a selected value
+    const showNew = function () { $("#xNew", el).style.display = v("xD") === "new" ? "grid" : "none"; }; $("#xD", el).onchange = showNew; showNew(); // 새로 생성일 때만 요인 선택을 보임 / show factor choices only for new generation
+    function stage(i, state, txt) { const b = $("#xs" + i, el); if (!b) return; b.className = "xst " + state; b.querySelector("span").innerHTML = txt; } // 단계 상자 상태 표시임 / stage box status display
+    function say(t) { if (!QP.State.touring && alive) QP.Voice.speak(t, true); } // 음성 안내임 / voice guide
+    function makeModel(train, valid, method, ctx, kind, eps, fa) { // ④ 모델 하나를 학습하고 오경보 예산에 맞춘 경보 기준을 정함 / ④ trains one model and sets the threshold to the false-alarm budget
+      let predict;                                  // 예측 함수임 / predict function
+      if (kind === "dnn") { const rows = train.map(function (s) { return { f: M.features(s.x, method, ctx), label: s.label }; }), m = M.mlpCreate(rows[0].f.length, 12, 5); for (let e = 0; e < eps; e++) M.mlpEpoch(m, rows, .3); predict = function (x) { return M.mlpForward(m, M.features(x, method, ctx)).o; }; } // 심층 신경망임 / deep neural network
+      else predict = M.fit(train, method, ctx).predict; // 로지스틱 회귀임 / logistic regression
+      const neg = valid.filter(function (r) { return !r.label; }).map(function (r) { return predict(r.x); }).sort(function (a, b) { return a - b; }); // 기준 표본의 정상 점수임 / normal scores of the threshold samples
+      return { predict: predict, threshold: neg[Math.max(0, Math.ceil(neg.length * (1 - fa)) - 1)] + 1e-9 }; // 정상의 fa만 울리는 기준임 / threshold at which only fa of normals ring
+    }
+    function run() {                                // 전체 사이클을 단계별로 실행함 / runs the whole cycle stage by stage
+      clearTimeout(runT); out = {}; STG.forEach(function (_, i) { stage(i, "", "대기"); }); $("#xMsg", el).textContent = "실행 중입니다."; // 초기화임 / reset
+      const cfg = { d: v("xD"), runs: Number(v("xRuns")), diff: v("xDiff"), w0: v("xW0"), s0: v("xS0"), split: Number(v("xSplit")) / 100, q: v("xQ"), shots: Number(v("xShots")), noise: Number(v("xNoise")), model: v("xM"), eps: Number(v("xEp")), mt: Number(v("xMt")), per: Number(v("xP")), w: Number(v("xW")), s: Number(v("xS")), fa: Number(v("xFA")), fb: v("xFB"), meta: v("xMeta") }; // 설정을 읽음 / read the settings
+      const method = cfg.q === "linear" ? "linear" : cfg.shots ? "shots" : cfg.q, ctx = cfg.shots ? { shots: cfg.shots, noise: cfg.noise, rand: QP.Sim.rng(7) } : null; // 양자 특징 방식과 판독 설정임 / quantum feature method and readout settings
+      if (cfg.q === "zz" && cfg.shots) { cfg.shots = 0; } // ZZ 회로는 정확 판독으로만 비교함 / the ZZ circuit is compared with exact readout only
+      const tasks = [
+        function () { const ds = cfg.d === "new" ? DS.makeGrounded(6000 + DS.list.length, cfg.runs, { diff: cfg.diff || undefined, weather: cfg.w0 === "" ? null : Number(cfg.w0), season: cfg.s0 === "" ? null : Number(cfg.s0) }) : DS.get(cfg.d); out.ds = ds; if (cfg.d === "new") { $("#xD", el).innerHTML = opt(dsList(), ds.id); showNew(); } stage(0, "done", ds.id + ", " + ds.stats.n.toLocaleString("ko-KR") + "행<br>위험 " + pct(ds.stats.rate) + ", 등급 " + ds.grade); }, // ① 데이터 / ① data
+        function () { const rows = out.ds.rows, a = Math.floor(rows.length * cfg.split), b = Math.floor(rows.length * (cfg.split + .2)); const cap = function (x, n) { return x.length > n ? x.filter(function (_, i) { return i % Math.ceil(x.length / n) === 0; }) : x; }; out.sp = { train: cap(rows.slice(0, a), 4000), valid: cap(rows.slice(a, b), 1500), test: cap(rows.slice(b), 2500) }; stage(1, "done", "신호 20개 → 학습 16개<br>학습 " + out.sp.train.length + ", 기준 " + out.sp.valid.length + ", 시험 " + out.sp.test.length); }, // ② 신호화 / ② signal encoding
+        function () { const s = out.sp.train[0].x, f = M.features(s, method, ctx); stage(2, "done", method === "linear" ? "양자 특징 없음(대조)" : (cfg.q === "zz" ? "ZZ 맵" : "겹침 회로") + " 6개 추가 → 입력 " + f.length + "개<br>" + (cfg.shots ? "샷 " + cfg.shots + ", 잡음 " + pct(cfg.noise) : "정확 판독")); }, // ③ 양자 특징 / ③ quantum features
+        function () { out.L = makeModel(out.sp.train, out.sp.valid, "linear", null, cfg.model, cfg.eps, cfg.fa); out.Q = makeModel(out.sp.train, out.sp.valid, method, ctx, cfg.model, cfg.eps, cfg.fa); out.mL = M.measure(out.sp.test, out.L.predict, out.L.threshold); out.mQ = M.measure(out.sp.test, out.Q.predict, out.Q.threshold); stage(3, "done", (cfg.model === "dnn" ? "DNN 3층" : "로지스틱") + "<br>탐지율 " + pct(out.mL.recall) + " → <b>" + pct(out.mQ.recall) + "</b>"); drawLearn(cfg); }, // ④ 학습 / ④ training
+        function () { const c = G.makeCourse(cfg.mt, 31 + cfg.mt), sim = G.simulate(c, G.personas[cfg.per], G.weathers[cfg.w], { season: cfg.s }); out.run = G.score(sim, [{ key: "linear", predict: out.L.predict, threshold: out.L.threshold }, { key: "quantum", predict: out.Q.predict, threshold: out.Q.threshold }]); stage(4, "done", c.name + ", " + G.personas[cfg.per].name.split(" (")[0] + "<br>" + Math.round(out.run.steps.length * 10 / 60) + "분 실시간 채점"); drawRun(); }, // ⑤ 배포 / ⑤ deployment
+        function () { out.alarm = alarms(out.run); stage(5, "done", "사건 " + out.alarm.n + "건, 사전 경보 " + out.alarm.qHit + "/" + out.alarm.n + "<br>평균 " + out.alarm.qLead.toFixed(1) + "분 전(일반 " + out.alarm.lLead.toFixed(1) + "분)"); }, // ⑥ 경보 / ⑥ alarms
+        function () { out.fb = cfg.fb === "on" ? out.run.steps.filter(function (_, i) { return i % 6 === 0; }).map(function (s) { return { x: s.sig, label: s.truth ? 1 : 0 }; }) : []; stage(6, "done", cfg.fb === "on" ? "확인, 신고 라벨 " + out.fb.length + "건 추가<br>(위험 " + out.fb.filter(function (r) { return r.label; }).length + "건)" : "반영 안 함"); }, // ⑦ 피드백 / ⑦ feedback
+        function () { // ⑧ 재학습과 메타학습 / ⑧ retraining and meta-learning
+          const train2 = out.sp.train.concat(out.fb, out.fb, out.fb); out.Q2 = makeModel(train2, out.sp.valid, method, ctx, cfg.model, cfg.eps, cfg.fa); out.mQ2 = M.measure(out.sp.test, out.Q2.predict, out.Q2.threshold); // 피드백(3배 가중)을 더해 재학습함 / retrain with feedback added (3× weight)
+          const c2 = G.makeCourse(cfg.mt, 977 + cfg.mt), sim2 = G.simulate(c2, G.personas[cfg.per], G.weathers[cfg.w], { season: cfg.s }); const r1 = alarms(G.score(G.simulate(c2, G.personas[cfg.per], G.weathers[cfg.w], { season: cfg.s }), [{ key: "linear", predict: out.L.predict, threshold: out.L.threshold }, { key: "quantum", predict: out.Q.predict, threshold: out.Q.threshold }])), r2 = alarms(G.score(sim2, [{ key: "linear", predict: out.L.predict, threshold: out.L.threshold }, { key: "quantum", predict: out.Q2.predict, threshold: out.Q2.threshold }])); out.re = { before: r1, after: r2 }; // 같은 산의 다른 날(새 코스 씨앗)에서 재학습 전후를 비교함 / compare before/after retraining on another day of the same mountain (new course seed)
+          if (cfg.meta === "both") { const m = QP.Meta.create(cfg.per * 13 + 5); for (let k = 0; k < 200; k++) QP.Meta.metaStep(m, 4); out.meta = QP.Meta.evaluate(m, cfg.per + 31); } else out.meta = null; // 메타러너 개인 적응임 / meta-learner personal adaptation
+          stage(7, "done", "재학습 탐지율 " + pct(out.mQ.recall) + " → <b>" + pct(out.mQ2.recall) + "</b>" + (out.meta ? "<br>메타 1걸음 " + pct(out.meta.meta[1]) : "")); drawRe(cfg);
+        }
+      ];
+      let k = 0; (function next() { if (!alive) return; stage(k, "on", "실행 중…"); runT = setTimeout(function () { if (!alive) return; try { tasks[k](); } catch (e) { stage(k, "err", "오류: " + e.message); $("#xMsg", el).textContent = "오류가 났습니다: " + e.message; return; } k++; if (k < tasks.length) next(); else { $("#xMsg", el).textContent = "전체 사이클 실험 완료(" + new Date().toLocaleTimeString("ko-KR") + ")"; say("전체 사이클 실험이 끝났습니다. 같은 오경보 예산에서 탐지율은 일반 인공지능 " + Math.round(out.mL.recall * 100) + "퍼센트, 선택한 양자 특징 인공지능 " + Math.round(out.mQ.recall * 100) + "퍼센트이며, 피드백을 반영해 재학습하면 " + Math.round(out.mQ2.recall * 100) + "퍼센트입니다. 배포 산행에서는 사건 " + out.alarm.n + "건 중 " + out.alarm.qHit + "건을 평균 " + out.alarm.qLead.toFixed(1) + "분 전에 알렸습니다."); } }, 650); })(); // 단계마다 0.65초 간격으로 실행해 진행이 보이게 함 / run each stage 0.65 s apart so progress is visible
+      say("전체 사이클 실험을 시작합니다. 위쪽 여덟 단계 상자가 차례로 켜지며 각 단계의 결과가 표시됩니다.");
+    }
+    function alarms(r) {                            // ⑥ 사건별 사전 경보와 선행 시간, 불필요 경보 시간을 셈 / ⑥ counts per-event pre-alarms, lead time and unnecessary alarm time
+      const ev = r.events, lead = function (key) { const h = ev.filter(function (e) { return e[key] >= 0 && e[key] <= e.s; }); return { hit: h.length, lead: h.length ? h.reduce(function (a, e) { return a + (e.s - e[key]) * 10 / 60; }, 0) / h.length : 0 }; }; // 사건 전에 울린 경우와 평균 선행 분임 / cases rung before the event and mean lead minutes
+      const q = lead("q"), l = lead("lin"), fq = r.steps.filter(function (s) { return s.qf >= r.thrQ && !s.truth; }).length * 10 / 60, fl = r.steps.filter(function (s) { return s.lin >= r.thrL && !s.truth; }).length * 10 / 60; // 불필요 경보 시간(분)임 / unnecessary alarm time (min)
+      return { n: ev.length, qHit: q.hit, qLead: q.lead, lHit: l.hit, lLead: l.lead, qFalse: fq, lFalse: fl };
+    }
+    function drawLearn(cfg) {                       // ④ 결과 표와 막대 / ④ result table and bars
+      const rows = [["일반 AI(신호 16개)", out.mL, "#4d6b8c"], [(cfg.q === "linear" ? "일반 AI(대조 반복)" : cfg.q === "zz" ? "양자 특징 AI(ZZ 맵)" : "양자 특징 AI(겹침 회로)") + (cfg.shots ? ", 샷 " + cfg.shots : ""), out.mQ, "#6e4c82"]];
+      $("#xT", el).innerHTML = "<tr><th>방식(" + (cfg.model === "dnn" ? "DNN" : "로지스틱") + ")</th><th>탐지율" + B.info("탐지율") + "</th><th>오경보" + B.info("오경보율") + "</th><th>F1" + B.info("F1") + "</th><th>AUC" + B.info("AUC") + "</th></tr>" + rows.map(function (r) { return "<tr><td>" + r[0] + "</td><td><b>" + pct(r[1].recall) + "</b></td><td>" + pct(r[1].falseAlarm) + "</td><td>" + r[1].f1.toFixed(3) + "</td><td>" + r[1].auc.toFixed(3) + "</td></tr>"; }).join(""); // 표임 / table
+      C.bars($("#xBar", el), [{ label: "탐지율", values: [out.mL.recall, out.mQ.recall] }, { label: "오경보", values: [out.mL.falseAlarm, out.mQ.falseAlarm] }, { label: "AUC", values: [out.mL.auc, out.mQ.auc] }], [{ color: "#4d6b8c" }, { color: "#6e4c82" }], { height: 130, max: 1 }); // 막대임 / bars
+    }
+    function drawRun() {                            // ⑤ 배포 산행 점수 시계열과 사건 띠 / ⑤ deployment hike score series and event bands
+      const r = out.run, st = r.steps, P = C.prep($("#xRun2", el), 150), g = P.g, W = P.w, H = P.h - 14; // 캔버스임 / canvas
+      st.forEach(function (s, i) { if (s.truth) { g.fillStyle = "rgba(199,107,103,.22)"; g.fillRect(i / st.length * W, 0, W / st.length + 1, H); } }); // 위험 사건 띠임 / risk event bands
+      [["lin", "#4d6b8c", r.thrL], ["qf", "#6e4c82", r.thrQ]].forEach(function (k) { g.strokeStyle = k[1]; g.lineWidth = 1.6; g.beginPath(); st.forEach(function (s, i) { const x = i / st.length * W, y = H - s[k[0]] * (H - 4); if (i) g.lineTo(x, y); else g.moveTo(x, y); }); g.stroke(); g.setLineDash([4, 4]); g.beginPath(); g.moveTo(0, H - k[2] * (H - 4)); g.lineTo(W, H - k[2] * (H - 4)); g.stroke(); g.setLineDash([]); }); // 두 AI 점수와 경보 기준선임 / the two AI scores and alarm threshold lines
+      const half = st.findIndex(function (s) { return !s.up; }); g.fillStyle = "#1d2a4d"; g.font = "11px Malgun Gothic,sans-serif"; g.fillText("출발", 2, P.h - 2); if (half > 0) g.fillText("▲ 정상(하산 시작)", half / st.length * W - 40, P.h - 2); g.fillText("하산 완료", W - 52, P.h - 2); // 시간축 글씨임 / time-axis labels
+    }
+    function drawRe(cfg) {                          // ⑤⑥⑦⑧ 결과 글과 근거 / ⑤⑥⑦⑧ result text and evidence
+      const a = out.alarm, b = out.re.before, c = out.re.after; // 경보 결과임 / alarm results
+      $("#xDep", el).innerHTML = "<b>⑥ 현장 경보</b>: 실제 위험 사건 " + a.n + "건 중 양자 특징 AI <b>" + a.qHit + "건</b>을 평균 <b>" + a.qLead.toFixed(1) + "분 전</b>에 알림(일반 AI " + a.lHit + "건, " + a.lLead.toFixed(1) + "분 전). 불필요 경보 시간: 양자 " + a.qFalse.toFixed(0) + "분, 일반 " + a.lFalse.toFixed(0) + "분. 오경보 예산 " + pct(cfg.fa) + ".";
+      $("#xRe", el).innerHTML = '<table class="labtbl"><tr><th>항목</th><th>재학습 전</th><th>재학습 후(피드백 ' + out.fb.length + '건)</th></tr><tr><td>시험 탐지율</td><td>' + pct(out.mQ.recall) + "</td><td><b>" + pct(out.mQ2.recall) + "</b></td></tr><tr><td>시험 AUC</td><td>" + out.mQ.auc.toFixed(3) + "</td><td><b>" + out.mQ2.auc.toFixed(3) + "</b></td></tr><tr><td>같은 산 다른 날: 사전 경보</td><td>" + b.qHit + "/" + b.n + ", " + b.qLead.toFixed(1) + "분 전</td><td><b>" + c.qHit + "/" + c.n + ", " + c.qLead.toFixed(1) + "분 전</b></td></tr>" + (out.meta ? "<tr><td>메타 개인 적응(새 사람 기록 10개)</td><td>무작위 시작 5걸음 " + pct(out.meta.rand[5]) + "</td><td><b>메타 시작 1걸음 " + pct(out.meta.meta[1]) + "</b></td></tr>" : "") + "</table><p>피드백은 배포 산행에서 생긴 확인, 신고 기록을 정답 라벨로 추가한 것입니다. 재학습 효과는 데이터 양과 산행 조건에 따라 달라지므로 여러 조건으로 반복해 보시기 바랍니다.</p>";
+      $("#xB", el).innerHTML = B.box({ data: out.ds.id + " " + out.ds.name + " (등급 " + out.ds.grade + "), 배포: " + G.mountains[cfg.mt][0] + ", " + G.personas[cfg.per].name + ", " + G.weathers[cfg.w].name + ", " + G.seasons[cfg.s].name, method: STG.join(" → "), formula: "경보 기준 = 기준 표본 정상 점수의 상위 " + pct(cfg.fa) + " 경계, 선행 시간 = (사건 시작 − 첫 경보) × 10초", code: "views_ecolab.js run(), models.js fit(), measure(), mountain.js simulate(), score(), meta.js", note: "합성 데이터 기준. 아이나비 실측 자료(DTO-1~5)를 ①에 넣으면 같은 절차로 검증됨" }, "전체 사이클 근거");
+    }
+
+    /* ---------- 따라하기 안내(GUI 가이드): 고를 곳을 지시봉으로 짚고, 펼치고, 반짝이며, 음성과 글로 설명함 / Follow-along GUI guide: points, expands, highlights and explains by voice and text  ---------- */
+    const GS = [
+      { sel: "#xD", sec: 0, t: "1. 입력 데이터 고르기", x: function () { return "먼저 AI가 공부할 데이터를 고릅니다. 이미 만든 데이터를 고르거나, 맨 위의 ‘새로 생성’을 고르면 요인을 섞은 합성 데이터를 새로 만듭니다."; } },
+      { sel: "#xRuns", sec: 0, need: function () { return v("xD") === "new"; }, t: "2. 합성 요인 정하기", x: function () { return "산행 수, 산 난이도, 날씨, 계절을 고릅니다. 출발 시각, 성별, 연령대, 환경은 자동으로 고르게 섞입니다."; } },
+      { sel: "#xSplit", sec: 1, t: "3. 학습, 기준, 시험 나누기", x: function () { return "데이터를 학습용, 경보 기준용, 시험용으로 나눕니다. 시험용은 학습에 쓰지 않으므로 공정하게 채점할 수 있습니다."; } },
+      { sel: "#xQ", sec: 2, t: "4. 양자 회로 고르기", x: function () { return "두 위험 신호를 큐비트로 묶는 회로를 고릅니다. 사용 안 함을 고르면 일반 AI만 비교하는 대조 실험이 됩니다."; } },
+      { sel: "#xShots", sec: 2, t: "5. 측정 방식과 잡음", x: function () { return "에뮬레이터는 정확한 값을 바로 읽지만, 실제 양자 장비는 유한 번 측정하고 잡음이 있습니다. 샷 수와 잡음을 바꾸면 장비 조건을 흉내 낼 수 있습니다."; } },
+      { sel: "#xM", sec: 3, t: "6. AI 모델 고르기", x: function () { return "로지스틱 회귀는 단순하고 설명하기 쉽고, 심층 신경망은 은닉층 세 개로 더 복잡한 관계를 배웁니다."; } },
+      { sel: "#xMt", sec: 4, t: "7. 배포 산행 고르기", x: function () { return "학습한 AI를 실제 산행에 내보낸 것처럼, 산, 산행자, 날씨, 계절을 고릅니다. 이 산행을 10초마다 실시간으로 채점합니다."; } },
+      { sel: "#xFA", sec: 5, t: "8. 오경보 예산 정하기", x: function () { return "정상인데 경보가 울리는 비율의 상한입니다. 두 AI 모두 같은 예산으로 맞추어야 공정하게 비교할 수 있습니다."; } },
+      { sel: "#xFB", sec: 6, t: "9. 피드백과 재학습 방식", x: function () { return "배포 산행에서 생긴 확인, 신고 기록을 정답으로 추가해 다시 학습할지, 메타러너로 개인 적응까지 볼지 정합니다."; }, also: "#xMeta", sec2: 7 },
+      { sel: "#xRun", t: "10. 실험 실행", x: function () { return "선택이 모두 끝났습니다. 다음을 누르면 실험을 실행하고, 위쪽 여덟 단계 상자가 차례로 켜집니다."; }, act: function () { run(); } },
+      { sel: "#xPipe", wait: true, t: "11. 단계별 진행 확인", x: function () { return "여덟 단계 상자가 노란색으로 켜지며 계산하고, 끝나면 자두색으로 바뀌며 결과 요약을 보여 줍니다."; } },
+      { sel: "#xT", wait: true, t: "12. 학습 결과 읽기", x: function () { return "같은 오경보 예산에서 시험 탐지율은 일반 AI " + pct(out.mL.recall) + ", 양자 특징 AI " + pct(out.mQ.recall) + "입니다. 탐지율은 높을수록, 오경보율은 낮을수록 좋습니다."; } },
+      { sel: "#xRun2", wait: true, t: "13. 배포 산행의 경보 읽기", x: function () { return "분홍 띠가 실제 위험 순간이고, 자두색 선이 양자 특징 AI 점수입니다. 점선을 먼저 넘을수록 일찍 알린 것입니다. 사건 " + out.alarm.n + "건 중 " + out.alarm.qHit + "건을 평균 " + out.alarm.qLead.toFixed(1) + "분 전에 알렸습니다."; } },
+      { sel: "#xRe", wait: true, t: "14. 재학습과 개인 적응 읽기", x: function () { return "피드백을 넣어 다시 학습한 결과와, 메타러너가 새 사람에게 한 걸음 만에 맞춘 정확도를 비교합니다. 재학습 뒤 시험 탐지율은 " + pct(out.mQ2.recall) + "입니다. 항상 오르지는 않으므로 조건을 바꿔 반복해 보시기 바랍니다."; } },
+      { sel: "#xCsv", wait: true, t: "15. 결과 내보내기", x: function () { return "결과를 시에스브이로 내보내 보고서에 쓰시면 됩니다. 왼쪽 선택을 바꾸어 다시 실행하면 다른 조건의 실험이 됩니다."; } }
+    ];
+    let gi = -1, gT = null, gTok = 0;               // 현재 안내 단계, 자동 넘김 타이머, 안내 순번임 / current guide step, auto-advance timer, guide token
+    const steps = function () { return GS.filter(function (g) { return !g.need || g.need(); }); }; // 지금 조건에 맞는 단계 목록임 / steps that fit the current conditions
+    function gDots() { const L = steps(); $("#xGd", el).innerHTML = L.map(function (g, i) { return '<i class="' + (i === gi ? "on" : i < gi ? "done" : "") + '" title="' + g.t + '"></i>'; }).join(""); $("#xGn", el).textContent = gi >= 0 ? (gi + 1) + " / " + L.length : ""; } // 진행 점임 / progress dots
+    function gShow(i) {                             // i번째 안내를 보여 줌 / shows the i-th guide step
+      const L = steps(); if (!alive) return; gi = Math.max(0, Math.min(L.length - 1, i)); const g = L[gi], tok = ++gTok; clearTimeout(gT); gDots(); // 단계를 정함 / set the step
+      if (g.wait && !out.mQ2) { $("#xGt", el).textContent = g.t; $("#xGx", el).textContent = "실험이 끝나기를 기다리는 중입니다…"; gT = setTimeout(function () { if (tok === gTok) gShow(gi); }, 800); return; } // 결과가 필요한 단계는 실행이 끝날 때까지 기다림 / steps needing results wait until the run finishes
+      const dts = el.querySelectorAll(".ecoctl details"); [g.sec, g.sec2].forEach(function (k) { if (k != null && dts[k]) dts[k].open = true; }); // 해당 설정 묶음을 펼침 / expand the related settings group
+      const t = $(g.sel, el); $("#xGt", el).textContent = g.t; const tx = g.x(); $("#xGx", el).textContent = tx; // 제목과 설명임 / title and explanation
+      if (t) { t.scrollIntoView({ block: "nearest" }); t.classList.add("labaim"); setTimeout(function () { t.classList.remove("labaim"); }, 3200); const r = t.getBoundingClientRect(); if (QP.App && QP.App.pointAt) QP.App.pointAt(r.left + Math.min(40, r.width / 2), r.top + Math.min(r.height / 2, 30)); } // 짚고 반짝임 / point and highlight
+      if (g.also) { const a2 = $(g.also, el); if (a2) { a2.classList.add("labaim"); setTimeout(function () { a2.classList.remove("labaim"); }, 3200); } } // 함께 볼 곳임 / also look here
+      if (!QP.State.touring) QP.Voice.speak(g.t.replace(/^\d+\.\s*/, "") + ". " + tx, true); // 음성으로 읽음 / read by voice
+      if ($("#xGa", el).checked) { const t0 = Date.now(); (function w() { if (tok !== gTok || !alive) return; if (QP.Voice.isActive() && Date.now() - t0 < 30000 || Date.now() - t0 < 2500) { gT = setTimeout(w, 500); return; } gNext(); })(); } // 자동 넘김이면 말이 끝난 뒤 다음으로 감 / with auto-advance, go next after speaking
+    }
+    function gNext() { const L = steps(), g = L[gi]; if (g && g.act) g.act(); if (gi < L.length - 1) gShow(gi + 1); } // 다음 단계(실행 단계면 실행도 함)임 / next step (also runs at the run step)
+    $("#xGs", el).onclick = function () { out = {}; $("#xGa", el).checked = true; gShow(0); }; // 처음부터 따라하기(자동 넘김 켬)임 / follow along from the start (auto-advance on)
+    $("#xGnx", el).onclick = function () { if (gi < 0) { gShow(0); return; } gNext(); }; // 다음임 / next
+    $("#xGp", el).onclick = function () { gShow(gi - 1); }; // 이전임 / previous
+    $("#xGa", el).onchange = function () { if (this.checked && gi >= 0) gShow(gi); }; // 자동 넘김을 켜면 지금 단계부터 이어 감 / turning on auto-advance continues from the current step
+    gDots();
+    $("#xRun", el).onclick = run;                   // 실행 버튼임 / run button
+    $("#xCsv", el).onclick = function () { if (!out.mQ2) { $("#xMsg", el).textContent = "먼저 실행하시기 바랍니다."; return; } const a = out.alarm; QP.App.download("eco_cycle_result.csv", "﻿항목,일반 AI,양자 특징 AI,재학습 후\n" + [["탐지율", out.mL.recall, out.mQ.recall, out.mQ2.recall], ["오경보율", out.mL.falseAlarm, out.mQ.falseAlarm, out.mQ2.falseAlarm], ["AUC", out.mL.auc, out.mQ.auc, out.mQ2.auc]].map(function (r) { return r[0] + "," + r.slice(1).map(function (x) { return x.toFixed(4); }).join(","); }).join("\n") + "\n사전 경보 건수," + a.lHit + "," + a.qHit + "," + out.re.after.qHit + "\n평균 선행(분)," + a.lLead.toFixed(2) + "," + a.qLead.toFixed(2) + "," + out.re.after.qLead.toFixed(2) + "\n데이터," + out.ds.id + "\n"); }; // 결과 CSV 내보내기임 / export results as CSV
+    return function () { alive = false; clearTimeout(runT); clearTimeout(gT); }; // 떠날 때 정리함 / clean up when leaving
+  }
+
+  QP.ViewDefs = (QP.ViewDefs || []); const at = QP.ViewDefs.findIndex(function (d) { return d.id === "lab"; }); QP.ViewDefs.splice(at < 0 ? QP.ViewDefs.length : at, 0, { id: "ecolab", group: "양자AI 실험실", title: "전체 사이클 실험(실험 실시와 관제)", render: ecolab }); // 안내형 실험보다 앞(실험실의 첫 화면)에 등록함 / registered before the guided experiment (first screen of the lab)
+})(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace

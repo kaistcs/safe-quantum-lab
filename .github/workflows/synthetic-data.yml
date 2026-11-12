@@ -1,0 +1,36 @@
+# Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved.
+# 행정안전부 재난안전연구개발사업 산행안전 과제 결과물. 이용 조건은 프로젝트 루트의 LICENSE를 따름.
+# synthetic-data.yml : 매주 월요일 09:17(한국시간) 합성 데이터와 비교 성적표를 새로 만들어 저장소에 올림
+# 공개 데이터 API 키가 필요하면 저장소 Settings → Secrets 에 DATA_GO_KR_KEY 로 넣고 아래 주석을 풀어 사용함
+name: synthetic-data
+on:
+  schedule:
+    - cron: "17 0 * * 1"         # UTC 월 00:17 = KST 월 09:17
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: generate + benchmark (latest version)
+        run: |
+          VER=$(python tools/latest.py)
+          cd versions/$VER
+          SEED=$(date +%Y%U)                       # 주차마다 다른 씨앗(재현 가능)
+          python -m qp.data.synthetic --seed $SEED --n 2750 --noise 0.03
+          python -m experiments.benchmark --shots 100 --noise 0.15
+          python -m pip install -q pytest && python -m pytest -q
+      # - name: public data (예: 기상청 ASOS)
+      #   env: { DATA_GO_KR_KEY: "${{ secrets.DATA_GO_KR_KEY }}" }
+      #   run: python versions/$(python tools/latest.py)/qp/data/fetch_asos.py
+      - name: commit
+        run: |
+          git config user.name "qp-bot"
+          git config user.email "qp-bot@users.noreply.github.com"
+          git add -A versions/*/data versions/*/results versions/*/web/data
+          git commit -m "weekly synthetic data + benchmark" || echo "nothing to commit"
+          git push

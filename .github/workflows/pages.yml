@@ -1,0 +1,32 @@
+# Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved.
+# 행정안전부 재난안전연구개발사업 산행안전 과제 결과물. 이용 조건은 프로젝트 루트의 LICENSE를 따름.
+# pages.yml : main 브랜치에 올릴 때마다 모든 버전 웹을 GitHub Pages 로 게시함 / publishes all version web pages to GitHub Pages on every push to main
+# 결과 주소: https://<아이디>.github.io/<저장소>/  (최신 버전으로 자동 이동, /v01 /v02 ... 개별 접속) / result URL
+name: deploy-pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:            # 수동 실행 버튼도 제공함
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4                 # 저장소 내려받기
+      - uses: actions/setup-python@v5             # 파이썬 준비
+        with: { python-version: "3.12" }
+      - run: python tools/build_site.py           # versions/* → _site/ 로 정리
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+      - id: deployment
+        uses: actions/deploy-pages@v4             # 게시
