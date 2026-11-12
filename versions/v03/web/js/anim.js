@@ -40,11 +40,12 @@
     g.beginPath(); g.moveTo(x, y); g.arc(x, y, r - 2, Math.PI / 2 - Math.PI * p1, Math.PI / 2 + Math.PI * p1); g.closePath(); g.fill(); // 아래쪽(1)부터 확률만큼 채움 / fill from the bottom (1) by the probability
     g.strokeStyle = "#e1e5ef"; g.beginPath(); g.moveTo(x, y - r); g.lineTo(x, y + r); g.stroke(); // 0-1 세로축임 / 0-1 vertical axis
     g.strokeStyle = color; g.lineWidth = Math.max(3, r / 12); // 상태 화살표 색과 굵기(큰 다이얼은 굵게)임 / arrow color and width (thicker on big dials)
-    const ex = x + Math.sin(theta) * (r - 4), ey = y - Math.cos(theta) * (r - 4); // 화살표 끝 좌표(위에서 시계 방향으로 회전)임 / arrow tip coordinates (clockwise from the top)
+    const tipR = Math.max(3.5, r / 9), reach = r - tipR - 3; // 끝 점이 원 안에 머물러 0, 1 글자와 이름표를 가리지 않게 함 / keep the tip dot inside the circle so it never covers the 0/1 marks or the name tag
+    const ex = x + Math.sin(theta) * reach, ey = y - Math.cos(theta) * reach; // 화살표 끝 좌표(위에서 시계 방향으로 회전)임 / arrow tip coordinates (clockwise from the top)
     g.beginPath(); g.moveTo(x, y); g.lineTo(ex, ey); g.stroke(); // 화살표 몸통임 / arrow body
-    g.fillStyle = color; g.beginPath(); g.arc(ex, ey, Math.max(3.5, r / 9), 0, 7); g.fill(); // 화살표 끝 점임 / arrow tip dot
+    g.fillStyle = color; g.beginPath(); g.arc(ex, ey, tipR, 0, 7); g.fill(); // 화살표 끝 점임 / arrow tip dot
     const fs = Math.max(11.5, Math.min(17, r * .3)); g.fillStyle = "#4a5470"; g.font = fs + "px Malgun Gothic,sans-serif"; g.textAlign = "center"; // 글씨 설정(다이얼이 크면 글씨도 큼)임 / text settings (bigger text on big dials)
-    g.fillText("0", x, y - r - 3); g.fillText("1", x, y + r + fs); // 위 0, 아래 1 표시임 / labels 0 at top, 1 at bottom
+    g.fillText("0", x, y - r - 5); g.fillText("1", x, y + r + fs + 1); // 위 0, 아래 1 표시임 / labels 0 at top, 1 at bottom
     if (label) g.fillText(label, x, y + r + fs * 2.1);    // 이름표임 / name tag
     g.restore();                                    // 설정을 되돌림 / restore settings
     return p1;                                      // 1 확률을 돌려줌 / return the probability of 1

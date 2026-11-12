@@ -153,7 +153,7 @@ details.basis summary{white-space:nowrap}
 .ent{grid-template-columns:1fr!important;grid-template-rows:auto auto 1fr} .entb{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:10px;min-height:0;overflow:auto} .flowdown{text-align:center;font-weight:800;color:#a9482a;font-size:13px;animation:fd 2.8s ease-in-out infinite} @keyframes fd{50%{transform:translateY(3px);color:#003087}}
 .ent .ent-stage{gap:22px} .ent>.card:first-child{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;align-items:center} .ent>.card:first-child>h3,.ent>.card:first-child>.qa{grid-column:1/-1}
 .coin3d{transition:transform 1.2s ease} .coin3d.spin{animation:spin 2.6s linear infinite}
-.stick polygon{fill:#c62828;stroke:#fff;stroke-width:1.5;stroke-linejoin:round}
+.stick polygon{fill:#c62828;stroke:#fff;stroke-width:2.5;stroke-linejoin:round;paint-order:stroke} .stick #stickC{fill:none;stroke:#c62828;stroke-width:3;opacity:.8;transform-box:fill-box;transform-origin:center;animation:stickPulse 1.2s ease-out infinite} @keyframes stickPulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.6);opacity:0}}
 
 .main{grid-template-rows:56px auto auto 1fr auto 48px} .main>.view{grid-row:4} .main>.live{grid-row:5} .main>.voicebar{grid-row:6}
 .live{width:auto!important;margin:0!important;border-radius:0!important;border:0!important;border-top:1px solid var(--line)!important;padding:4px 16px!important;gap:12px!important;background:#f4f7fd} .live canvas{width:320px!important;height:40px!important} .live span{font-size:13.5px!important;font-weight:500!important;color:var(--ink)!important} .live-h{font-size:12px;color:var(--maple);white-space:nowrap}
@@ -296,3 +296,14 @@ body[data-theme=winter] .databadge{background:#e8f3fd}
 .sit{display:grid;text-align:left;gap:2px;padding:8px 10px;border:1px solid #d9e1f2;border-radius:10px;background:#fff;font-size:13.5px;cursor:pointer} .sit small{color:#5b6684} .sit.stored{border-left:5px solid #6e4c82} .sit.sel{border-color:#003087;box-shadow:0 0 0 2px #ffb50077}
 .sprev{overflow:auto;max-height:52vh} .sprev table{font-size:12px} .sprev td,.sprev th{white-space:nowrap}
 @media (max-width:1250px){.storev{grid-template-columns:minmax(0,1fr)}}
+/* 5과 회로도 단계 안내 / lesson 5 circuit step guide */
+.rcsteps{display:flex;gap:6px;flex-wrap:wrap} .rcsteps button{padding:4px 12px} .rcsteps button.on{background:#ffb500;color:#00205e;font-weight:800;border-color:#e0a000}
+.rctxt{font-size:15px;line-height:1.65;background:#fffbea;border-left:5px solid #ffb500;padding:10px 14px;border-radius:8px;margin:0;min-height:72px}
+.steps4{grid-template-columns:1fr 1fr 2.2fr 1fr} .qmini{display:grid;grid-template-columns:1fr 290px;gap:8px;align-items:start} .qmini canvas{width:290px;display:block} .steps4 .qmini p{margin:0 0 3px;line-height:1.45} .steps4 .qmini p.small{font-size:12px;color:#4a3f5c}
+@media (max-width:1300px){.qmini{grid-template-columns:1fr} .qmini canvas{width:100%}}
+/* 왜 대조군과 같은가: 위 표와 성적표 연결 / link between the feature table and the score table */
+.ybadge{display:inline-block;min-width:20px;padding:0 5px;border-radius:10px;background:var(--c);color:#fff;font-weight:800;text-align:center}
+.ybar td{vertical-align:middle} .ybarw{position:relative;height:18px;background:#eef0f6;border-radius:4px;min-width:110px} .ybarw i{position:absolute;left:0;top:0;bottom:0;border-radius:4px} .ybarw span{position:relative;padding-left:6px;font-size:12px;font-weight:800;color:#fff;text-shadow:0 0 3px rgba(0,0,0,.7);line-height:18px}
+.ybar tr.ysame td{background:#f6f0fa}
+.dq.sel{outline:2px solid #ffb500;outline-offset:-2px;background:#fffbea} .dq{cursor:pointer}
+.rcsl{display:inline-flex;align-items:center;gap:6px;font-size:13px;margin-left:10px} .rcsl input{width:130px} .rcsl output{min-width:26px;font-weight:700}

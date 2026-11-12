@@ -176,12 +176,18 @@
     else if (W - r.right > 80) { gx = r.right + 8; gy = Math.min(H - 140, Math.max(60, r.top + 6)); } // 오른쪽 바깥에 섬 / stand outside on the right
     else { gx = Math.max(265, r.left + 6); gy = Math.min(H - 140, r.bottom - 70); } // 자리가 없으면 대상 왼쪽 아래 귀퉁이에 섬 / if there is no room, stand at the target's lower-left corner
     pt.style.left = gx + "px"; pt.style.top = gy + "px"; pt.classList.toggle("flip", gx > r.left + r.width / 2); // 위치를 옮기고 방향을 정함(CSS로 걸어가듯 이동) / move and set direction (walks via CSS)
-    aim = { x: left ? r.left + Math.min(60, r.width * .25) : r.right - Math.min(60, r.width * .25), y: r.top + Math.min(r.height / 2, 60) }; // 지시봉 끝이 닿을 곳(대상 안쪽 위)임 / where the stick tip touches (inside top of the target)
+    aim = { el: target }; // 지시봉 끝은 대상 안쪽이 아니라 테두리에 닿게 함(내용과 답을 가리지 않음), 위치는 매 프레임 다시 계산 / the tip touches the target's border, not its inside (never covers content or answers); recomputed every frame
   }
   (function stickLoop() {                           // 매 프레임 지시봉을 눈송이 손에서 대상까지 이음 / each frame, connect the stick from Snowflake's hand to the target
     const pt = $("pointer");                        // 눈송이 요소임 / Snowflake element
-    if (!pt.hidden && aim) { const r = pt.getBoundingClientRect(), flip = pt.classList.contains("flip"); const hx = flip ? r.left + r.width * .12 : r.left + r.width * .88, hy = r.top + r.height * .5; const L = $("stickL"), T = $("stickT"); const wob = Math.sin(performance.now() / 700) * 3; const tx = aim.x + wob, ty = aim.y + wob / 2, ang = Math.atan2(ty - hy, tx - hx), len = 18, half = 8; // 화살촉 끝 위치, 방향, 길이, 반폭임 / arrowhead tip position, direction, length, half-width
+    if (!pt.hidden && aim) { const r = pt.getBoundingClientRect(), flip = pt.classList.contains("flip"); const hx = flip ? r.left + r.width * .12 : r.left + r.width * .88, hy = r.top + r.height * .5; const L = $("stickL"), T = $("stickT"); const wob = Math.sin(performance.now() / 700) * 2; let ax = aim.x, ay = aim.y; // 가리킬 점임 / point to touch
+      if (aim.el) { const q = aim.el.getBoundingClientRect(); ax = Math.min(q.right, Math.max(q.left, hx)); ay = Math.min(q.bottom, Math.max(q.top, hy)); // 손에서 가장 가까운 테두리 점 / nearest border point to the hand
+        if (ax > q.left && ax < q.right && ay > q.top && ay < q.bottom) { const cxq = (q.left + q.right) / 2, cyq = (q.top + q.bottom) / 2, vx = cxq - hx, vy = cyq - hy, dv = Math.hypot(vx, vy) || 1, L2 = Math.min(70, dv); ax = hx + vx / dv * L2; ay = hy + vy / dv * L2; } // 눈송이가 대상 안에 서 있으면 대상 가운데 쪽으로 짧게(최대 70px) 가리킴 / if Snowflake stands inside the target, point a short way (max 70 px) toward its center
+        else { const dx0 = ax - hx, dy0 = ay - hy, d0 = Math.hypot(dx0, dy0) || 1; ax -= dx0 / d0 * 4; ay -= dy0 / d0 * 4; } } // 바깥이면 테두리 바로 바깥에 닿게 함 / if outside, touch just outside the border
+      const dist = Math.hypot(ax - hx, ay - hy); $("stick").style.opacity = dist > 170 ? 0 : 1; // 걸어가는 중이라 멀면 지시봉을 숨김(지나치게 긴 화살표 방지) / hide the stick while far away during the walk (no overly long arrow)
+      const tx = ax + wob, ty = ay + wob / 2, ang = Math.atan2(ty - hy, tx - hx), len = 24, half = 11; // 화살촉 끝 위치, 방향, 길이, 반폭임 / arrowhead tip position, direction, length, half-width
       const bx = tx - Math.cos(ang) * len, by = ty - Math.sin(ang) * len; // 화살촉 밑변 가운데임 / center of the arrowhead base
+      const C0 = $("stickC"); if (C0) { C0.setAttribute("cx", tx); C0.setAttribute("cy", ty); } // 끝 지점에 퍼지는 고리로 정확한 위치를 표시 / a pulsing ring marks the exact tip point
       L.setAttribute("x1", hx); L.setAttribute("y1", hy); L.setAttribute("x2", bx); L.setAttribute("y2", by); // 지시봉 막대는 화살촉 밑변까지 그림 / draw the stick shaft up to the arrowhead base
       T.setAttribute("points", tx + "," + ty + " " + (bx + Math.sin(ang) * half) + "," + (by - Math.cos(ang) * half) + " " + (bx - Math.sin(ang) * half) + "," + (by + Math.cos(ang) * half)); } // 끝을 뾰족한 화살촉(삼각형)으로 그려 정확한 지점을 가리킴(살짝 흔들며 가리킴) / draw the tip as a sharp arrowhead (triangle) to point precisely (with a slight wiggle)
     requestAnimationFrame(stickLoop);               // 다음 프레임임 / next frame

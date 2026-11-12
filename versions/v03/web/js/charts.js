@@ -27,6 +27,33 @@
   const LOW = [251, 246, 236], MID = [233, 196, 140], HIGH = [169, 72, 42]; // 낮음=종이색, 중간=황토, 높음=단풍색 / low = paper, middle = ochre, high = maple
 
   // 결정 지도: grid(점수 2차원), thr(경보 기준), opts.truth(정답 경계 함수), opts.mark([x,y] 현재 위치) / decision map: grid (2-D scores), thr (alarm threshold), opts.truth (true boundary function), opts.mark ([x,y] current position)
+  // 등산객 배지 / hiker badge: 지금 산행자를 산과 함께 크게 그림(경사가 급할수록 산이 가파르고, 비가 셀수록 빗방울이 많음) / draws the current hiker large with a mountain (steeper mountain for higher slope, more drops for stronger rain)
+  function hikerBadge(g, x, y, rain, slope) {
+    const R = 26;                                   // 배지 반지름 / badge radius
+    g.save();
+    g.shadowColor = "rgba(0,0,0,.35)"; g.shadowBlur = 6;
+    g.fillStyle = "#eaf3ff"; g.strokeStyle = "#2e2420"; g.lineWidth = 2.5; g.beginPath(); g.arc(x, y, R, 0, 7); g.fill(); g.stroke(); g.shadowBlur = 0;
+    g.beginPath(); g.arc(x, y, R - 1.5, 0, 7); g.clip();   // 안쪽만 그림 / draw inside only
+    const ang = (12 + 48 * Math.max(0, Math.min(1, slope))) * Math.PI / 180, base = y + R * .78; // 산비탈 각도(12~60도) / mountainside angle (12-60 deg)
+    const peakX = x + R * .55, peakY = Math.max(y - R * .9, base - Math.tan(ang) * (R * 1.6)); // 오른쪽 위 봉우리 / peak at the upper right
+    g.fillStyle = "#6f8f5a"; g.beginPath(); g.moveTo(x - R - 2, base); g.lineTo(peakX, peakY); g.lineTo(x + R + 2, peakY + (base - peakY) * .35); g.lineTo(x + R + 2, y + R + 2); g.lineTo(x - R - 2, y + R + 2); g.closePath(); g.fill(); // 산 / mountain
+    g.fillStyle = "#fff"; g.beginPath(); g.moveTo(peakX, peakY); g.lineTo(peakX - 5, peakY + 6); g.lineTo(peakX + 5, peakY + 6); g.closePath(); g.fill(); // 봉우리 눈 / snow cap
+    const n = Math.round(Math.max(0, Math.min(1, rain)) * 9); g.strokeStyle = "#1f6fd1"; g.lineWidth = 1.6; // 빗방울 수 = 비 세기 / number of drops = rain
+    for (let i = 0; i < n; i++) { const dx = x - R + 4 + ((i * 37) % (2 * R - 8)), dy = y - R + 4 + ((i * 23) % (R * .9)); g.beginPath(); g.moveTo(dx, dy); g.lineTo(dx - 2, dy + 6); g.stroke(); }
+    const t = .42, hx = x - R - 2 + (peakX - (x - R - 2)) * t, hy = base + (peakY - base) * t; // 비탈 위 등산객 발 위치 / hiker's foot position on the slope
+    g.save(); g.translate(hx, hy); g.strokeStyle = "#2e2420"; g.lineWidth = 2.4; g.lineCap = "round";
+    const lean = -ang * .45;                        // 오르막이라 앞으로 기울임 / lean forward uphill
+    g.rotate(lean);
+    g.beginPath(); g.moveTo(0, 0); g.lineTo(3, -9); g.lineTo(7, -1); g.stroke(); // 다리 / legs
+    g.beginPath(); g.moveTo(3, -9); g.lineTo(3, -19); g.stroke(); // 몸통 / body
+    g.fillStyle = "#c62828"; g.fillRect(-3.5, -19, 5.5, 9); // 배낭 / backpack
+    g.beginPath(); g.moveTo(3, -16); g.lineTo(10, -11); g.stroke(); g.strokeStyle = "#8a5a2b"; g.lineWidth = 1.6; g.beginPath(); g.moveTo(10, -14); g.lineTo(13, 1); g.stroke(); // 팔과 스틱 / arm and pole
+    g.fillStyle = "#2e2420"; g.beginPath(); g.arc(3.5, -23, 3.6, 0, 7); g.fill(); // 머리 / head
+    g.fillStyle = "#ffb500"; g.fillRect(0, -27.5, 7, 2.4); // 모자 챙 / cap
+    g.restore();
+    g.restore();
+  }
+
   function heatmap(cv, grid, thr, opts) {
     const o = opts || {}, P = prep(cv, o.height), g = P.g; // 옵션과 도구를 준비함 / prepare options and context
     const pad = 26, W = P.w - pad - 6, H = P.h - pad - 6, n = grid.length; // 여백과 그림 크기임 / margins and plot size
@@ -60,9 +87,8 @@
     }
     if (o.mark) {                                   // 현재 상황 위치를 표시함 / mark the current situation
       const px = pad + o.mark[0] * W, py = 4 + (1 - o.mark[1]) * H; // 화면 좌표임 / screen coordinates
-      g.fillStyle = "#fff"; g.strokeStyle = "#2e2420"; g.lineWidth = 2.5; // 흰 원에 검은 테두리임 / white circle with a black border
-      g.beginPath(); g.arc(px, py, 9, 0, 7); g.fill(); g.stroke(); g.font = "12px sans-serif"; g.textAlign = "center"; g.fillStyle = "#2e2420"; g.fillText("🥾", px, py + 4); g.textAlign = "left"; // 산행자 위치(등산화 표시)임 / hiker position (boot icon)
-      if (o.markLabel) { g.font = "bold 12px Malgun Gothic,sans-serif"; const tw = g.measureText(o.markLabel).width + 10, bx = Math.max(pad, Math.min(P.w - tw - 4, px - tw / 2)), by = py > 40 ? py - 34 : py + 14; g.fillStyle = "rgba(255,255,255,.93)"; g.strokeStyle = "#2e2420"; g.lineWidth = 1; g.fillRect(bx, by, tw, 20); g.strokeRect(bx, by, tw, 20); g.fillStyle = "#2e2420"; g.fillText(o.markLabel, bx + 5, by + 14); } // 말풍선: 지금 산행자의 상태와 판정임 / speech bubble: current hiker state and verdict
+      hikerBadge(g, px, py, o.mark[0], o.mark[1]);  // 등산객 배지: 작은 산(기울기=경사) 위의 등산객, 빗방울 수=비 / hiker badge: a hiker on a small mountain (tilt = slope), raindrops = rain
+      if (o.markLabel) { g.font = "bold 12px Malgun Gothic,sans-serif"; const tw = g.measureText(o.markLabel).width + 10, bx = Math.max(pad, Math.min(P.w - tw - 4, px - tw / 2)), by = py > 64 ? py - 58 : py + 32; g.fillStyle = "rgba(255,255,255,.93)"; g.strokeStyle = "#2e2420"; g.lineWidth = 1; g.fillRect(bx, by, tw, 20); g.strokeRect(bx, by, tw, 20); g.fillStyle = "#2e2420"; g.fillText(o.markLabel, bx + 5, by + 14); } // 말풍선: 지금 산행자의 상태와 판정임 / speech bubble: current hiker state and verdict
     }
     if (o.corners) { g.font = "bold 11.5px Malgun Gothic,sans-serif"; g.fillStyle = "rgba(46,36,32,.75)"; g.textAlign = "left"; g.fillText("맑고 완만(안전)", pad + 4, 4 + H - 6); g.textAlign = "right"; g.fillText("비 + 급경사(위험)", pad + W - 4, 18); g.fillText("비만 강함", pad + W - 4, 4 + H - 6); g.textAlign = "left"; g.fillText("경사만 급함", pad + 4, 18); } // 네 모서리의 뜻을 적음 / write the meaning of the four corners
     g.fillStyle = "#6d5e55";                        // 축 글씨 색임 / axis text color
