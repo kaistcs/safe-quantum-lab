@@ -371,3 +371,24 @@ button,select,input,textarea{font-family:inherit}
 .hpoi .hadv{margin:4px 0 0;font-weight:700;color:#7d2c22}
 /* 전체 안내 칸에 번호 / numbers in the guide cells */
 .tprog{height:22px!important} .tprog i{font-style:normal;font-size:11px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;min-width:18px;line-height:1} .tprog i.cur{color:#00205e} .tprog i.done{color:#00205e}
+/* 실험 과정 보고서 / experiment process report */
+.xrepc #xRep{display:flex;flex-direction:column;gap:8px} .xr{border:1px solid #d5dae6;border-radius:10px;padding:8px 10px;background:#fbfcff;animation:ehIn .5s} .xr.xfin{border:2px solid #ffb500;background:#fffbea}
+.xrh{display:flex;gap:8px;align-items:center;font-size:15px} .xrn{display:inline-flex;width:28px;height:28px;border-radius:50%;background:#003087;color:#fff;align-items:center;justify-content:center;font-weight:800}
+.xflow{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:6px 0} .xchip{background:#eef4ff;border:1px solid #c9d3ea;border-radius:14px;padding:3px 10px;font-size:12.5px} .xar{color:#6d5e55;font-weight:900}
+.xcmp{display:grid;grid-template-columns:1fr 1fr;gap:6px} .xcl,.xcq{border-radius:8px;padding:5px 9px;font-size:13px} .xcl{background:#eef2f8;border-left:5px solid #4d6b8c} .xcq{background:#f4eef8;border-left:5px solid #6e4c82} .xcl p,.xcq p{margin:2px 0}
+.xri{margin-top:6px;font-size:13px;line-height:1.55} .xcmpt td,.xcmpt th{font-size:12.5px;padding:3px 7px} .xgood{color:#2e7d32;font-weight:800} .xbad{color:#c62828;font-weight:800} .xrd summary{cursor:pointer;color:#0a4fd6;font-size:12.5px;margin-top:4px}
+/* 학습 내부 과정 창 / training internals window */
+.tvx{position:fixed;inset:0;z-index:250;background:rgba(0,20,60,.55);display:flex;align-items:center;justify-content:center} .tvbox{width:min(1180px,95vw);height:92vh;background:#fff;border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.4);display:flex;flex-direction:column;overflow:hidden}
+.tvh{display:flex;gap:12px;align-items:center;padding:10px 16px;border-bottom:3px solid #003087} .tvh b{font-size:17px;color:#003087} .tvh button{margin-left:auto}
+.tvsteps{display:flex;gap:6px;padding:8px 16px;flex-wrap:wrap} .tvsteps span{padding:4px 12px;border-radius:14px;background:#eef0f6;color:#6d5e55;font-weight:700;font-size:13px} .tvsteps span.on{background:#ffb500;color:#00205e} .tvsteps span.done{background:#2e9d4f;color:#fff}
+#tvBody{flex:1;overflow:auto;padding:4px 16px 16px;display:flex;flex-direction:column;gap:10px} .tvsec{border:1px solid #d5dae6;border-radius:10px;padding:8px 12px;animation:ehIn .5s} .tvsec h3{margin:2px 0 6px;color:#003087}
+.tv2{display:grid;grid-template-columns:1fr 1fr;gap:10px} .tv2w{display:grid;grid-template-columns:1.6fr 1fr;gap:10px} .tvc{border-left:5px solid #4d6b8c;padding-left:8px} .tvq{border-left:5px solid #6e4c82;padding-left:8px} .tv2 canvas,.tv2w canvas{width:100%;display:block}
+
+/* 100대 명산 실시간 날씨 줄 / live summit weather row */
+.live{flex-wrap:wrap!important;row-gap:3px!important}
+.wxtag{flex:1 1 100%;order:9;font-size:13px;line-height:1.5;padding:3px 10px;border-radius:6px;background:#eef6ee;border-left:5px solid #2e9d4f;color:var(--ink);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wxtag .wxh{font-weight:700;color:#1b5e20;margin-right:4px} .wxtag small{color:#8892ad}
+.wxtag.mid{background:#f3f6fc;border-left-color:#1e88e5} .wxtag.mid .wxh{color:#0d47a1}
+.wxtag.warn{background:#fff7e0;border-left-color:#ffb500} .wxtag.warn .wxh{color:#a06a00}
+.wxtag.bad{background:#fde2de;border-left-color:#c62828} .wxtag.bad .wxh,.wxtag.bad .wxs{color:#c62828}
+.live-h{line-height:1.25;text-align:center}

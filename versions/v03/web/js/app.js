@@ -145,10 +145,10 @@
     same: [[/항상 같아요|코사인/, ".proof"], [/대조군은/, ".qa"], [/샷|잡음|다른 회로/, ".tint-plum"], [/지지 특징|탐지율/, "#yC"]],
     bench: [[/탐지율|오경보|정밀도|에프원|에이유씨/, ".metric-desc"], [/에프원은/, "#bT"]],
     persona: [[/심박 백사십|서른한|예순여덟/, "#pCards"], [/최대심박|여성/, "#pCards .card:nth-child(1)"], [/인공지능이라도|경보가 달라/, "#pC"]],
-    meta: [[/관계도|워치|씨낫|겹침 점수를 만듭니다|고정/, "#mFlow"], [/신경망 그림|노란 선/, "#mNet"], [/가중치 공간|금색|주황 선/, "#mPar"], [/적응 곡선|무작위 시작점/, "#mAd"]],
+    meta: [[/관계도|워치|씨낫|겹침 점수를 만듭니다|고정/, "#mFlow"], [/신경망 그림|초록 선/, "#mNet"], [/가중치 공간|진분홍|남색 선/, "#mPar"], [/적응 곡선|무작위 시작점/, "#mAd"]],
     ecolab: [[/풀다운|왼쪽/, ".ecoctl"], [/여덟 단계 상자|차례로 켜/, "#xPipe"], [/배포|실시간 채점|현장 경보/, "#xRun2"], [/재학습|메타러너|피드백/, "#xRe"], [/로지스틱|심층/, "#xT"]],
     lab: [[/일곱 단계|왼쪽/, "#lSteps"], [/자동 실험/, "#lAuto"], [/다음 단계/, "#lNext"]],
-    dnn: [[/입력 신호|은닉|위험 점수/, "#dNet"], [/노란 선|굵기/, "#dNet"], [/문제 풀기|여덟|막대|체크|맞힌/, "#dQuiz"], [/손실이|손실/, "#dCur"], [/사백사십일|가중치/, "#dW"]],
+    dnn: [[/입력 신호|은닉|위험 점수/, "#dNet"], [/초록 선|굵기/, "#dNet"], [/문제 풀기|여덟|막대|체크|맞힌/, "#dQuiz"], [/손실이|손실/, "#dCur"], [/사백사십일|가중치/, "#dW"]],
     vqc: [[/다이얼|각도/, "#vC"], [/기울기|측정하면/, ".qa"]],
     eco: [[/수집|신호화|양자 특징|학습|배포|경보|피드백|메타/, "#eC"], [/자두색|장밋빛|안전 규칙/, "#eC"]],
     datamgr: [[/교과서|하는 일/, ".dmflow"], [/근거 기반 산행 시계열|생성할 때/, ".dmv>.card:nth-child(2)"], [/등급|검사/, "#gD"], [/연속 생성|학습 곡선/, "#gC"]],
@@ -317,7 +317,7 @@
     c.pois.forEach(function (q) { if (q.type === "stamp") return; h.fillStyle = "#c76b67"; h.fillRect(X(q.x) - 1.5, Y(QP.Mountain.elevAt(c, q.x)) - 5, 3, 3); }); // 위험 지점을 빨간 점으로 표시함 / mark risk points with red dots
     h.fillStyle = risk ? "#c62828" : al ? "#6e4c82" : "#ffb500"; h.beginPath(); h.arc(X(s0.x), Y(s0.elev) - 2, 4, 0, 7); h.fill(); h.strokeStyle = "#003087"; h.stroke(); // 산행자 위치(위험이면 빨강, 경보면 자두)임 / hiker position (red if risk, plum if alarm)
     h.fillStyle = "#003087"; h.font = "bold 10px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; h.fillText(s0.up ? "↗" : "↘", X(s0.x) + 6, Y(s0.elev) - 4); // 오르막, 내리막 방향임 / uphill or downhill direction
-    $("liveTag").innerHTML = "<b>" + live.course.name + " " + live.course.peak + "</b> 고도 " + Math.round(s0.elev) + "m, 경사 " + Math.round(s0.grade * 100) + "%, <b>심박 " + Math.round(s0.hr) + " bpm</b>(%HRR " + Math.round(s0.pHRR * 100) + "), 기온 " + s0.T.toFixed(1) + "°C, 비 " + s0.rain.toFixed(1) + " mm/h | <span class='c-dusk'>일반 " + Math.round(s0.lin * 100) + "%</span> <span class='c-plum'>양자 " + Math.round(s0.qf * 100) + "%</span> " + (risk ? "<b class='c-rose'>⚠ 위험 구간</b>" : al ? "<b class='c-plum'>⚠ 양자 경보</b>" : "정상"); // 상태 글자(크게, 자세히)임 / status text (large and detailed)
+    $("liveTag").innerHTML = "<small style=\"color:#8892ad\">[가상 시뮬레이션]</small> <b>" + live.course.name + " " + live.course.peak + "</b> 고도 " + Math.round(s0.elev) + "m, 경사 " + Math.round(s0.grade * 100) + "%, <b>심박 " + Math.round(s0.hr) + " bpm</b>(%HRR " + Math.round(s0.pHRR * 100) + "), 기온 " + s0.T.toFixed(1) + "°C, 비 " + s0.rain.toFixed(1) + " mm/h | <span class='c-dusk'>일반 " + Math.round(s0.lin * 100) + "%</span> <span class='c-plum'>양자 " + Math.round(s0.qf * 100) + "%</span> " + (risk ? "<b class='c-rose'>⚠ 위험 구간</b>" : al ? "<b class='c-plum'>⚠ 양자 경보</b>" : "정상"); // 상태 글자(크게, 자세히)임 / status text (large and detailed)
     $("live").className = "live" + (risk ? " risk" : al ? " warn" : ""); // 위험이면 깜빡임 / flash if risky
   }
   setInterval(liveTick, 260);                       // 0.12초마다 갱신함 / update every 0.12 s

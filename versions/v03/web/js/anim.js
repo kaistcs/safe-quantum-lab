@@ -85,20 +85,20 @@
       let md = 1e-9; if (o.deltas) o.deltas[l].forEach(function (r) { r.forEach(function (v) { md = Math.max(md, v); }); }); // 그 층의 최대 변화량임 / maximum change of that layer
       for (let j = 0; j < m.sizes[l + 1]; j++) for (let i = 0; i < m.sizes[l]; i++) {
         const w = m.W[l][j][i]; let a = Math.abs(w) / mx; if (o.acts) a = Math.min(1, Math.abs(w * o.acts[l][i]) / mx * 1.6); if (o.acts && a < .06) continue; // 활성값이 있으면 실제로 흐르는 신호 세기로 그림 / with activations, draw the actual flowing signal strength
-        const hot = o.deltas && o.deltas[l][j][i] / md > .6; // 이번 반복에 크게 바뀐 연결임 / connections that changed a lot this iteration
-        g.strokeStyle = hot ? "rgba(255,181,0,.95)" : (w > 0 ? "rgba(0,48,135," : "rgba(199,107,103,") + (.06 + .7 * a) + ")"; g.lineWidth = hot ? 2 : .3 + (o.small ? 1.4 : 2.2) * a; g.beginPath(); g.moveTo(xs(l), ys(l, i)); g.lineTo(xs(l + 1), ys(l + 1, j)); g.stroke(); // 연결선임 / connection line
+        const hot = o.deltas && md > 1e-6 && o.deltas[l][j][i] / md > .6; // 이번 반복에 크게 바뀐 연결임 / connections that changed a lot this iteration
+        g.strokeStyle = hot ? "rgba(0,176,80,.95)" : (w > 0 ? "rgba(0,48,135," : "rgba(199,107,103,") + (.06 + .7 * a) + ")"; g.lineWidth = hot ? 2 : .3 + (o.small ? 1.4 : 2.2) * a; g.beginPath(); g.moveTo(xs(l), ys(l, i)); g.lineTo(xs(l + 1), ys(l + 1, j)); g.stroke(); // 연결선임 / connection line
       }
     }
     const r0 = o.small ? 3.5 : 5;                   // 뉴런 반지름 기준임 / base neuron radius
     for (let l = 0; l < L; l++) for (let k = 0; k < m.sizes[l]; k++) { // 뉴런마다 / for each neuron
       const x = xs(l), y = ys(l, k), last = l === L - 1, v = o.acts ? o.acts[l][k] : null; // 위치와 활성값임 / position and activation
-      if (l === 0) g.fillStyle = k >= 16 ? "#6e4c82" : "#003087"; else if (last) g.fillStyle = v != null ? "rgba(169,72,42," + (.25 + .75 * v) + ")" : "#a9482a"; else g.fillStyle = v != null ? (v > 0 ? "rgba(255,181,0," + (.2 + .8 * v) + ")" : "rgba(199,107,103," + (.2 - .8 * v) + ")") : "#ffb500"; // 입력=청/자두, 은닉=노랑, 출력=단풍색임 / input = blue/plum, hidden = yellow, output = maple
+      const qf = o.qFrom || 16; if (l === 0) g.fillStyle = k >= qf ? "#6e4c82" : "#003087"; else if (last) g.fillStyle = v != null ? "rgba(169,72,42," + (.25 + .75 * v) + ")" : "#a9482a"; else g.fillStyle = v != null ? (v > 0 ? "rgba(255,181,0," + (.2 + .8 * v) + ")" : "rgba(199,107,103," + (.2 - .8 * v) + ")") : "#ffb500"; // 입력=청/자두, 은닉=노랑, 출력=단풍색임 / input = blue/plum, hidden = yellow, output = maple
       g.strokeStyle = "#8892ad"; g.lineWidth = 1; g.beginPath(); g.arc(x, y, last ? r0 * 2.6 : l === 0 ? r0 : r0 * 1.5, 0, 7); g.fill(); if (l) g.stroke(); // 뉴런 원임 / neuron circle
     }
     g.fillStyle = "#1d2a4d"; g.font = (o.small ? "bold 10px" : "bold 12px") + " Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.textAlign = "center"; // 층 이름 글씨임 / layer name text
     for (let l = 1; l < L; l++) g.fillText(l === L - 1 ? "출력" : "은닉 " + l + " (" + m.sizes[l] + ")", xs(l), o.y1 + (o.small ? 11 : 16)); // 층 이름임 / layer name
     if (!o.small) for (let l = 1; l < L - 2; l++) { g.fillStyle = "#8892ad"; g.font = "bold 16px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText("⋯", (xs(l) + xs(l + 1)) / 2, o.y0 - 2); } // 층이 이어짐을 뜻하는 표시임 / mark meaning the layers continue
-    if (o.labels) { g.textAlign = "right"; g.font = (o.small ? 9 : 11) + "px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; for (let k = 0; k < m.sizes[0]; k++) { g.fillStyle = k >= 16 ? "#6e4c82" : "#1d2a4d"; g.fillText(o.labels[k] || "", xs(0) - 8, ys(0, k) + 4); } } // 입력 이름임 / input names
+    if (o.labels) { g.textAlign = "right"; g.font = (o.small ? 9 : 11) + "px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; for (let k = 0; k < m.sizes[0]; k++) { g.fillStyle = k >= (o.qFrom || 16) ? "#6e4c82" : "#1d2a4d"; g.fillText(o.labels[k] || "", xs(0) - 8, ys(0, k) + 4); } } // 입력 이름임 / input names
     g.textAlign = "left"; return { xs: xs, ys: ys };  // 좌표 함수를 돌려줌 / return the coordinate functions
   }
   function canvas(cv, h) { return QP.Charts.prep(cv, h); } // 캔버스 준비(배율 처리)를 공유함 / share canvas preparation (scaling)

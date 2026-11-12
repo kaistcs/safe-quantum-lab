@@ -387,6 +387,27 @@ button,select,input,textarea{font-family:inherit}
 .hpoi .hadv{margin:4px 0 0;font-weight:700;color:#7d2c22}
 /* 전체 안내 칸에 번호 / numbers in the guide cells */
 .tprog{height:22px!important} .tprog i{font-style:normal;font-size:11px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;min-width:18px;line-height:1} .tprog i.cur{color:#00205e} .tprog i.done{color:#00205e}
+/* 실험 과정 보고서 / experiment process report */
+.xrepc #xRep{display:flex;flex-direction:column;gap:8px} .xr{border:1px solid #d5dae6;border-radius:10px;padding:8px 10px;background:#fbfcff;animation:ehIn .5s} .xr.xfin{border:2px solid #ffb500;background:#fffbea}
+.xrh{display:flex;gap:8px;align-items:center;font-size:15px} .xrn{display:inline-flex;width:28px;height:28px;border-radius:50%;background:#003087;color:#fff;align-items:center;justify-content:center;font-weight:800}
+.xflow{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:6px 0} .xchip{background:#eef4ff;border:1px solid #c9d3ea;border-radius:14px;padding:3px 10px;font-size:12.5px} .xar{color:#6d5e55;font-weight:900}
+.xcmp{display:grid;grid-template-columns:1fr 1fr;gap:6px} .xcl,.xcq{border-radius:8px;padding:5px 9px;font-size:13px} .xcl{background:#eef2f8;border-left:5px solid #4d6b8c} .xcq{background:#f4eef8;border-left:5px solid #6e4c82} .xcl p,.xcq p{margin:2px 0}
+.xri{margin-top:6px;font-size:13px;line-height:1.55} .xcmpt td,.xcmpt th{font-size:12.5px;padding:3px 7px} .xgood{color:#2e7d32;font-weight:800} .xbad{color:#c62828;font-weight:800} .xrd summary{cursor:pointer;color:#0a4fd6;font-size:12.5px;margin-top:4px}
+/* 학습 내부 과정 창 / training internals window */
+.tvx{position:fixed;inset:0;z-index:250;background:rgba(0,20,60,.55);display:flex;align-items:center;justify-content:center} .tvbox{width:min(1180px,95vw);height:92vh;background:#fff;border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.4);display:flex;flex-direction:column;overflow:hidden}
+.tvh{display:flex;gap:12px;align-items:center;padding:10px 16px;border-bottom:3px solid #003087} .tvh b{font-size:17px;color:#003087} .tvh button{margin-left:auto}
+.tvsteps{display:flex;gap:6px;padding:8px 16px;flex-wrap:wrap} .tvsteps span{padding:4px 12px;border-radius:14px;background:#eef0f6;color:#6d5e55;font-weight:700;font-size:13px} .tvsteps span.on{background:#ffb500;color:#00205e} .tvsteps span.done{background:#2e9d4f;color:#fff}
+#tvBody{flex:1;overflow:auto;padding:4px 16px 16px;display:flex;flex-direction:column;gap:10px} .tvsec{border:1px solid #d5dae6;border-radius:10px;padding:8px 12px;animation:ehIn .5s} .tvsec h3{margin:2px 0 6px;color:#003087}
+.tv2{display:grid;grid-template-columns:1fr 1fr;gap:10px} .tv2w{display:grid;grid-template-columns:1.6fr 1fr;gap:10px} .tvc{border-left:5px solid #4d6b8c;padding-left:8px} .tvq{border-left:5px solid #6e4c82;padding-left:8px} .tv2 canvas,.tv2w canvas{width:100%;display:block}
+
+/* 100대 명산 실시간 날씨 줄 / live summit weather row */
+.live{flex-wrap:wrap!important;row-gap:3px!important}
+.wxtag{flex:1 1 100%;order:9;font-size:13px;line-height:1.5;padding:3px 10px;border-radius:6px;background:#eef6ee;border-left:5px solid #2e9d4f;color:var(--ink);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wxtag .wxh{font-weight:700;color:#1b5e20;margin-right:4px} .wxtag small{color:#8892ad}
+.wxtag.mid{background:#f3f6fc;border-left-color:#1e88e5} .wxtag.mid .wxh{color:#0d47a1}
+.wxtag.warn{background:#fff7e0;border-left-color:#ffb500} .wxtag.warn .wxh{color:#a06a00}
+.wxtag.bad{background:#fde2de;border-left-color:#c62828} .wxtag.bad .wxh,.wxtag.bad .wxs{color:#c62828}
+.live-h{line-height:1.25;text-align:center}
 
 </style>                    <!-- 디자인 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet"> <!-- 한글: 본명조 계열 Noto Serif KR(인터넷이 없으면 바탕으로 대신 표시) / Korean font -->
@@ -415,7 +436,7 @@ button,select,input,textarea{font-family:inherit}
     <div id="tourBar" class="tourbar" hidden><b class="tb-t">전체 안내</b><button id="tPrev">◀ 이전</button><button id="tPause">▶ 재생</button><button id="tNext">다음 ▶</button><div class="tprog" id="tProg"></div><span id="tLabel"></span><label class="tog"><input type="checkbox" id="tLoop" checked> 반복 재생</label><button id="tEnd">✕ 종료</button></div> <!-- 자동 안내 진행 막대 -->
     <div id="dataBadge" class="databadge"></div>                  <!-- 지금 에뮬레이팅 중인 데이터와 변화 -->
     <section id="view" class="view"></section>                    <!-- 화면 내용 -->
-    <div id="live" class="live" title="배경에서 계속 진행되는 실시간 산행 관제(청=일반 AI, 자두=양자 특징 AI)"><b class="live-h">실시간 산행 관제</b><canvas id="liveMtn" title="산 단면(가상 코스, 실측 GPX로 교체 예정)과 산행자 위치"></canvas><canvas id="liveCv"></canvas><span id="liveTag">실시간 관제 준비 중</span></div> <!-- 아래쪽 큰 실시간 관제 띠 -->
+    <div id="live" class="live" title="배경에서 계속 진행되는 실시간 산행 관제(청=일반 AI, 자두=양자 특징 AI)"><b class="live-h">100대 명산 현재<br>실시간 산행 정보</b><canvas id="liveMtn" title="산 단면(가상 코스, 실측 GPX로 교체 예정)과 산행자 위치"></canvas><canvas id="liveCv"></canvas><span id="liveTag">실시간 관제 준비 중</span></div> <!-- 아래쪽 큰 실시간 관제 띠 -->
     <footer class="voicebar"><button id="vPlay" title="설명 재생">▶</button><button id="vPause" title="일시정지">❚❚</button><button id="vStop" title="정지">■</button>
       <select id="vRate" title="속도"><option value="0.85">천천히(0.85배)</option><option value="1" selected>보통(1배)</option><option value="1.3">조금 빠르게(1.3배)</option><option value="1.6">빠르게(1.6배)</option><option value="1.9">아주 빠르게(1.9배)</option></select>
       <select id="vAlt" title="여성, 남성 목소리 자동 교대"><option value="99" selected>남녀 교대: 주제마다(기본)</option><option value="4">남녀 교대: 4문장마다</option><option value="2">남녀 교대: 2문장마다</option><option value="0">교대 끄기</option></select>
@@ -1061,7 +1082,7 @@ window.QP_I18N_EN = {
 "근거: 에코 사이클": "Evidence: eco-cycle",
 "근거: 초개인화": "Evidence: hyper-personalization",
 "근거: 측정과 확률": "Evidence: measurement and probability",
-"금색 = 사람별 #걸음 적응 θ′ (가중치 #개를 #차원으로 투영)": "gold = per-person #-step adapted θ′ (# weights projected to # dimensions)",
+"진분홍 = 사람별 #걸음 적응 θ′ (가중치 #개를 #차원으로 투영)": "gold = per-person #-step adapted θ′ (# weights projected to # dimensions)",
 "급경사": "Steep slope",
 "급경사, 계획 시간": "steep slope, planned time",
 "기상": "Weather",
@@ -1231,7 +1252,7 @@ window.QP_I18N_EN = {
 "반복 #회, 맞힌 문제": "iteration #, questions correct",
 "반복 →": "iterations →",
 "반복 → (주황 손실, 청 정확도)": "iterations → (orange loss, blue accuracy)",
-"반복할 때마다 오차를 뒤로 전달해 연결의 굵기와 색이 바뀌고, 노란 선은 이번에 크게 바뀐 연결입니다.": "Each iteration sends the error backward, changing connection thickness and color; yellow lines are connections that changed a lot this time.",
+"반복할 때마다 오차를 뒤로 전달해 연결의 굵기와 색이 바뀌고, 초록 선은 이번에 크게 바뀐 연결입니다.": "Each iteration sends the error backward, changing connection thickness and color; green lines are connections that changed a lot this time.",
 "반영 안 함": "not applied",
 "받기": "Get",
 "발생 시": "on occurrence",
@@ -1418,7 +1439,7 @@ window.QP_I18N_EN = {
 "시험 표본에서 탐지율, AUC 비교와 판정": "compare detection rate and AUC on test samples and decide",
 "시험관 모드": "Examiner mode",
 "시험관 모드(근거 모두 펼침)": "Examiner mode (open all evidence)",
-"신경망 #→#→# (청=+, 장밋빛=−, 굵기=크기, 노랑=이 사람에게 맞추며 크게 바뀐 연결)": "Network #→#→# (blue=+, rose=−, thickness=size, yellow=connections changed a lot while fitting this person)",
+"심층 신경망 #→#→#→#→# (청=+, 장밋빛=−, 굵기=크기, 초록=이 사람에게 맞추며 크게 바뀐 연결, 자주=양자 입력)": "Network #→#→# (blue=+, rose=−, thickness=size, green=connections changed a lot while fitting this person)",
 "신경망 학습을 시작합니다.": "Starting neural-network training.",
 "신선봉 #m": "Sinseonbong # m",
 "신호 #개 → 학습 #개": "# signals → # for training",
@@ -1426,6 +1447,9 @@ window.QP_I18N_EN = {
 "신호 쌍 곱 > # 규칙": "signal-pair product > # rule",
 "신호화(#개)": "Signal encoding (#)",
 "실시간 산행 관제": "Live hiking control",
+"100대 명산 현재": "Top-100 mountains",
+"실시간 산행 정보": "live hiking info",
+"[가상 시뮬레이션]": "[virtual simulation]",
 "실제 데이터로 바꾸려면 산행에서 무엇을 얻어야 하나": "What must be collected on hikes to switch to real data",
 "실제 양자 장비는 유한 번 측정하고 잡음이 있습니다. 샷 수를 #, #, #, #로 줄이면 탐지율이 얼마나 떨어지는지 확인합니다.": "Real quantum hardware measures a finite number of times and has noise. We check how much the detection rate drops when shots are reduced to #, #, #, #.",
 "실제 위험 중 경보한 비율": "share of real risks that got an alarm",
@@ -1466,11 +1490,11 @@ window.QP_I18N_EN = {
 "심박×피로": "HR×fatigue",
 "심박만 높은 짧은 오르막(피로 낮음)": "short climb with only high heart rate (low fatigue)",
 "심박예비율. (HR−안정시)/(최대−안정시)": "heart-rate reserve. (HR−rest)/(max−rest)",
-"심층 신경망 내부: 입력 → 은닉 # → # → # → 위험 점수 (청=+, 장밋빛=−, 굵기=크기, 노랑=이번 반복에 크게 바뀐 연결)": "Inside the deep network: input → hidden # → # → # → risk score (blue=+, rose=−, thickness=size, yellow=connections changed a lot this iteration)",
+"심층 신경망 내부: 입력 → 은닉 # → # → # → 위험 점수 (청=+, 장밋빛=−, 굵기=크기, 초록=이번 반복에 크게 바뀐 연결)": "Inside the deep network: input → hidden # → # → # → risk score (blue=+, rose=−, thickness=size, green=connections changed a lot this iteration)",
 "심층 신경망(은닉 #, #, #)": "Deep neural network (hidden #, #, #)",
 "심층 신경망이 학습되는 모습을 보여 줍니다.": "Shows a deep neural network learning.",
 "씨앗": "Seed",
-"아래 신경망 그림에서 노란 선은 한 사람에게 맞추며 크게 바뀐 연결입니다.": "In the network below, yellow lines are connections that changed a lot while fitting one person.",
+"아래 신경망 그림에서 초록 선은 한 사람에게 맞추며 크게 바뀐 연결입니다.": "In the network below, green lines are connections that changed a lot while fitting one person.",
 "아이나비 백대 명산 스탬프 투어입니다.": "This is the iNavi top 100 mountains stamp tour.",
 "아주 느리게": "very slow",
 "아주 빠르게(#배)": "very fast (#×)",
@@ -1703,7 +1727,7 @@ window.QP_I18N_EN = {
 "오대산": "Odaesan",
 "오대산 비로봉 #m": "Odaesan Birobong # m",
 "오르는 중 #%": "climbing #%",
-"오른쪽 가중치 공간 그림의 금색 선은 한 사람에게 다섯 걸음 맞추는 안쪽 루프이고, 주황 선은 여러 사람의 결과로 공통 시작점이 옮겨 가는 바깥 루프입니다.": "In the weight-space plot on the right, gold lines are the inner loop fitting one person in five steps, and the orange line is the outer loop moving the shared start using many people's results.",
+"오른쪽 가중치 공간 그림의 진분홍 선은 한 사람에게 다섯 걸음 맞추는 안쪽 루프이고, 남색 선은 여러 사람의 결과로 공통 시작점이 옮겨 가는 바깥 루프입니다.": "In the weight-space plot on the right, gold lines are the inner loop fitting one person in five steps, and the orange line is the outer loop moving the shared start using many people's results.",
 "오른쪽 표는 근거 기반 산행 스물네 번에서 실제 사건을 세 종류로 나눠, 사건 전에 경보를 낸 횟수와 평균 몇 분 앞섰는지 보여 줍니다.": "The table on the right splits real events from the evidence-based hikes into three types and shows how often each AI warned before the event and by how many minutes on average.",
 "오른쪽에는 학습을 알기 쉽게 문제 풀기로 표현했습니다.": "On the right, learning is shown simply as solving questions.",
 "오른쪽에서는 소나기 속 젖은 돌계단 하산, 폭우 속 깔딱고개처럼 실제 상황 여섯 문제를 회로가 풀며, 학습할수록 맞힌 문제가 늘어납니다.": "On the right, the circuit solves six real situations, such as descending wet stone steps in a shower or a steep pass in heavy rain, and gets more right as it learns.",
@@ -2408,9 +2432,9 @@ window.QP_I18N_EN = {
 "전체 자동 안내를 마쳤습니다.": "The full automatic guide is finished.",
 "들어 주셔서 감사합니다.": "Thank you for listening.",
 "숙명여자대학교 에이지아이 연구실이었습니다.": "This was the AGI Lab., Sookmyung Women's University.",
-"반복할 때마다 노란 선이 크게 바뀐 연결입니다.": "With each iteration, yellow lines are the connections that changed a lot.",
+"반복할 때마다 초록 선이 크게 바뀐 연결입니다.": "With each iteration, green lines are the connections that changed a lot.",
 "오른쪽에서는 실제 산행 상황 여덟 문제를 신경망이 풀고 있으며, 학습할수록 맞힌 문제가 늘어납니다.": "On the right, the network is solving eight real hiking situations and gets more right as it learns.",
-"금색 화살표는 한 사람에게 맞추는 다섯 걸음이고, 주황 선은 여러 사람의 결과로 공통 시작점이 옮겨 가는 길입니다.": "Gold arrows are the five steps fitting one person; the orange line is the path along which the shared start moves using many people's results.",
+"진분홍 화살표는 한 사람에게 맞추는 다섯 걸음이고, 남색 선은 여러 사람의 결과로 공통 시작점이 옮겨 가는 길입니다.": "Gold arrows are the five steps fitting one person; the orange line is the path along which the shared start moves using many people's results.",
 "시작점이 좋아질수록 새 사람도 한두 걸음 만에 맞춰집니다.": "The better the start, the faster a new person is fitted, in one or two steps.",
 "정답 위험": "answer risk",
 "정답 정상": "answer normal",
@@ -3121,7 +3145,8 @@ window.QP_I18N_EN = {
  *            학습하면 데이터가 많이 필요하므로, 여러 사람(과제)에서 "빨리 적응하기
  *            좋은 시작 가중치 θ"를 먼저 배워 두고(메타학습), 새 사람은 산행 기록
  *            10개만으로 몇 걸음 만에 맞춤(적응)함.
- * 양자 특징과의 관계 : 입력 3개 중 하나가 2큐비트 회로의 겹침 점수 ⟨Z⟩(심박 부담×피로)임.
+ * 양자 특징과의 관계 : 입력 8개 중 2개가 2큐비트 회로의 겹침 점수 ⟨Z⟩(심박 부담×피로, 강수×경사)임.
+ *            신경망은 8 → 16 → 12 → 8 → 1(은닉층 3개)이고, 정답은 나이, 안정시 심박, 체력, 산행 이력에 따라 사람마다 다름.
  *            즉 양자 특징 AI가 만든 "겹침 신호"를 메타러너가 받아, 사람마다 그
  *            신호를 얼마나 무겁게 볼지를 빠르게 조정함.
  * 근거 : Finn, Abbeel & Levine, ICML 2017(MAML) / Nichol et al., arXiv:1803.02999(1차 근사)
@@ -3129,72 +3154,62 @@ window.QP_I18N_EN = {
  * ===================================================================== */
 (function (QP) {                                    // QP 이름공간에 메타학습 기능을 붙임 / attaches meta-learning to the QP namespace
   "use strict";                                     // 엄격 모드를 켬 / turn on strict mode
-  const H = 6;                                      // 은닉 뉴런 수임 / number of hidden neurons
+  const SIZES = [8, 16, 12, 8, 1];                  // 입력 8 → 은닉 16 → 12 → 8 → 위험 점수(심층 신경망) / input 8 → hidden 16 → 12 → 8 → risk score (deep network)
+  const NAMES = ["심박(bpm)", "피로", "경사", "강수", "일몰 여유 부족", "결빙", "⟨Z⟩ 심박×피로", "⟨Z⟩ 강수×경사"]; // 입력 이름(마지막 2개는 양자 겹침 점수) / input names (last two are quantum overlap scores)
   const clip = function (v) { return Math.max(0, Math.min(1, v)); }; // 0~1로 자름 / clip to 0~1
   function newPerson(r) {                           // 무작위 산행자(과제) 하나를 만듦 / makes one random hiker (task)
-    const sex = r() < .5 ? "F" : "M", age = 25 + Math.floor(r() * 55), rest = 52 + Math.floor(r() * 30); // 성별, 나이, 안정시 심박임 / sex, age, resting HR
-    return { sex: sex, age: age, rest: rest, max: sex === "F" ? 206 - .88 * age : 208 - .7 * age }; // 개인 최대심박(Gulati, Tanaka)임 / personal max HR (Gulati, Tanaka)
+    const sex = r() < .5 ? "F" : "M", age = 25 + Math.floor(r() * 55), rest = 52 + Math.floor(r() * 30), fit = .75 + r() * .5, hist = Math.floor(r() * 50); // 성별, 나이, 안정시 심박, 체력, 산행 이력 / sex, age, resting HR, fitness, hiking history
+    return { sex: sex, age: age, rest: rest, fit: fit, hist: hist, max: sex === "F" ? 206 - .88 * age : 208 - .7 * age }; // 개인 최대심박(Gulati, Tanaka) / personal max HR
   }
-  function sample(p, n, r) {                        // 그 사람의 산행 기록 n개(입력, 정답)를 만듦 / makes n hiking records (input, label) for that person
-    const out = [];                                 // 결과 목록임 / result list
-    for (let k = 0; k < n; k++) {                   // n번 반복함 / repeat n times
-      const hr = 85 + r() * 100, slope = r() * .45, fat = r(); // 심박(bpm), 경사, 피로임 / heart rate (bpm), slope, fatigue
-      const hrr = (hr - p.rest) / (p.max - p.rest); // 개인 심박예비율(정답 계산에만 씀, 입력에는 없음)임 / personal HR reserve (used only for the label, not an input)
-      const load = clip((hr - 90) / 90);            // 모두에게 같은 기준으로 잰 심박 부담(개인차 반영 안 됨)임 / heart-rate load on a common scale for everyone (no personal difference)
-      const z = QP.Models.pairExact(load, fat);     // 2큐비트 회로 겹침 점수(심박 부담 × 피로)임 / 2-qubit circuit overlap score (heart-rate load × fatigue)
-      const y = hrr > .85 || (hrr > .65 && slope > .3) || (hrr > .55 && fat > .8) ? 1 : 0; // 개인 기준의 위험 정답(사람마다 경계가 다름)임 / risk label by the personal standard (boundary differs per person)
-      out.push({ f: [hr / 200, slope / .45, z], y: y }); // 입력 3개(심박, 경사, 양자 겹침 점수)와 정답임 / three inputs (heart rate, slope, quantum overlap score) and the label
+  function sample(p, n, r) {                        // 그 사람의 산행 기록 n개(입력, 정답) / n hiking records for that person
+    const out = [];
+    for (let k = 0; k < n; k++) {
+      const hr = 85 + r() * 100, fat = r(), slope = r(), rain = r() < .4 ? r() : r() * .2, sun = r() < .3 ? r() : r() * .3, ice = r() < .2 ? r() : 0; // 원자료 / raw values
+      const hrr = (hr - p.rest) / (p.max - p.rest), tol = (p.fit - 1) * .25 + Math.min(1, p.hist / 40) * .08; // 개인 %HRR과 견딤 정도(체력, 이력) / personal %HRR and tolerance (fitness, history)
+      const load = clip((hr - 90) / 90), zA = QP.Models.pairExact(load, fat), zB = QP.Models.pairExact(rain, slope); // 양자 겹침 점수 2개 / two quantum overlap scores
+      const y = hrr > .85 + tol || (hrr > .65 + tol && slope > .65) || (hrr > .55 + tol && fat > .8) || (rain > .6 && slope > .6) || (sun > .7 && fat > .6 - tol) || (ice > .5 && slope > .5) ? 1 : 0; // 개인 기준의 위험 정답(사람마다 경계가 다름) / personal risk label
+      out.push({ f: [hr / 200, fat, slope, rain, sun, ice, zA, zB], y: y });
     }
-    return out;                                     // 기록을 돌려줌 / return the records
+    return out;
   }
-  function init(r) {                                // 무작위 시작 가중치임 / random starting weights
-    const g = function () { return (r() - .5) * 1.2; }; // 작은 무작위 값임 / small random value
-    return { W1: Array.from({ length: H }, function () { return [g(), g(), g()]; }), b1: new Array(H).fill(0), W2: Array.from({ length: H }, g), b2: 0 }; // 3→6→1 신경망임 / 3→6→1 network
+  function init(r) {                                // Xavier 무작위 시작 가중치 / Xavier random initial weights
+    const W = [], b = [];
+    for (let l = 0; l < SIZES.length - 1; l++) { const n0 = SIZES[l], n1 = SIZES[l + 1], sc = Math.sqrt(6 / (n0 + n1)); W.push(Array.from({ length: n1 }, function () { return Array.from({ length: n0 }, function () { return (r() * 2 - 1) * sc; }); })); b.push(new Array(n1).fill(0)); }
+    return { W: W, b: b };
   }
-  const copy = function (t) { return { W1: t.W1.map(function (r) { return r.slice(); }), b1: t.b1.slice(), W2: t.W2.slice(), b2: t.b2 }; }; // 가중치 복사임 / copy the weights
-  function fwd(t, f) {                              // 순전파임 / forward pass
-    const h = t.W1.map(function (w, j) { return Math.tanh(w[0] * f[0] + w[1] * f[1] + w[2] * f[2] + t.b1[j]); }); // 은닉값임 / hidden values
-    let z = t.b2; for (let j = 0; j < H; j++) z += t.W2[j] * h[j]; // 출력 합임 / output sum
-    return { h: h, o: 1 / (1 + Math.exp(-z)) };     // 은닉값과 위험 점수임 / hidden values and risk score
+  const copy = function (t) { return { W: t.W.map(function (Wl) { return Wl.map(function (r) { return r.slice(); }); }), b: t.b.map(function (bl) { return bl.slice(); }) }; }; // 가중치 복사 / copy weights
+  function fwd(t, f) {                              // 순전파(은닉 tanh, 출력 sigmoid) / forward pass
+    const acts = [f]; let a = f;
+    for (let l = 0; l < t.W.length; l++) { const last = l === t.W.length - 1; a = t.W[l].map(function (row, j) { let z = t.b[l][j]; for (let i = 0; i < row.length; i++) z += row[i] * a[i]; return last ? 1 / (1 + Math.exp(-z)) : Math.tanh(z); }); acts.push(a); }
+    return { acts: acts, o: a[0] };
   }
-  function grad(t, data) {                          // 평균 기울기와 손실을 구함(역전파) / mean gradient and loss (backpropagation)
-    const g = { W1: t.W1.map(function () { return [0, 0, 0]; }), b1: new Array(H).fill(0), W2: new Array(H).fill(0), b2: 0 }; let L = 0; // 누적 변수임 / accumulator
-    data.forEach(function (d) { const r = fwd(t, d.f), e = r.o - d.y; L -= d.y ? Math.log(r.o + 1e-9) : Math.log(1 - r.o + 1e-9); g.b2 += e; for (let j = 0; j < H; j++) { g.W2[j] += e * r.h[j]; const dh = e * t.W2[j] * (1 - r.h[j] * r.h[j]); g.b1[j] += dh; for (let i = 0; i < 3; i++) g.W1[j][i] += dh * d.f[i]; } }); // 표본마다 기울기를 더함 / add the gradient per sample
-    const n = data.length; g.b2 /= n; g.W2 = g.W2.map(function (v) { return v / n; }); g.b1 = g.b1.map(function (v) { return v / n; }); g.W1 = g.W1.map(function (r) { return r.map(function (v) { return v / n; }); }); // 평균을 냄 / take the average
-    return { g: g, L: L / n };                      // 기울기와 손실임 / gradient and loss
+  function grad(t, data) {                          // 역전파로 평균 기울기와 손실 / mean gradient and loss by backpropagation
+    const g = { W: t.W.map(function (Wl) { return Wl.map(function (r) { return new Array(r.length).fill(0); }); }), b: t.b.map(function (bl) { return new Array(bl.length).fill(0); }) }; let L = 0;
+    data.forEach(function (d) { const r = fwd(t, d.f), A = r.acts; L -= d.y ? Math.log(r.o + 1e-9) : Math.log(1 - r.o + 1e-9); let delta = [r.o - d.y];
+      for (let l = t.W.length - 1; l >= 0; l--) { const prev = A[l], nd = new Array(prev.length).fill(0);
+        for (let j = 0; j < delta.length; j++) { g.b[l][j] += delta[j]; for (let i = 0; i < prev.length; i++) { g.W[l][j][i] += delta[j] * prev[i]; nd[i] += delta[j] * t.W[l][j][i]; } }
+        if (l > 0) delta = nd.map(function (v, i) { return v * (1 - prev[i] * prev[i]); }); } });
+    const n = data.length; g.W.forEach(function (Wl) { Wl.forEach(function (r) { for (let i = 0; i < r.length; i++) r[i] /= n; }); }); g.b.forEach(function (bl) { for (let j = 0; j < bl.length; j++) bl[j] /= n; });
+    return { g: g, L: L / n };
   }
-  function step(t, g, lr) {                         // 기울기 방향으로 가중치를 고침 / updates the weights along the gradient
-    t.b2 -= lr * g.b2; for (let j = 0; j < H; j++) { t.W2[j] -= lr * g.W2[j]; t.b1[j] -= lr * g.b1[j]; for (let i = 0; i < 3; i++) t.W1[j][i] -= lr * g.W1[j][i]; } // 모든 가중치를 고침 / update every weight
-    return t;                                       // 고친 가중치임 / updated weights
+  function step(t, g, lr) { for (let l = 0; l < t.W.length; l++) for (let j = 0; j < t.W[l].length; j++) { t.b[l][j] -= lr * g.b[l][j]; for (let i = 0; i < t.W[l][j].length; i++) t.W[l][j][i] -= lr * g.W[l][j][i]; } return t; } // 가중치 갱신 / update weights
+  function adapt(t, support, k, lr) { const a = copy(t), path = [copy(a)]; for (let s = 0; s < k; s++) { step(a, grad(a, support).g, lr); path.push(copy(a)); } return { a: a, path: path }; } // 안쪽 루프 / inner loop
+  function acc(t, data) { let ok = 0; data.forEach(function (d) { if ((fwd(t, d.f).o >= .5 ? 1 : 0) === d.y) ok++; }); return ok / data.length; } // 정확도 / accuracy
+  function create(seed) { const r = QP.Sim.rng(seed || 77); return { r: r, theta: init(r), it: 0, loss: [], last: [], inner: 5, lrIn: .5, lrOut: .3 }; } // 메타학습기 / meta-learner
+  function metaStep(m, nTasks) {                    // 바깥 루프 한 번(FOMAML) / one outer loop (FOMAML)
+    const gs = [], tasks = []; let L = 0;
+    for (let k = 0; k < (nTasks || 4); k++) { const p = newPerson(m.r), sup = sample(p, 10, m.r), qry = sample(p, 30, m.r), ad = adapt(m.theta, sup, m.inner, m.lrIn), q = grad(ad.a, qry); gs.push(q.g); L += q.L; tasks.push({ p: p, path: ad.path, before: acc(m.theta, qry), after: acc(ad.a, qry) }); }
+    const avg = { W: m.theta.W.map(function (Wl, l) { return Wl.map(function (r, j) { return r.map(function (_, i) { return gs.reduce(function (s, g) { return s + g.W[l][j][i]; }, 0) / gs.length; }); }); }), b: m.theta.b.map(function (bl, l) { return bl.map(function (_, j) { return gs.reduce(function (s, g) { return s + g.b[l][j]; }, 0) / gs.length; }); }) };
+    m.prev = copy(m.theta); step(m.theta, avg, m.lrOut); m.it++; m.loss.push(L / gs.length); m.last = tasks; return m;
   }
-  function adapt(t, support, k, lr) {               // 안쪽 루프: 그 사람 기록으로 k걸음 적응함 / inner loop: adapt k steps with that person's records
-    const a = copy(t), path = [copy(a)];            // 시작점 복사와 경로 기록임 / copy of the start and path record
-    for (let s = 0; s < k; s++) { step(a, grad(a, support).g, lr); path.push(copy(a)); } // k번 고침 / update k times
-    return { a: a, path: path };                    // 적응한 가중치와 경로임 / adapted weights and path
+  function evaluate(m, seed) {                      // 처음 보는 사람 12명: 메타 시작점 vs 무작위 시작점 / 12 new people: meta start vs random start
+    const r = QP.Sim.rng(seed || 999), cM = new Array(11).fill(0), cR = new Array(11).fill(0), N = 12;
+    for (let k = 0; k < N; k++) { const p = newPerson(r), sup = sample(p, 10, r), qry = sample(p, 60, r), am = adapt(m.theta, sup, 10, m.lrIn).path, ar = adapt(init(r), sup, 10, m.lrIn).path; for (let s = 0; s <= 10; s++) { cM[s] += acc(am[s], qry) / N; cR[s] += acc(ar[s], qry) / N; } }
+    return { meta: cM, rand: cR };
   }
-  function acc(t, data) { let ok = 0; data.forEach(function (d) { if ((fwd(t, d.f).o >= .5 ? 1 : 0) === d.y) ok++; }); return ok / data.length; } // 정확도임 / accuracy
-  function create(seed) {                           // 메타학습기 하나를 만듦 / creates one meta-learner
-    const r = QP.Sim.rng(seed || 77);               // 고정 난수임 / fixed random generator
-    return { r: r, theta: init(r), it: 0, loss: [], last: [], inner: 5, lrIn: .8, lrOut: .25 }; // 메타 가중치 θ와 기록임 / meta weights θ and records
-  }
-  function metaStep(m, nTasks) {                    // 바깥 루프 한 번: 사람 nTasks명에서 θ를 고침(FOMAML) / one outer loop: update θ from nTasks people (FOMAML)
-    const gs = [], tasks = []; let L = 0;           // 기울기 목록, 과제 기록, 손실임 / gradient list, task records, loss
-    for (let k = 0; k < (nTasks || 4); k++) {       // 사람마다 / for each person
-      const p = newPerson(m.r), sup = sample(p, 10, m.r), qry = sample(p, 30, m.r); // 적응용 10개, 평가용 30개 기록임 / 10 records for adaptation, 30 for evaluation
-      const ad = adapt(m.theta, sup, m.inner, m.lrIn); // 안쪽 루프 적응임 / inner-loop adaptation
-      const q = grad(ad.a, qry); gs.push(q.g); L += q.L; // 적응한 가중치로 평가 기울기(1차 근사)를 구함 / evaluation gradient at the adapted weights (first-order approximation)
-      tasks.push({ p: p, path: ad.path, before: acc(m.theta, qry), after: acc(ad.a, qry) }); // 그림용 기록임 / record for drawing
-    }
-    const avg = gs.reduce(function (s, g) { s.b2 += g.b2 / gs.length; for (let j = 0; j < H; j++) { s.W2[j] += g.W2[j] / gs.length; s.b1[j] += g.b1[j] / gs.length; for (let i = 0; i < 3; i++) s.W1[j][i] += g.W1[j][i] / gs.length; } return s; }, { W1: m.theta.W1.map(function () { return [0, 0, 0]; }), b1: new Array(H).fill(0), W2: new Array(H).fill(0), b2: 0 }); // 사람들 기울기의 평균임 / average of the people's gradients
-    m.prev = copy(m.theta); step(m.theta, avg, m.lrOut); m.it++; m.loss.push(L / gs.length); m.last = tasks; // θ를 평균 방향으로 고침(바깥 루프) / move θ along the average (outer loop)
-    return m;                                       // 메타학습기임 / the meta-learner
-  }
-  function evaluate(m, seed) {                      // 처음 보는 사람에서 "메타 시작점 vs 무작위 시작점" 적응 곡선을 비교함 / compares "meta start vs random start" adaptation curves on new people
-    const r = QP.Sim.rng(seed || 999), curveM = new Array(11).fill(0), curveR = new Array(11).fill(0), N = 12; // 비교용 사람 12명임 / 12 people for comparison
-    for (let k = 0; k < N; k++) { const p = newPerson(r), sup = sample(p, 10, r), qry = sample(p, 60, r); const am = adapt(m.theta, sup, 10, m.lrIn).path, ar = adapt(init(r), sup, 10, m.lrIn).path; for (let s = 0; s <= 10; s++) { curveM[s] += acc(am[s], qry) / N; curveR[s] += acc(ar[s], qry) / N; } } // 걸음 수별 정확도를 평균함 / average accuracy per step count
-    return { meta: curveM, rand: curveR };          // 두 곡선임 / the two curves
-  }
-  QP.Meta = { create: create, metaStep: metaStep, evaluate: evaluate, fwd: fwd, H: H }; // 공개함 / make public
+  const flat = function (t) { const v = []; t.W.forEach(function (Wl) { Wl.forEach(function (r) { v.push.apply(v, r); }); }); t.b.forEach(function (bl) { v.push.apply(v, bl); }); return v; }; // 가중치를 한 줄로 / flatten
+  const COUNT = flat(init(QP.Sim.rng(1))).length;   // 학습되는 숫자 개수 / number of parameters
+  QP.Meta = { create: create, metaStep: metaStep, evaluate: evaluate, fwd: fwd, flat: flat, SIZES: SIZES, NAMES: NAMES, COUNT: COUNT, H: COUNT }; // 공개함 / make public
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace
 
 </script>
@@ -3986,20 +4001,20 @@ window.QP_I18N_EN = {
       let md = 1e-9; if (o.deltas) o.deltas[l].forEach(function (r) { r.forEach(function (v) { md = Math.max(md, v); }); }); // 그 층의 최대 변화량임 / maximum change of that layer
       for (let j = 0; j < m.sizes[l + 1]; j++) for (let i = 0; i < m.sizes[l]; i++) {
         const w = m.W[l][j][i]; let a = Math.abs(w) / mx; if (o.acts) a = Math.min(1, Math.abs(w * o.acts[l][i]) / mx * 1.6); if (o.acts && a < .06) continue; // 활성값이 있으면 실제로 흐르는 신호 세기로 그림 / with activations, draw the actual flowing signal strength
-        const hot = o.deltas && o.deltas[l][j][i] / md > .6; // 이번 반복에 크게 바뀐 연결임 / connections that changed a lot this iteration
-        g.strokeStyle = hot ? "rgba(255,181,0,.95)" : (w > 0 ? "rgba(0,48,135," : "rgba(199,107,103,") + (.06 + .7 * a) + ")"; g.lineWidth = hot ? 2 : .3 + (o.small ? 1.4 : 2.2) * a; g.beginPath(); g.moveTo(xs(l), ys(l, i)); g.lineTo(xs(l + 1), ys(l + 1, j)); g.stroke(); // 연결선임 / connection line
+        const hot = o.deltas && md > 1e-6 && o.deltas[l][j][i] / md > .6; // 이번 반복에 크게 바뀐 연결임 / connections that changed a lot this iteration
+        g.strokeStyle = hot ? "rgba(0,176,80,.95)" : (w > 0 ? "rgba(0,48,135," : "rgba(199,107,103,") + (.06 + .7 * a) + ")"; g.lineWidth = hot ? 2 : .3 + (o.small ? 1.4 : 2.2) * a; g.beginPath(); g.moveTo(xs(l), ys(l, i)); g.lineTo(xs(l + 1), ys(l + 1, j)); g.stroke(); // 연결선임 / connection line
       }
     }
     const r0 = o.small ? 3.5 : 5;                   // 뉴런 반지름 기준임 / base neuron radius
     for (let l = 0; l < L; l++) for (let k = 0; k < m.sizes[l]; k++) { // 뉴런마다 / for each neuron
       const x = xs(l), y = ys(l, k), last = l === L - 1, v = o.acts ? o.acts[l][k] : null; // 위치와 활성값임 / position and activation
-      if (l === 0) g.fillStyle = k >= 16 ? "#6e4c82" : "#003087"; else if (last) g.fillStyle = v != null ? "rgba(169,72,42," + (.25 + .75 * v) + ")" : "#a9482a"; else g.fillStyle = v != null ? (v > 0 ? "rgba(255,181,0," + (.2 + .8 * v) + ")" : "rgba(199,107,103," + (.2 - .8 * v) + ")") : "#ffb500"; // 입력=청/자두, 은닉=노랑, 출력=단풍색임 / input = blue/plum, hidden = yellow, output = maple
+      const qf = o.qFrom || 16; if (l === 0) g.fillStyle = k >= qf ? "#6e4c82" : "#003087"; else if (last) g.fillStyle = v != null ? "rgba(169,72,42," + (.25 + .75 * v) + ")" : "#a9482a"; else g.fillStyle = v != null ? (v > 0 ? "rgba(255,181,0," + (.2 + .8 * v) + ")" : "rgba(199,107,103," + (.2 - .8 * v) + ")") : "#ffb500"; // 입력=청/자두, 은닉=노랑, 출력=단풍색임 / input = blue/plum, hidden = yellow, output = maple
       g.strokeStyle = "#8892ad"; g.lineWidth = 1; g.beginPath(); g.arc(x, y, last ? r0 * 2.6 : l === 0 ? r0 : r0 * 1.5, 0, 7); g.fill(); if (l) g.stroke(); // 뉴런 원임 / neuron circle
     }
     g.fillStyle = "#1d2a4d"; g.font = (o.small ? "bold 10px" : "bold 12px") + " Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.textAlign = "center"; // 층 이름 글씨임 / layer name text
     for (let l = 1; l < L; l++) g.fillText(l === L - 1 ? "출력" : "은닉 " + l + " (" + m.sizes[l] + ")", xs(l), o.y1 + (o.small ? 11 : 16)); // 층 이름임 / layer name
     if (!o.small) for (let l = 1; l < L - 2; l++) { g.fillStyle = "#8892ad"; g.font = "bold 16px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText("⋯", (xs(l) + xs(l + 1)) / 2, o.y0 - 2); } // 층이 이어짐을 뜻하는 표시임 / mark meaning the layers continue
-    if (o.labels) { g.textAlign = "right"; g.font = (o.small ? 9 : 11) + "px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; for (let k = 0; k < m.sizes[0]; k++) { g.fillStyle = k >= 16 ? "#6e4c82" : "#1d2a4d"; g.fillText(o.labels[k] || "", xs(0) - 8, ys(0, k) + 4); } } // 입력 이름임 / input names
+    if (o.labels) { g.textAlign = "right"; g.font = (o.small ? 9 : 11) + "px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; for (let k = 0; k < m.sizes[0]; k++) { g.fillStyle = k >= (o.qFrom || 16) ? "#6e4c82" : "#1d2a4d"; g.fillText(o.labels[k] || "", xs(0) - 8, ys(0, k) + 4); } } // 입력 이름임 / input names
     g.textAlign = "left"; return { xs: xs, ys: ys };  // 좌표 함수를 돌려줌 / return the coordinate functions
   }
   function canvas(cv, h) { return QP.Charts.prep(cv, h); } // 캔버스 준비(배율 처리)를 공유함 / share canvas preparation (scaling)
@@ -4100,10 +4115,10 @@ window.QP_I18N_EN = {
     same: function (r) { return { short: "양자 특징 인공지능과 일반 수식 대조군이 왜 같은 결과인지 설명합니다.", long: "네, 지금 쓰는 두 큐비트 회로에서는 항상 같습니다. 회로가 만드는 겹침 점수가 수학적으로 코사인 두 개를 곱한 값과 똑같기 때문입니다. 대조군은 좋아진 이유가 양자 장비 덕분인지, 겹침을 함께 보는 특징 덕분인지 가려내기 위한 비교 대상입니다. 샷 측정이나 잡음이 들어가거나, 다른 회로를 쓰면 결과가 달라집니다. 지금 데이터에서 다른 양자 회로인 지지 특징 맵은 탐지율 " + p(R(r, "zz").recall) + "퍼센트로, 회로 설계가 문제와 맞아야 좋아진다는 것을 보여 줍니다." }; },
     bench: function (r) { const L = R(r, "linear"), Q = R(r, "quantum"); return { short: "같은 데이터, 같은 학습, 같은 오경보 예산으로 매긴 성적표입니다. 지표 옆 아이 표시를 누르면 뜻이 나옵니다.", long: "탐지율은 실제 위험 중 경보를 낸 비율, 오경보율은 정상인데 울린 비율, 정밀도는 울린 경보 중 진짜 위험의 비율, 에프원은 정밀도와 탐지율의 조화평균, 에이유씨는 위험을 정상보다 높게 점수 매길 확률입니다. 지금 일반 인공지능의 에프원은 " + L.f1.toFixed(2) + ", 양자 특징 인공지능은 " + Q.f1.toFixed(2) + "입니다." }; },
     persona: function () { return { short: "같은 심박이라도 나이, 성별, 안정시 심박에 따라 위험이 달라지는 초개인화 실험실입니다.", long: "심박 백사십은 서른한 살에게는 중간 강도지만, 예순여덟 살에게는 최대에 가까운 고강도일 수 있습니다. 최대심박은 남성과 기본은 이백팔 빼기 영점칠 곱하기 나이, 여성은 이백육 빼기 영점팔팔 곱하기 나이로 계산하고, 안정시 심박을 빼서 개인의 심박예비율을 구합니다. 같은 인공지능이라도 이 개인 신호가 달라지면 경보가 달라집니다." }; },
-    meta: function () { return { short: "메타학습이 사람마다 빠르게 맞추는 과정과, 양자 특징 인공지능과의 관계를 보여 드립니다.", long: "위쪽 관계도를 먼저 보시기 바랍니다. 워치에서 들어온 심박 부담과 피로를 두 큐비트에 각도로 넣고 씨낫으로 엮어 겹침 점수를 만듭니다. 여기까지가 양자 특징 인공지능이며, 이 회로는 고정되어 학습하지 않습니다. 메타러너는 이 겹침 점수를 심박, 경사와 함께 입력으로 받는 작은 신경망입니다. 아래 신경망 그림에서 노란 선은 한 사람에게 맞추며 크게 바뀐 연결입니다. 오른쪽 가중치 공간 그림의 금색 선은 한 사람에게 다섯 걸음 맞추는 안쪽 루프이고, 주황 선은 여러 사람의 결과로 공통 시작점이 옮겨 가는 바깥 루프입니다. 적응 곡선에서 메타 시작점은 기록 열 개로 한 걸음만 적응해도 정확도가 크게 오르지만, 무작위 시작점은 거의 오르지 않습니다. 정리하면, 양자 특징 인공지능은 겹침 신호를 만들고, 메타러너는 그 신호를 사람마다 얼마나 믿을지를 빠르게 정한다고 이해하시면 좋을 듯합니다." }; },
+    meta: function () { return { short: "메타학습이 사람마다 빠르게 맞추는 과정과, 양자 특징 인공지능과의 관계를 보여 드립니다.", long: "위쪽 관계도를 먼저 보시기 바랍니다. 워치에서 들어온 심박 부담과 피로를 두 큐비트에 각도로 넣고 씨낫으로 엮어 겹침 점수를 만듭니다. 여기까지가 양자 특징 인공지능이며, 이 회로는 고정되어 학습하지 않습니다. 메타러너는 이 겹침 점수 두 개를 심박, 피로, 경사, 강수, 일몰, 결빙과 함께 여덟 개 입력으로 받아, 은닉층 세 개(열여섯, 열둘, 여덟)를 거쳐 위험 점수를 내는 심층 신경망입니다. 아래 신경망 그림에서 초록 선은 한 사람에게 맞추며 크게 바뀐 연결입니다. 오른쪽 가중치 공간 그림의 진분홍 선은 한 사람에게 다섯 걸음 맞추는 안쪽 루프이고, 남색 선은 여러 사람의 결과로 공통 시작점이 옮겨 가는 바깥 루프입니다. 적응 곡선에서 메타 시작점은 기록 열 개로 한 걸음만 적응해도 정확도가 크게 오르지만, 무작위 시작점은 거의 오르지 않습니다. 정리하면, 양자 특징 인공지능은 겹침 신호를 만들고, 메타러너는 그 신호를 사람마다 얼마나 믿을지를 빠르게 정한다고 이해하시면 좋을 듯합니다." }; },
     ecolab: function () { return { short: "양자AI 실험실의 전체 사이클 실험입니다. 생성한 데이터를 넣고 학습 에코 사이클 여덟 단계를 그대로 실행합니다.", long: "왼쪽 풀다운 메뉴에서 단계마다 구체적인 조건을 고릅니다. 데이터 수집에서는 등록된 데이터를 고르거나 요인을 결합한 합성 데이터를 새로 만들고, 양자 특징 변환에서는 회로와 판독 방식, 잡음을, 인공지능 학습에서는 로지스틱 회귀 또는 심층 신경망을 고릅니다. 배포 단계에서는 산, 산행자, 날씨, 계절을 골라 학습한 모델로 새 산행을 실시간 채점하고, 현장 경보 단계에서 사건 전에 몇 분 먼저 알렸는지 셉니다. 사용자 피드백을 정답 라벨로 추가해 재학습하고, 메타러너로 개인 적응까지 확인합니다. 위쪽 여덟 단계 상자가 차례로 켜지며 결과가 표시되고, 결과는 시에스브이로 내보낼 수 있습니다. 처음이시면 따라하기 시작을 누르시기 바랍니다. 눈송이가 고를 곳을 지시봉으로 짚으며 데이터 고르기부터 결과 해석까지 차례로 안내합니다." }; },
     lab: function () { return { short: "양자AI 실험실의 안내형 실험입니다. 눈송이가 실험 고르기부터 결과 판정까지 다음 할 일을 하나씩 짚어 드립니다.", long: "이 실험실은 전체 안내와 별개로, 직접 실험을 설계하고 실행하는 공간입니다. 왼쪽의 일곱 단계를 따라 실험 고르기, 데이터 고르기, 조건 입력, 가설과 관찰 포인트 고정, 실행, 결과 판정, 기록 순서로 진행합니다. 실행 전에 가설과 판정 기준을 먼저 정해 두기 때문에 결과를 믿을 수 있습니다. 눈송이와 자동 실험을 누르시면 기본값으로 처음부터 끝까지 진행되며, 다음 단계 버튼으로 직접 진행하실 수도 있습니다." }; },
-    dnn: function () { return { short: "심층 신경망이 학습되는 모습을 보여 줍니다. 학습 시작을 눌러 보시기 바랍니다.", long: "왼쪽부터 입력 신호 열여섯 개와 자두색 양자 겹침 특징 여섯 개, 가운데 은닉층 세 개(열두 개, 여덟 개, 여섯 개 뉴런), 오른쪽 위험 점수입니다. 층을 여러 겹 쌓았기 때문에 심층 신경망이라고 부릅니다. 반복할 때마다 오차를 뒤로 전달해 연결의 굵기와 색이 바뀌고, 노란 선은 이번에 크게 바뀐 연결입니다. 손실이 줄어드는 것이 학습입니다. 오른쪽에는 학습을 알기 쉽게 문제 풀기로 표현했습니다. 소나기 속 젖은 돌계단 하산, 결빙된 겨울 급경사, 해 지기 전 하산 지연처럼 실제 산행에서 흔한 상황 여덟 개를 신경망이 풀고, 막대는 신경망이 매긴 위험 점수, 체크 표시는 정답을 맞혔는지입니다. 처음에는 대부분 틀리지만, 반복할수록 맞힌 문제가 늘어납니다. 판단 지도로 보기를 누르면 같은 학습을 비와 경사 조합별 색 지도로도 볼 수 있습니다. 양자 회로는 고정이고, 학습되는 것은 사백사십일 개의 가중치와 절편입니다." }; },
+    dnn: function () { return { short: "심층 신경망이 학습되는 모습을 보여 줍니다. 학습 시작을 눌러 보시기 바랍니다.", long: "왼쪽부터 입력 신호 열여섯 개와 자두색 양자 겹침 특징 여섯 개, 가운데 은닉층 세 개(열두 개, 여덟 개, 여섯 개 뉴런), 오른쪽 위험 점수입니다. 층을 여러 겹 쌓았기 때문에 심층 신경망이라고 부릅니다. 반복할 때마다 오차를 뒤로 전달해 연결의 굵기와 색이 바뀌고, 초록 선은 이번에 크게 바뀐 연결입니다. 손실이 줄어드는 것이 학습입니다. 오른쪽에는 학습을 알기 쉽게 문제 풀기로 표현했습니다. 소나기 속 젖은 돌계단 하산, 결빙된 겨울 급경사, 해 지기 전 하산 지연처럼 실제 산행에서 흔한 상황 여덟 개를 신경망이 풀고, 막대는 신경망이 매긴 위험 점수, 체크 표시는 정답을 맞혔는지입니다. 처음에는 대부분 틀리지만, 반복할수록 맞힌 문제가 늘어납니다. 판단 지도로 보기를 누르면 같은 학습을 비와 경사 조합별 색 지도로도 볼 수 있습니다. 양자 회로는 고정이고, 학습되는 것은 사백사십일 개의 가중치와 절편입니다." }; },
     vqc: function () { return { short: "회로의 회전 각도 자체를 학습하는 변분 양자 회로입니다.", long: "일반 신경망은 숫자인 가중치를 고치며 배우지만, 변분 양자 회로는 큐비트를 돌리는 각도를 고치며 배웁니다. 라디오 다이얼 네 개를 조금씩 돌려 잡음이 가장 적은 위치를 찾는 것과 같다고 이해하시면 좋을 듯합니다. 왼쪽 다이얼이 학습되는 각도입니다. 오른쪽에서는 소나기 속 젖은 돌계단 하산, 폭우 속 깔딱고개처럼 실제 상황 여섯 문제를 회로가 풀며, 학습할수록 맞힌 문제가 늘어납니다. 손실은 틀린 정도이며 내려갈수록 잘 배운 것입니다. 각도를 구십 도 앞뒤로 옮겨 두 번 측정하면 정확한 기울기를 얻는데, 실제 양자 장비에서도 같은 방법으로 학습합니다." }; },
     eco: function () { return { short: "데이터가 모이고, 인공지능이 배우고, 현장에 쓰이고, 다시 배우는 순환입니다. 원을 누르면 설명합니다.", long: "데이터 수집, 신호화, 양자 특징 변환, 오프라인 학습, 배포, 현장 경보, 사용자 피드백, 재학습과 메타학습이 하나의 고리로 돌아갑니다. 자두색은 학습이 일어나는 곳이고, 장밋빛 안전 규칙은 학습과 상관없이 항상 먼저 작동합니다." }; },
     datamgr: function () { return { short: "데이터 관리 센터는 인공지능이 공부할 산행 기록 교과서를 만들고, 검사하고, 공부시키는 곳입니다. 지금 생성을 누르면 근거 기반 산행 데이터가 만들어지고, 이 데이터로 인공지능 학습을 누르면 모든 화면에 반영됩니다.", long: "근거 기반 산행 시계열은 최대심박 공식, 등산 속도 공식, 기온감률, 기상 특보 기준으로 실제 산행처럼 시간 흐름을 만듭니다. 생성할 때마다 근거 일치 검사를 자동으로 해서 등급을 매깁니다. 연속 생성을 켜면 데이터가 계속 쌓이며 인공지능이 자동으로 다시 배우고, 데이터가 늘수록 성능이 어떻게 변하는지 학습 곡선으로 보여 줍니다." }; },
@@ -4219,7 +4234,7 @@ window.QP_I18N_EN = {
       const d = DS.get(selId) || DS.list[0]; if (!d) return; selId = d.id; // 대상임 / target
       $("#gD", el).innerHTML = "<p><b>" + d.id + " " + d.name + "</b><br><span class='small'>" + d.created + ", " + d.gradeText + "</span></p>" + '<div class="btns dmact"><button id="gT" class="primary">🧠 이 데이터로 AI 학습</button><button id="gX">⬇ 내보내기 CSV</button><button id="gXj">⬇ 근거 포함 JSON</button><button id="gXa">⬇ 전체 데이터 목록</button><button id="gSv">서버에 저장</button></div>' + "<table>" + d.checks.map(function (c) { return "<tr><td>" + (c.ok ? "✔" : "✖") + "</td><th>" + c.k + "</th><td>" + c.d + "</td></tr>"; }).join("") + "</table>" + (d.factors ? "<p class='small'><b>결합된 요인(균형 배치)</b><br>" + d.factors.map(function (f) { return "<b>" + f.factor + "</b>: " + f.levels.join(", "); }).join("<br>") + "</p>" : "") + "<p class='small'>근거: " + d.refs + "</p>" +
         "" + (d.history ? "<p class='small'>학습 기록: " + d.history.map(function (h) { return h.at + " 양자 AUC " + h.qAUC.toFixed(3) + " / 일반 " + h.lAUC.toFixed(3); }).join(", ") + "</p>" : ""); // 상세 내용임 / detail content
-      $("#gT", el).onclick = function () { $("#gMsg", el).textContent = "학습 중…"; setTimeout(function () { DS.retrain(d.id); $("#gMsg", el).textContent = d.id + "로 다섯 방식 + DNN을 다시 학습함(" + Math.round(QP.State.trainMs) + "ms). 모든 화면이 이 결과를 씀."; note("🧠", d.id + "로 AI를 다시 학습했습니다", "일반 AI, 양자 특징 AI, 대조군 등 다섯 방식과 DNN을 " + Math.round(QP.State.trainMs) + "ms 만에 학습했습니다. 위쪽 띠의 ‘에뮬레이팅 데이터’가 " + d.id + "로 바뀌었고, 관제실과 성적표가 모두 이 결과를 씁니다."); QP.Voice.speak(d.name + " 데이터로 인공지능을 다시 학습했습니다. 관제실과 성적표가 이 결과를 씁니다.", true); }, 30); }; // AI 재학습 버튼임 / AI retrain button
+      $("#gT", el).onclick = function () { $("#gMsg", el).textContent = "학습 중…"; setTimeout(function () { DS.retrain(d.id); $("#gMsg", el).textContent = d.id + "로 다섯 방식 + DNN을 다시 학습함(" + Math.round(QP.State.trainMs) + "ms). 모든 화면이 이 결과를 씀."; if (QP.TrainViz) QP.TrainViz.open(d); /* 학습의 내부 과정을 그림과 애니메이션으로 모두 보여 줌 / show every inner training step with graphics */ note("🧠", d.id + "로 AI를 다시 학습했습니다", "일반 AI, 양자 특징 AI, 대조군 등 다섯 방식과 DNN을 " + Math.round(QP.State.trainMs) + "ms 만에 학습했습니다. 위쪽 띠의 ‘에뮬레이팅 데이터’가 " + d.id + "로 바뀌었고, 관제실과 성적표가 모두 이 결과를 씁니다."); QP.Voice.speak(d.name + " 데이터로 인공지능을 다시 학습했습니다. 관제실과 성적표가 이 결과를 씁니다.", true); }, 30); }; // AI 재학습 버튼임 / AI retrain button
       $("#gX", el).onclick = function () { QP.App.download(d.id + ".csv", "\ufeff" + DS.toCSV(d.id)); $("#gMsg", el).textContent = d.id + ".csv 내보내기 완료(" + d.stats.n + "행)"; note("⬇", d.id + ".csv를 내려받았습니다", d.stats.n.toLocaleString("ko-KR") + "행이 브라우저의 다운로드 폴더에 저장되었습니다. 엑셀로 열어 볼 수 있습니다."); }; // CSV 내보내기임 / CSV export
       $("#gXj", el).onclick = function () { QP.App.download(d.id + "_근거포함.json", DS.toJSON(d.id)); $("#gMsg", el).textContent = d.id + " 근거 포함 JSON 내보내기 완료"; }; // 검증 항목, 등급, 출처를 함께 담은 JSON임 / JSON with checks, grade and sources
       $("#gXa", el).onclick = function () { QP.App.download("datasets_목록.json", DS.all()); $("#gMsg", el).textContent = "데이터 " + DS.list.length + "개 목록 내보내기 완료"; }; // 전체 목록임 / full list
@@ -5177,7 +5192,7 @@ window.QP_I18N_EN = {
   function dnn(el) {
     const ds = QP.Datasets.get(QP.State.dataId) || QP.Datasets.list[0]; // 현재 데이터셋임 / current dataset
     let timer = null;                               // 학습 타이머임 / training timer
-    el.innerHTML = '<div class="grid dnnv"><div class="card stack"><div class="row" style="justify-content:space-between"><h3>심층 신경망 내부: 입력 → 은닉 12 → 8 → 6 → 위험 점수 (청=+, 장밋빛=−, 굵기=크기, 노랑=이번 반복에 크게 바뀐 연결)</h3><div class="btns"><select id="dM"><option value="quantum">입력: 신호 16 + 양자 특징 6</option><option value="linear">입력: 신호 16만</option></select><button id="dGo" data-autoplay="1" class="primary">▶ 학습 시작</button><button id="dSt">멈춤</button><button id="dRe">초기화</button></div></div><canvas id="dNet"></canvas></div>' +
+    el.innerHTML = '<div class="grid dnnv"><div class="card stack"><div class="row" style="justify-content:space-between"><h3>심층 신경망 내부: 입력 → 은닉 12 → 8 → 6 → 위험 점수 (청=+, 장밋빛=−, 굵기=크기, 초록=이번 반복에 크게 바뀐 연결)</h3><div class="btns"><select id="dM"><option value="quantum">입력: 신호 16 + 양자 특징 6</option><option value="linear">입력: 신호 16만</option></select><button id="dGo" data-autoplay="1" class="primary">▶ 학습 시작</button><button id="dSt">멈춤</button><button id="dRe">초기화</button></div></div><canvas id="dNet"></canvas></div>' +
       '<div class="stack"><div class="card"><div class="dmet"><span>반복 <b id="dE">0</b></span><span><i class="mn" style="background:#a9482a">①</i> 손실 <b id="dL">-</b> <small>(틀린 정도, 낮을수록 좋음)</small></span><span><i class="mn" style="background:#003087">②</i> 학습 정확도 <b id="dA">-</b> <small>(공부한 문제를 맞힌 비율)</small></span><span><i class="mn" style="background:#6e4c82">③</i> 시험 탐지율 <b id="dR" class="c-plum">-</b> <small>(처음 보는 문제에서 실제 위험을 잡은 비율)</small></span></div><canvas id="dCur"></canvas></div><div class="card"><div class="row" style="justify-content:space-between"><h3>학습 = 산행 상황 문제 풀기 <span class="small" id="dQs"></span></h3><button id="dMapT">판단 지도로 보기</button></div><div id="dQuiz" class="dquiz"></div><div id="dQx" class="dqxs"></div><div id="dMapBox" hidden><canvas id="dMap"></canvas><p class="small maplegend"><b>산 그림이 아닙니다.</b> 가로 = 비의 세기, 세로 = 경사. 칸마다 신경망이 매긴 위험 점수(진할수록 위험, 경보 기준 50%). 점선 = 실제 위험 경계. 학습할수록 진한 영역이 점선 위쪽 모서리에 맞춰집니다.</p></div></div><div class="card"><h3>무엇이 학습되나</h3><p id="dW" class="small"></p><div id="dB"></div></div></div></div>';
     function setup() { QP.DNN.reset($("#dM", el).value); QP.DNN.setData(ds.split.train.slice(0, 3000), ds.split.test.slice(0, 1500)); draw(); } // 새 신경망과 자료를 준비함 / prepare a new network and data
     function draw() {                               // 신경망, 곡선, 지도를 그림 / draw the network, curves and map
@@ -5204,7 +5219,7 @@ window.QP_I18N_EN = {
       $("#dB", el).innerHTML = B.box({ data: ds.name + " 학습 3,000행, 시험 1,500행", method: "미니배치 32, 경사하강법(학습률 0.3), 은닉층 3개(tanh 12, 8, 6), Xavier 초기값, 출력 sigmoid, 교차엔트로피 손실, 층별 역전파", formula: "h₁ = tanh(W₁f + b₁), h₂ = tanh(W₂h₁ + b₂), h₃ = tanh(W₃h₂ + b₃), 점수 = σ(W₄h₃ + b₄), W ← W − η∂손실/∂W", code: "models.js mlpCreate(), mlpForward(), mlpEpoch() / dnn.js", ref: "Rumelhart, Hinton & Williams, Nature 323:533 (1986) 역전파" }, "DNN 학습"); // 근거임 / evidence
     }
     $("#dMapT", el).onclick = function () { const b = $("#dMapBox", el), q = $("#dQuiz", el); b.hidden = !b.hidden; q.hidden = !b.hidden; this.textContent = b.hidden ? "판단 지도로 보기" : "문제 풀기로 보기"; draw(); }; // 두 가지 표현을 바꿔 봄 / switch between the two views
-    $("#dGo", el).onclick = function () { if (timer) return; if (!QP.State.touring) QP.Voice.speak("신경망 학습을 시작합니다. 반복할 때마다 노란 선이 크게 바뀐 연결입니다. 오른쪽에서는 실제 산행 상황 여덟 문제를 신경망이 풀고 있으며, 학습할수록 맞힌 문제가 늘어납니다.", true); timer = setInterval(function () { QP.DNN.step(); draw(); if (QP.DNN.model.epoch >= 60) { clearInterval(timer); timer = null; } }, 550); }; // 학습 시작임 / start training
+    $("#dGo", el).onclick = function () { if (timer) return; if (!QP.State.touring) QP.Voice.speak("신경망 학습을 시작합니다. 반복할 때마다 초록 선이 크게 바뀐 연결입니다. 오른쪽에서는 실제 산행 상황 여덟 문제를 신경망이 풀고 있으며, 학습할수록 맞힌 문제가 늘어납니다.", true); timer = setInterval(function () { QP.DNN.step(); draw(); if (QP.DNN.model.epoch >= 60) { clearInterval(timer); timer = null; } }, 550); }; // 학습 시작임 / start training
     $("#dSt", el).onclick = function () { clearInterval(timer); timer = null; }; // 멈춤임 / stop
     $("#dRe", el).onclick = function () { clearInterval(timer); timer = null; setup(); }; // 초기화임 / reset
     $("#dM", el).onchange = function () { clearInterval(timer); timer = null; setup(); }; // 입력 방식 변경임 / change the input type
@@ -5418,11 +5433,11 @@ window.QP_I18N_EN = {
   /* ===== 메타학습(초개인화 적응) 과정 : 양자 특징 AI → 메타러너 / Meta-learning (personal adaptation): quantum-feature AI → meta-learner  ===== */
   function meta(el) {
     let m = QP.Meta.create(77), timer = null, cur = 0, sub = 0, hist = [], ev = QP.Meta.evaluate(m), people = []; // 메타학습기, 타이머, 보여 줄 사람, 적응 걸음, θ 궤적, 적응 곡선임 / meta-learner, timer, shown person, adaptation step, θ trajectory, adaptation curve
-    const prj = (function () { const r = QP.Sim.rng(5), n = QP.Meta.H * 5 + 1; return [0, 1].map(function () { return Array.from({ length: n }, function () { return r() - .5; }); }); })(); // 가중치 31개를 2차원으로 내리는 고정 투영 벡터임 / fixed projection vectors reducing 31 weights to 2-D
-    const flat = function (t) { const v = []; t.W1.forEach(function (r) { v.push(r[0], r[1], r[2]); }); return v.concat(t.b1, t.W2, [t.b2]); }; // 가중치를 한 줄로 폄 / flatten the weights into one row
+    const prj = (function () { const r = QP.Sim.rng(5), n = QP.Meta.COUNT; return [0, 1].map(function () { return Array.from({ length: n }, function () { return r() - .5; }); }); })(); // 가중치 전체를 2차원으로 내리는 고정 투영 벡터임 / fixed projection vectors reducing 31 weights to 2-D
+    const flat = QP.Meta.flat; // 가중치를 한 줄로 폄 / flatten the weights into one row
     const proj = function (t) { const v = flat(t); return prj.map(function (p) { return p.reduce(function (a, w, i) { return a + w * v[i]; }, 0); }); }; // 2차원 좌표임 / 2-D coordinates
     el.innerHTML = '<div class="grid metav"><div class="stack"><div class="card"><div class="row" style="justify-content:space-between"><h3>양자 특징 AI → 메타러너 → 사람마다 맞춘 경보</h3><div class="btns"><button id="mGo" data-autoplay="1" class="primary">▶ 메타 학습 시작</button><button id="mSt">멈춤</button><button id="mRe">초기화</button></div></div><canvas id="mFlow"></canvas></div>' +
-      '<div class="card"><h3 id="mNetT">신경망 3→6→1 (청=+, 장밋빛=−, 굵기=크기, 노랑=이 사람에게 맞추며 크게 바뀐 연결)</h3><canvas id="mNet"></canvas></div></div>' +
+      '<div class="card"><h3 id="mNetT">심층 신경망 8→16→12→8→1 (청=+, 장밋빛=−, 굵기=크기, 초록=이 사람에게 맞추며 크게 바뀐 연결, 자주=양자 입력)</h3><canvas id="mNet"></canvas></div></div>' +
       '<div class="stack"><div class="card"><h3>가중치 공간: 공통 시작점 θ와 사람별 적응 θ′</h3><canvas id="mPar"></canvas></div>' +
       '<div class="card"><h3>새 사람 적응 곡선 (기록 10개, 걸음 0~10)</h3><canvas id="mAd"></canvas><p id="mNum" class="small"></p></div><div class="card"><div id="mPeople" class="small"></div><div id="mB"></div></div></div></div>';
     const flowS = { i: 0, g: 0, dwell: true, at: performance.now() }; /* 메타 흐름 단계 상태 / meta flow step state */
@@ -5430,7 +5445,7 @@ window.QP_I18N_EN = {
       const P = A.canvas($("#mFlow", el), 154), g = P.g, W = P.w, tt = performance.now() / 900; // 캔버스임 / canvas
       const t = m.last[cur] || null, per = t ? t.p : { sex: "F", age: 62, rest: 70, max: 151 }; // 지금 보여 줄 사람임 / person shown now
       const load = Math.min(1, Math.max(0, .35 + .3 * Math.sin(tt))), fat = Math.min(1, Math.max(0, .55 + .35 * Math.sin(tt * .7 + 1))), z = QP.Models.pairExact(load, fat); // 움직이는 예시 입력과 양자 겹침 점수임 / moving example inputs and the quantum overlap score
-      const bx = [[6, "센서(워치)", "심박 " + Math.round(90 + load * 90) + "bpm\n피로 " + Math.round(fat * 100) + "%", "#003087"], [.205, "양자 특징 AI", "RY(πa)⊗RY(πb)\nCNOT → ⟨Z⟩", "#6e4c82"], [.41, "겹침 점수", "⟨Z⟩ = " + z.toFixed(2) + "\n(부담×피로)", "#6e4c82"], [.615, "메타러너 θ", "여러 사람에게서\n배운 시작점", "#a9482a"], [.82, "개인 θ′", (per.sex === "F" ? "여 " : "남 ") + per.age + "세\n10개로 5걸음 적응", "#c38a2b"]]; // 다섯 상자임 / five boxes
+      const bx = [[6, "센서(워치)", "심박 " + Math.round(90 + load * 90) + "bpm\n피로 " + Math.round(fat * 100) + "%", "#003087"], [.205, "양자 특징 AI", "RY(πa)⊗RY(πb)\nCNOT → ⟨Z⟩", "#6e4c82"], [.41, "겹침 점수", "⟨Z⟩ = " + z.toFixed(2) + "\n(부담×피로)", "#6e4c82"], [.615, "메타러너 θ", "여러 사람에게서\n배운 시작점", "#003087"], [.82, "개인 θ′", (per.sex === "F" ? "여 " : "남 ") + per.age + "세\n10개로 5걸음 적응", "#d81b60"]]; // 다섯 상자임 / five boxes
       const bw = W * .172, bh = 88, y0 = 40; g.font = "bold 13px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; // 상자 크기임 / box size
       const FS = flowS, MSG = ["① 워치가 심박과 피로를 잽니다. 지금 값은 왼쪽 상자에 보입니다.", "② 두 신호를 양자 회로에 넣어 RY 회전과 CNOT으로 엮습니다.", "③ 회로가 두 신호의 겹침 점수 Z를 냅니다.", "④ 메타러너가 여러 사람에게서 배운 공통 시작점에 이 값을 넣습니다.", "⑤ 이 사람의 기록 10개로 몇 걸음 만에 개인 기준을 맞춥니다. 이렇게 센서 값이 개인 맞춤 경보가 됩니다."];
       if (FS.dwell) { if (performance.now() - FS.at > 5500 && !(QP.Voice.isActive && QP.Voice.isActive())) { if (FS.i >= 4) { FS.i = 0; FS.at = performance.now(); QP.Pace.say(MSG[0]); } else FS.dwell = false; } } else { FS.g += .012; if (FS.g >= 1) { FS.i++; FS.g = 0; FS.dwell = true; FS.at = performance.now(); QP.Pace.say(MSG[FS.i]); } } /* 상자마다 설명을 읽고, 다 읽은 뒤 다음 화살표가 자람 / read each box, grow the next arrow only after the explanation ends */
@@ -5444,40 +5459,37 @@ window.QP_I18N_EN = {
       g.fillStyle = "#6e4c82"; g.font = "12px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.textAlign = "left"; g.font = "12px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText("① 양자 특징 AI: 겹침 신호를 만듦(고정 회로, 학습 안 함)", 6, 14); g.fillStyle = "#a9482a"; g.fillText("② 메타러너: 그 신호를 사람마다 얼마나 믿을지 빠르게 맞춤(학습함)", 6, 31); // 역할 분담 설명임 / explanation of roles
       g.fillStyle = "#a9482a"; g.textAlign = "right"; g.fillText("↺ 바깥 루프: 여러 사람의 적응 결과로 θ를 고침(" + m.it + "회)", W - 6, y0 + bh + 18); g.textAlign = "left"; // 메타 루프 설명임 / explanation of the meta loop
     }
-    function drawNet() {                             // 3→6→1 신경망: θ(공통) 또는 θ′(개인 적응 중) / 3→6→1 network: θ (shared) or θ′ (adapting to a person)
+    function drawNet() {                             // 8→16→12→8→1 심층 신경망: θ(공통) 또는 θ′(개인 적응 중) / deep network: θ (shared) or θ′ (adapting to a person)
       const t = m.last[cur], path = t ? t.path : [m.theta], w = path[Math.min(sub, path.length - 1)], w0 = path[0]; // 지금 보여 줄 가중치와 시작점임 / weights shown now and the start
-      const P = A.canvas($("#mNet", el), Math.max(200, el.clientHeight - 300)), g = P.g, H = QP.Meta.H; // 캔버스임 / canvas
-      const xi = 130, xh = P.w * .55, xo = P.w - 90, yi = function (k) { return P.h * (.2 + k * .3); }, yh = function (j) { return 18 + j * (P.h - 36) / (H - 1); }; // 위치임 / positions
-      const names = ["심박(bpm)", "경사", "양자 겹침 ⟨Z⟩"], cols = ["#003087", "#003087", "#6e4c82"]; // 입력 이름과 색임 / input names and colors
-      let mx = .01; w.W1.forEach(function (r) { r.forEach(function (v) { mx = Math.max(mx, Math.abs(v)); }); }); // 최대 가중치임 / maximum weight
-      for (let j = 0; j < H; j++) for (let k = 0; k < 3; k++) { const v = w.W1[j][k], d = Math.abs(v - w0.W1[j][k]); g.strokeStyle = d > .15 && sub > 0 ? "rgba(255,181,0,.95)" : (v > 0 ? "rgba(0,48,135," : "rgba(199,107,103,") + (.15 + .75 * Math.abs(v) / mx) + ")"; g.lineWidth = .6 + 4 * Math.abs(v) / mx; g.beginPath(); g.moveTo(xi, yi(k)); g.lineTo(xh, yh(j)); g.stroke(); } // 입력→은닉 연결임 / input → hidden connections
-      for (let j = 0; j < H; j++) { const v = w.W2[j], d = Math.abs(v - w0.W2[j]); g.strokeStyle = d > .15 && sub > 0 ? "rgba(255,181,0,.95)" : (v > 0 ? "rgba(0,48,135," : "rgba(199,107,103,") + Math.min(1, .25 + Math.abs(v) / 3) + ")"; g.lineWidth = .8 + Math.min(5, Math.abs(v) * 1.5); g.beginPath(); g.moveTo(xh, yh(j)); g.lineTo(xo, P.h / 2); g.stroke(); } // 은닉→출력 연결임 / hidden → output connections
-      g.font = "13px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.textAlign = "right"; for (let k = 0; k < 3; k++) { g.fillStyle = cols[k]; g.beginPath(); g.arc(xi, yi(k), 9, 0, 7); g.fill(); g.fillStyle = "#1d2a4d"; g.fillText(names[k], xi - 14, yi(k) + 5); } // 입력 뉴런임 / input neurons
-      for (let j = 0; j < H; j++) { g.fillStyle = "#ffb500"; g.strokeStyle = "#8892ad"; g.beginPath(); g.arc(xh, yh(j), 9, 0, 7); g.fill(); g.stroke(); } // 은닉 뉴런임 / hidden neurons
-      g.fillStyle = "#a9482a"; g.beginPath(); g.arc(xo, P.h / 2, 15, 0, 7); g.fill(); g.fillStyle = "#1d2a4d"; g.textAlign = "center"; g.fillText("위험 점수", xo, P.h / 2 + 34); // 출력 뉴런임 / output neuron
-      g.textAlign = "left"; g.fillStyle = sub > 0 ? "#c38a2b" : "#a9482a"; g.font = "bold 13px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText(sub > 0 ? "개인 적응 θ′: " + sub + "걸음째 (" + (t.p.sex === "F" ? "여 " : "남 ") + t.p.age + "세)" : "공통 시작점 θ (메타 " + m.it + "회)", 8, 16); // 상태 글자임 / status text
+      const P = A.canvas($("#mNet", el), Math.max(260, el.clientHeight - 300)), g = P.g, S = QP.Meta.SIZES; // 캔버스임 / canvas
+      const d = sub > 0 ? w.W.map(function (Wl, l) { return Wl.map(function (r, j) { return r.map(function (v, i) { return Math.abs(v - w0.W[l][j][i]); }); }); }) : null; // 시작점 대비 변화량(초록 선) / change from the start (green lines)
+      const lab = QP.Meta.NAMES.map(function (n, i) { return (i + 1) + ". " + n; }); // 번호 붙인 입력 이름 / numbered input names
+      A.deepNet(g, { sizes: S, W: w.W }, { x0: 150, x1: P.w - 50, y0: 30, y1: P.h - 26, labels: lab, deltas: d, qFrom: 6 }); // 심층 신경망을 그림 / draw the deep network
+      let tot = 0; if (d) d.forEach(function (Dl) { Dl.forEach(function (r) { r.forEach(function (v) { if (v > .05) tot++; }); }); }); // 크게 바뀐 연결 수 / count of changed connections
+      g.textAlign = "left"; g.fillStyle = sub > 0 ? "#d81b60" : "#003087"; g.font = "bold 13px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText(sub > 0 ? "개인 적응 θ′: " + sub + "걸음째 (" + (t.p.sex === "F" ? "여 " : "남 ") + t.p.age + "세, 체력 " + t.p.fit.toFixed(2) + ", 산행 " + t.p.hist + "회), 바뀐 연결 " + tot + "개" : "공통 시작점 θ (메타 " + m.it + "회, 학습 숫자 " + QP.Meta.COUNT + "개)", 8, 16); // 상태 글자임 / status text
+      g.textAlign = "right"; g.fillStyle = "#a9482a"; g.fillText("위험 점수", P.w - 4, P.h / 2 - 22); g.textAlign = "left"; // 출력 이름 / output name
     }
     function drawPar() {                             // 가중치 공간 그림: θ 궤적(바깥 루프)과 사람별 적응 화살표(안쪽 루프) / weight-space plot: θ trajectory (outer loop) and per-person adaptation arrows (inner loop)
       const P = A.canvas($("#mPar", el), 150), g = P.g, pts = hist.slice(-120); m.last.forEach(function (t) { pts.push(proj(t.path[t.path.length - 1])); }); pts.push(proj(m.theta)); // 그릴 점들임 / points to draw
       let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; pts.forEach(function (p) { x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }); // 범위임 / range
       const sx = function (v) { return 14 + (v - x0) / Math.max(1e-6, x1 - x0) * (P.w - 28); }, sy = function (v) { return P.h - 12 - (v - y0) / Math.max(1e-6, y1 - y0) * (P.h - 46); }; // 화면 좌표임 / screen coordinates
-      g.strokeStyle = "rgba(169,72,42,.6)"; g.lineWidth = 2; g.beginPath(); hist.slice(-120).forEach(function (p, i) { if (i) g.lineTo(sx(p[0]), sy(p[1])); else g.moveTo(sx(p[0]), sy(p[1])); }); g.stroke(); // θ 궤적임 / θ trajectory
-      m.last.forEach(function (t, i) { g.strokeStyle = i === cur ? "#c38a2b" : "rgba(195,138,43,.45)"; g.lineWidth = i === cur ? 2.5 : 1.3; g.beginPath(); t.path.slice(0, i === cur ? sub + 1 : t.path.length).forEach(function (w, k) { const q = proj(w); if (k) g.lineTo(sx(q[0]), sy(q[1])); else g.moveTo(sx(q[0]), sy(q[1])); }); g.stroke(); const e = proj(t.path[i === cur ? Math.min(sub, t.path.length - 1) : t.path.length - 1]); g.fillStyle = "#c38a2b"; g.beginPath(); g.arc(sx(e[0]), sy(e[1]), i === cur ? 6 : 4, 0, 7); g.fill(); }); // 사람별 적응 경로와 끝점 θ′임 / per-person adaptation paths and end points θ′
+      g.strokeStyle = "rgba(0,48,135,.85)"; g.lineWidth = 2.4; g.beginPath(); hist.slice(-120).forEach(function (p, i) { if (i) g.lineTo(sx(p[0]), sy(p[1])); else g.moveTo(sx(p[0]), sy(p[1])); }); g.stroke(); // θ 궤적임 / θ trajectory
+      m.last.forEach(function (t, i) { g.strokeStyle = i === cur ? "#d81b60" : "rgba(216,27,96,.4)"; g.lineWidth = i === cur ? 2.5 : 1.3; g.beginPath(); t.path.slice(0, i === cur ? sub + 1 : t.path.length).forEach(function (w, k) { const q = proj(w); if (k) g.lineTo(sx(q[0]), sy(q[1])); else g.moveTo(sx(q[0]), sy(q[1])); }); g.stroke(); const e = proj(t.path[i === cur ? Math.min(sub, t.path.length - 1) : t.path.length - 1]); g.fillStyle = "#d81b60"; g.beginPath(); g.arc(sx(e[0]), sy(e[1]), i === cur ? 6 : 4, 0, 7); g.fill(); }); // 사람별 적응 경로와 끝점 θ′임 / per-person adaptation paths and end points θ′
       const c = proj(m.theta); g.fillStyle = "#a9482a"; g.beginPath(); g.arc(sx(c[0]), sy(c[1]), 8, 0, 7); g.fill(); g.fillStyle = "#1d2a4d"; g.font = "bold 12px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText("θ", sx(c[0]) + 10, sy(c[1]) - 6); // 현재 θ임 / current θ
-      g.font = "11px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillStyle = "#1d2a4d"; g.fillText("주황 선 = θ가 지나온 길(바깥 루프, 메타 갱신)", 6, 12); g.fillText("금색 = 사람별 5걸음 적응 θ′ (가중치 31개를 2차원으로 투영)", 6, 26); // 범례임 / legend
+      g.font = "11px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillStyle = "#003087"; g.fillText("■ 남색 선 = θ가 지나온 길(바깥 루프, 메타 갱신)", 6, 12); g.fillStyle = "#d81b60"; g.fillText("■ 진분홍 = 사람별 5걸음 적응 θ′ (가중치 " + QP.Meta.COUNT + "개를 2차원으로 투영)", 6, 26); // 범례임 / legend
     }
     function drawSide() {                            // 적응 곡선, 숫자, 사람 카드, 근거임 / adaptation curve, numbers, person cards, evidence
-      C.line($("#mAd", el), [{ values: ev.meta, color: "#a9482a" }, { values: ev.rand, color: "#8892ad" }], { height: 100, min: .4, max: 1, xLabel: "적응 걸음 → (주황: 메타 시작점, 회색: 무작위 시작점)" }); // 곡선임 / curves
+      C.line($("#mAd", el), [{ values: ev.meta, color: "#003087" }, { values: ev.rand, color: "#8892ad" }], { height: 100, min: .4, max: 1, xLabel: "적응 걸음 → (남색: 메타 시작점, 회색: 무작위 시작점)" }); // 곡선임 / curves
       $("#mNum", el).innerHTML = "처음 보는 12명 평균 정확도: 메타 시작점 <b class='c-plum'>" + pct(ev.meta[0]) + " → 1걸음 " + pct(ev.meta[1]) + " → 5걸음 " + pct(ev.meta[5]) + "</b>, 무작위 시작점 " + pct(ev.rand[0]) + " → 5걸음 " + pct(ev.rand[5]) + ". 메타 손실 " + (m.loss.length ? m.loss[0].toFixed(3) + " → " + m.loss[m.loss.length - 1].toFixed(3) : "-"); // 수치임 / numbers
       $("#mPeople", el).innerHTML = "<b>이번 산행자 " + m.last.length + "명</b> (적응 전 → 5걸음 뒤): " + m.last.map(function (t, i) { return (i === cur ? "▶" : "") + (t.p.sex === "F" ? "여" : "남") + t.p.age + "세 " + pct(t.before) + "→<b>" + pct(t.after) + "</b>"; }).join(", "); // 사람 카드임 / person cards
     }
     function drawAll() { drawFlow(); drawNet(); drawPar(); drawSide(); } // 전부 그림 / draw everything
-    $("#mB", el).innerHTML = B.box({ data: "가상 산행자(여/남, 25~79세, 안정심박 52~81): 입력 [심박/200, 경사, 양자 겹침 ⟨Z⟩(부담, 피로)], 정답은 개인 %HRR 기준(사람마다 경계가 다름). 실제 적용 시 아이나비 개인 워치 기록으로 교체", method: "FOMAML: 사람(과제)마다 기록 10개로 5걸음 적응(안쪽 루프, 학습률 0.8) → 평가 기록 30개의 기울기를 평균해 θ 갱신(바깥 루프, 0.25)", formula: "θ′ = θ − α∇L_support(θ),  θ ← θ − β·평균∇L_query(θ′),  ⟨Z⟩ = cos(πa)cos(πb)", code: "meta.js create(), metaStep(), evaluate() / views_ai.js meta()", ref: "Finn, Abbeel & Levine, ICML 2017(MAML), Nichol et al. 2018(1차 근사), Gulati 2010, Tanaka 2001", note: "양자 회로는 고정된 특징 생성기이고, 학습되는 것은 메타러너의 가중치 31개임. 정확도는 가상 자료 기준이며 실측 검증 전임" }, "메타학습 근거");
+    $("#mB", el).innerHTML = B.box({ data: "가상 산행자(여/남, 25~79세, 안정심박 52~81, 체력, 산행 이력): 입력 8개 [심박/200, 피로, 경사, 강수, 일몰 여유 부족, 결빙, 양자 ⟨Z⟩(심박×피로), 양자 ⟨Z⟩(강수×경사)], 신경망 8→16→12→8→1(tanh, 출력 sigmoid), 정답은 개인 %HRR, 체력, 이력 기준(사람마다 경계가 다름). 실제 적용 시 아이나비 개인 워치 기록으로 교체", method: "FOMAML: 사람(과제)마다 기록 10개로 5걸음 적응(안쪽 루프, 학습률 0.5) → 평가 기록 30개의 역전파 기울기를 평균해 θ 갱신(바깥 루프, 0.3)", formula: "θ′ = θ − α∇L_support(θ),  θ ← θ − β×평균∇L_query(θ′),  ⟨Z⟩ = cos(πa)cos(πb)", code: "meta.js create(), metaStep(), evaluate() / views_ai.js meta()", ref: "Finn, Abbeel & Levine, ICML 2017(MAML), Nichol et al. 2018(1차 근사), Gulati 2010, Tanaka 2001", note: "양자 회로는 고정된 특징 생성기이고, 학습되는 것은 메타러너의 가중치 31개임. 정확도는 가상 자료 기준이며 실측 검증 전임" }, "메타학습 근거");
     function tick() {                                // 0.7초마다: 적응 걸음을 한 칸 보여 주고, 끝나면 다음 사람, 한 바퀴 돌면 메타 갱신 / every 0.7 s: show one adaptation step; then the next person; after a full round, a meta update
       sub++; if (!m.last.length || sub > m.inner) { sub = 0; cur++; if (cur >= m.last.length) { cur = 0; for (let k = 0; k < 25; k++) { QP.Meta.metaStep(m, 4); if (k % 5 === 0) hist.push(proj(m.theta)); } ev = QP.Meta.evaluate(m); } } // 다음 단계로 감 / go to the next step
       drawAll(); if (m.it >= 600 && timer) { clearInterval(timer); timer = null; } // 그림을 갱신하고 충분하면 멈춤 / update the drawing and stop when enough
     }
-    $("#mGo", el).onclick = function () { if (timer) return; if (!QP.State.touring) QP.Voice.speak("메타 학습을 시작합니다. 금색 화살표는 한 사람에게 맞추는 다섯 걸음이고, 주황 선은 여러 사람의 결과로 공통 시작점이 옮겨 가는 길입니다. 시작점이 좋아질수록 새 사람도 한두 걸음 만에 맞춰집니다.", true); timer = setInterval(tick, 700); }; // 시작임 / start
+    $("#mGo", el).onclick = function () { if (timer) return; if (!QP.State.touring) QP.Voice.speak("메타 학습을 시작합니다. 진분홍 화살표는 한 사람에게 맞추는 다섯 걸음이고, 남색 선은 여러 사람의 결과로 공통 시작점이 옮겨 가는 길입니다. 시작점이 좋아질수록 새 사람도 한두 걸음 만에 맞춰집니다.", true); timer = setInterval(tick, 700); }; // 시작임 / start
     $("#mSt", el).onclick = function () { clearInterval(timer); timer = null; }; // 멈춤임 / stop
     $("#mRe", el).onclick = function () { clearInterval(timer); timer = null; m = QP.Meta.create(77); hist = []; cur = 0; sub = 0; QP.Meta.metaStep(m, 4); hist.push(proj(m.theta)); ev = QP.Meta.evaluate(m); drawAll(); }; // 초기화임 / reset
     QP.Meta.metaStep(m, 4); hist.push(proj(m.theta)); drawAll(); // 처음 한 번 준비함 / prepare once at first
@@ -5688,6 +5700,7 @@ window.QP_I18N_EN = {
       '<details><summary>⑧ 재학습, 메타학습</summary><label>방식 <select id="xMeta">' + opt([["both", "재학습 + 메타 개인 적응"], ["re", "재학습만"]], "both") + '</select></label></details>' +
       '<div class="btns"><button id="xRun" class="primary" data-autoplay="1">▶ 전체 사이클 실험 실행</button><button id="xCsv">⬇ 결과 내보내기</button></div><p id="xMsg" class="small"></p></div>' +
       '<div class="stack ecoout"><div class="card xguide" id="xG"><div class="xg-h"><span class="xg-snow">❄</span><b id="xGt">따라하기: 눈송이가 실험 순서를 하나씩 짚어 드립니다</b><span class="xg-n" id="xGn"></span></div><p id="xGx" class="xg-x">처음이시면 <b>▶ 따라하기 시작</b>을 누르시기 바랍니다. 데이터 고르기부터 결과 해석까지 무엇을 고르고 무엇을 보아야 하는지 차례로 안내합니다.</p><div class="xg-dots" id="xGd"></div><div class="btns"><button id="xGs" class="primary">▶ 따라하기 시작</button><button id="xGp">◀ 이전</button><button id="xGnx">다음 ▶</button><label class="tog"><input type="checkbox" id="xGa"> 자동으로 넘기기</label></div></div><div class="card"><div id="xPipe" class="xpipe">' + STG.map(function (s, i) { return '<div class="xst" id="xs' + i + '"><b>' + s + '</b><span>대기</span></div>'; }).join("") + '</div><div id="xData" class="xdata"><p class="small">단계 상자를 누르거나 실험을 실행하면, 그 단계에서 실제로 오가는 데이터가 여기에 표로 나타납니다.</p></div></div>' +
+      '<div class="card xrepc"><h3>에뮬레이팅 실험 과정 보고서: 8단계를 순서대로 모두 기록 <span class="small">(왼쪽 = 일반 AI, 오른쪽 = 양자 특징 AI)</span></h3><div id="xRep"><p class="small">▶ 전체 사이클 실험 실행을 누르면 ①부터 ⑧까지 단계가 끝날 때마다 과정 도식, 일반과 양자 비교, 실제 데이터가 여기에 차례로 쌓이고, 마지막에 ⑨ 종합 분석이 나옵니다.</p></div></div>' +
       '<div class="xres"><div class="card"><h3>④ 학습 결과: 같은 오경보 예산에서 시험 성적</h3><table id="xT" class="labtbl"></table><canvas id="xBar"></canvas></div>' +
       '<div class="card"><h3>⑤⑥ 배포 산행의 실시간 점수와 경보 <span class="small">(분홍 띠 = 실제 위험 사건)</span></h3><canvas id="xRun2"></canvas><p id="xDep" class="small"></p></div></div>' +
       '<div class="card"><h3>⑦⑧ 피드백 반영 재학습과 메타 개인 적응</h3><div id="xRe" class="small">실행하면 결과가 표시됩니다.</div><div id="xB"></div></div></div></div>';
@@ -5697,9 +5710,9 @@ window.QP_I18N_EN = {
     let dSel = -1;
     setTimeout(function () { el.querySelectorAll(".xst").forEach(function (b, k) { b.style.cursor = "pointer"; b.onclick = function () { showData(k); }; }); }, 0); // 단계 상자를 누르면 그 단계 데이터 / click a stage box to see its data                                  // 아래에 데이터를 보여 주는 단계 / stage whose data is shown below
     function tbl(head, rows) { return '<table class="labtbl xdt"><tr>' + head.map(function (h) { return "<th>" + h + "</th>"; }).join("") + "</tr>" + rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>"; }
-    function showData(i) {                          // 단계별로 실제 데이터를 표로 보임 / show the actual data of each stage as a table
-      dSel = i; el.querySelectorAll(".xst").forEach(function (b, k) { b.classList.toggle("pick", k === i); });
-      const box = $("#xData", el), SG = QP.Data.signals, f2 = function (v) { return (+v).toFixed(2); }, mm = function (t) { return Math.floor(t / 60) + "분"; };
+    function showData(i) { dSel = i; el.querySelectorAll(".xst").forEach(function (b, k) { b.classList.toggle("pick", k === i); }); $("#xData", el).innerHTML = dataHTML(i); } // 선택한 단계의 데이터 / data of the chosen stage
+    function dataHTML(i) {                          // 단계별 실제 데이터 표(HTML) / actual data table of each stage (HTML)
+      const SG = QP.Data.signals, f2 = function (v) { return (+v).toFixed(2); }, mm = function (t) { return Math.floor(t / 60) + "분"; };
       const title = function (t) { return '<p class="xdh"><b>' + STG[i] + "</b> " + t + "</p>"; };
       let h = "";
       if (i === 0 && out.ds) { const r = out.ds.rows; const pickR = r.filter(function (x) { return !x.label; }).slice(0, 3).concat(r.filter(function (x) { return x.label; }).slice(0, 3)); h = title("데이터 " + out.ds.id + "의 예시 6행(정상 3, 위험 3, 전체 " + r.length.toLocaleString("ko-KR") + "행). 한 행 = 1분 동안의 신호 20개 + 정답") + tbl(["예", SG[0][1], SG[3][1], SG[9][1], SG[8][1], SG[16][1], "…", "정답"], pickR.map(function (x, k) { return [k + 1, f2(x.x[0]), f2(x.x[3]), f2(x.x[9]), f2(x.x[8]), f2(x.x[16]), "…", x.label ? "<b class='c-maple'>위험</b>" : "정상"]; })); }
@@ -5711,7 +5724,7 @@ window.QP_I18N_EN = {
       else if (i === 6 && out.fb) { h = title(out.fb.length ? "산행 기록에서 만든 정답 라벨 " + out.fb.length + "건(1분 간격) 중 앞 8건: 사용자 확인, 신고가 정답이 됨" : "피드백을 끔으로 골라 추가된 정답이 없습니다.") + (out.fb.length ? tbl(["번호", SG[0][1], SG[3][1], SG[9][1], "정답 라벨"], out.fb.slice(0, 8).map(function (r, k) { return [k + 1, f2(r.x[0]), f2(r.x[3]), f2(r.x[9]), r.label ? "<b class='c-maple'>위험</b>" : "정상"]; })) : ""); }
       else if (i === 7 && out.mQ2) { h = title("피드백을 더해 다시 학습한 전후 비교") + tbl(["항목", "전", "후"], [["시험 탐지율", pct(out.mQ.recall), "<b>" + pct(out.mQ2.recall) + "</b>"], ["시험 AUC", f2(out.mQ.auc), "<b>" + f2(out.mQ2.auc) + "</b>"], ["경보 기준", f2(out.Q.threshold), f2(out.Q2.threshold)]].concat(out.meta ? [["메타 개인 적응(새 사람)", "무작위 시작 1걸음 " + pct(out.meta.rand[1]), "메타 시작 1걸음 " + pct(out.meta.meta[1])]] : [])); }
       else h = '<p class="small"><b>' + STG[i] + "</b>: 아직 실행 전이라 보여 줄 데이터가 없습니다. ▶ 전체 사이클 실험 실행을 누르시기 바랍니다.</p>";
-      box.innerHTML = h;
+      return h;
     } // 단계 상자 상태 표시임 / stage box status display
     function say(t) { if (!QP.State.touring && alive) QP.Voice.speak(t, true); } // 음성 안내임 / voice guide
     function makeModel(train, valid, method, ctx, kind, eps, fa) { // ④ 모델 하나를 학습하고 오경보 예산에 맞춘 경보 기준을 정함 / ④ trains one model and sets the threshold to the false-alarm budget
@@ -5721,11 +5734,38 @@ window.QP_I18N_EN = {
       const neg = valid.filter(function (r) { return !r.label; }).map(function (r) { return predict(r.x); }).sort(function (a, b) { return a - b; }); // 기준 표본의 정상 점수임 / normal scores of the threshold samples
       return { predict: predict, threshold: neg[Math.max(0, Math.ceil(neg.length * (1 - fa)) - 1)] + 1e-9 }; // 정상의 fa만 울리는 기준임 / threshold at which only fa of normals ring
     }
+    const flow = function (arr) { return '<div class="xflow">' + arr.map(function (t, i) { return (i ? '<span class="xar">→</span>' : "") + '<span class="xchip">' + t + "</span>"; }).join("") + "</div>"; }; // 과정 도식 / process diagram
+    const sec = function (min) { return (min * 10 / 60); };
+    function cmpRow(name, a, b, fmt, better) { const d = b - a, good = better === "low" ? d < 0 : d > 0; return "<tr><td>" + name + "</td><td>" + fmt(a) + "</td><td><b>" + fmt(b) + "</b></td><td class='" + (Math.abs(d) < 1e-9 ? "" : good ? "xgood" : "xbad") + "'>" + (d >= 0 ? "+" : "−") + fmt(Math.abs(d)).replace(/^[+−-]/, "") + "</td></tr>"; } // 비교 한 줄 / one comparison row
+    function report(i, cfg, method) {               // 단계 i가 끝나면 보고서 카드를 쌓음 / append a report card when stage i finishes
+      const box = $("#xRep", el); if (!box) return; if (i === 0) box.innerHTML = "";
+      const P = function (v) { return (v * 100).toFixed(1) + "%"; }, F = function (v) { return (+v).toFixed(3); }, MN = function (v) { return (+v).toFixed(1) + "분"; };
+      let fl = "", cl = "", cq = "", it = "";
+      if (i === 0) { const d = out.ds; fl = flow(["요인 결합(산행 " + (cfg.d === "new" ? cfg.runs + "회" : "기존 데이터") + ", 산 난이도, 날씨, 계절, 사람)", "근거 공식으로 산행 시뮬레이션(10초 단위)", "1분마다 1행 = 신호 20개 + 정답"]); cl = cq = "같은 데이터 " + d.id + " 사용(공정 비교)"; it = d.stats.n.toLocaleString("ko-KR") + "행, 위험 비율 " + P(d.stats.rate) + ", 근거 등급 " + d.grade + ". 두 AI는 이 같은 데이터로만 비교합니다."; }
+      if (i === 1) { fl = flow(["원자료(심박, GPS, 기상, POI 거리)", "0~1 신호 20개", "학습 " + out.sp.train.length + " / 기준 " + out.sp.valid.length + " / 시험 " + out.sp.test.length]); cl = "입력: 신호 16개"; cq = "입력: 같은 신호 16개(③에서 겹침 점수 6개를 더함)"; it = "학습, 기준(경보 문턱 정하기), 시험(최종 채점)을 서로 겹치지 않게 나눴습니다."; }
+      if (i === 2) { const ex = (out.sp.train.find(function (r) { return r.label; }) || out.sp.train[0]).x, f = M.features(ex, method, ctx0); let md = 0; out.sp.test.slice(0, 300).forEach(function (r) { QP.Data.pairs.forEach(function (pp) { md = Math.max(md, Math.abs(M.pairExact(r.x[pp[0]], r.x[pp[1]]) - M.pairAnalytic(r.x[pp[0]], r.x[pp[1]]))); }); });
+        fl = flow(["신호 쌍 6개 (a, b)", "RY(π×a) ⊗ RY(π×b)", "CNOT(얽힘)", (cfg.shots ? "샷 " + cfg.shots + "번 측정, 잡음 " + P(cfg.noise) : "정확 판독(상태벡터)"), "겹침 점수 ⟨Z⟩ 6개"]); cl = "변환 없음: 신호 16개 그대로"; cq = method === "linear" ? "양자 특징 끔(대조 실험)" : "에뮬레이터로 2큐비트 회로 6개 실행 → 입력 " + f.length + "개"; it = "정확 판독일 때 양자 회로 값과 cos×cos 대조군 값의 최대 차이: " + md.toExponential(1) + " (컴퓨터 반올림 수준이면 같은 값입니다)."; }
+      if (i === 3) { fl = flow(["학습 표본 " + out.sp.train.length + "행", (cfg.model === "dnn" ? "DNN(은닉층 3개)" : "로지스틱 회귀") + ", 반복 " + cfg.eps, "기준 표본으로 오경보 " + P(cfg.fa) + " 문턱 결정", "시험 표본 채점"]); cl = "경보 문턱 " + F(out.L.threshold); cq = "경보 문턱 " + F(out.Q.threshold);
+        it = '<table class="labtbl xcmpt"><tr><th>시험 지표</th><th>일반 AI</th><th>양자 특징 AI</th><th>차이(양자−일반)</th></tr>' + cmpRow("탐지율(재현율)", out.mL.recall, out.mQ.recall, P) + cmpRow("오경보율", out.mL.falseAlarm, out.mQ.falseAlarm, P, "low") + cmpRow("정밀도", out.mL.precision, out.mQ.precision, P) + cmpRow("F1", out.mL.f1, out.mQ.f1, F) + cmpRow("AUC", out.mL.auc, out.mQ.auc, F) + "</table>"; }
+      if (i === 4) { const st = out.run.steps, aL = st.filter(function (x) { return x.lin >= out.run.thrL; }).length, aQ = st.filter(function (x) { return x.qf >= out.run.thrQ; }).length, mean = function (k) { return st.reduce(function (a, x) { return a + x[k]; }, 0) / st.length; };
+        fl = flow([G.mountains[cfg.mt][0] + ", " + G.personas[cfg.per].name.split(" (")[0] + ", " + G.weathers[cfg.w].name, "산행 시뮬레이션 " + Math.round(st.length * 10 / 60) + "분(10초마다 1걸음)", "걸음마다 두 AI가 실시간 채점"]); cl = "평균 점수 " + P(mean("lin")) + ", 경보가 켜진 시간 " + MN(sec(aL)); cq = "평균 점수 " + P(mean("qf")) + ", 경보가 켜진 시간 " + MN(sec(aQ)); it = "학습 때 정한 문턱을 그대로 써서, 처음 보는 산행에 배포한 것처럼 채점했습니다(분홍 띠가 실제 위험)."; }
+      if (i === 5) { const a = out.alarm; fl = flow(["실제 위험 사건 " + a.n + "건", "사건 시작 전 첫 경보 찾기", "선행 시간, 불필요 경보 계산"]); cl = "사전 경보 " + a.lHit + "/" + a.n + ", 평균 " + MN(a.lLead) + " 전, 불필요 경보 " + MN(a.lFalse); cq = "사전 경보 " + a.qHit + "/" + a.n + ", 평균 " + MN(a.qLead) + " 전, 불필요 경보 " + MN(a.qFalse); it = a.qHit > a.lHit ? "양자 특징 AI가 사건을 " + (a.qHit - a.lHit) + "건 더 미리 알렸습니다." : a.qHit === a.lHit ? "사전 경보 건수는 같고, 선행 시간과 불필요 경보로 차이를 봅니다." : "이번 산행에서는 일반 AI가 사건을 더 많이 미리 알렸습니다(한 번의 산행 결과라 반복 확인이 필요합니다)."; }
+      if (i === 6) { fl = flow(["배포 산행 기록", "1분마다 정답 라벨(확인, 신고)", "학습 데이터에 3배 가중으로 추가"]); cl = cq = cfg.fb === "on" ? "라벨 " + out.fb.length + "건(위험 " + out.fb.filter(function (r) { return r.label; }).length + "건)을 두 AI에 똑같이 추가" : "피드백 반영 안 함"; it = "실제 서비스에서는 이 라벨이 사용자 확인과 사고 신고로 채워집니다."; }
+      if (i === 7) { fl = flow(["학습 + 피드백으로 두 AI 재학습", "같은 산의 다른 날 산행으로 재검증", out.meta ? "메타학습으로 새 사람 적응" : "메타학습 생략"]); cl = "시험 탐지율 " + P(out.mL.recall) + " → " + P(out.mL2.recall) + ", 다른 날 사전 경보 " + out.re.before.lHit + " → " + out.re.after.lHit + "/" + out.re.after.n; cq = "시험 탐지율 " + P(out.mQ.recall) + " → " + P(out.mQ2.recall) + ", 다른 날 사전 경보 " + out.re.before.qHit + " → " + out.re.after.qHit + "/" + out.re.after.n; it = out.meta ? "메타학습(입력에 양자 겹침 점수 포함): 새 사람 1걸음 정확도 무작위 시작 " + P(out.meta.rand[1]) + " → 메타 시작 " + P(out.meta.meta[1]) + "." : ""; }
+      box.insertAdjacentHTML("beforeend", '<div class="xr"><div class="xrh"><span class="xrn">' + "①②③④⑤⑥⑦⑧"[i] + "</span><b>" + STG[i].slice(2) + "</b></div>" + fl + '<div class="xcmp"><div class="xcl"><b>일반 AI</b><p>' + cl + '</p></div><div class="xcq"><b>양자 특징 AI</b><p>' + cq + '</p></div></div>' + (it ? '<div class="xri">' + it + "</div>" : "") + '<details class="xrd"><summary>이 단계의 실제 데이터 보기</summary>' + dataHTML(i) + "</details></div>");
+      if (i === 7) { const a = out.alarm, b = out.re.after; box.insertAdjacentHTML("beforeend", '<div class="xr xfin"><div class="xrh"><span class="xrn">⑨</span><b>종합 분석: 같은 조건에서 일반 AI와 양자 특징 AI</b></div><table class="labtbl xcmpt"><tr><th>지표</th><th>일반 AI</th><th>양자 특징 AI</th><th>차이(양자−일반)</th></tr>' + cmpRow("④ 시험 탐지율", out.mL.recall, out.mQ.recall, P) + cmpRow("④ 시험 오경보율", out.mL.falseAlarm, out.mQ.falseAlarm, P, "low") + cmpRow("④ AUC", out.mL.auc, out.mQ.auc, F) + cmpRow("④ F1", out.mL.f1, out.mQ.f1, F) + cmpRow("⑥ 사전 경보 건수(" + a.n + "건 중)", a.lHit, a.qHit, function (v) { return String(Math.round(v)); }) + cmpRow("⑥ 평균 선행 시간(분)", a.lLead, a.qLead, function (v) { return v.toFixed(1); }) + cmpRow("⑥ 불필요 경보(분)", a.lFalse, a.qFalse, function (v) { return v.toFixed(1); }, "low") + cmpRow("⑧ 재학습 후 시험 탐지율", out.mL2.recall, out.mQ2.recall, P) + cmpRow("⑧ 다른 날 사전 경보(" + b.n + "건 중)", b.lHit, b.qHit, function (v) { return String(Math.round(v)); }) + '</table><div class="xri">' + verdict() + "</div></div>"); }
+      box.lastElementChild.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+    function verdict() {                            // 종합 판정 문장 / overall verdict
+      const w = [out.mQ.recall > out.mL.recall, out.mQ.falseAlarm < out.mL.falseAlarm, out.mQ.auc > out.mL.auc, out.alarm.qHit > out.alarm.lHit, out.alarm.qFalse < out.alarm.lFalse, out.mQ2.recall > out.mL2.recall].filter(Boolean).length;
+      return "<b>판정</b>: 주요 6개 지표 중 양자 특징 AI가 나은 것은 " + w + "개입니다. " + (w >= 4 ? "이번 조건에서는 겹친 위험을 함께 보는 양자 특징이 도움이 되었습니다." : w >= 2 ? "지표마다 우열이 갈려, 조건을 바꿔 반복 실험해 보시기 바랍니다." : "이번 조건에서는 양자 특징의 이점이 뚜렷하지 않았습니다.") + "<br><b>정직한 해석</b>: 지금의 2큐비트 회로는 정확 판독에서 일반 수식(cos×cos)과 같은 값을 냅니다. 차이는 ‘두 위험의 겹침을 함께 보는 특징’ 덕분이며, 양자 장비만의 이점은 아닙니다. 합성 데이터의 한 번 실험이므로 씨앗과 조건을 바꿔 여러 번 반복해야 결론을 낼 수 있습니다.";
+    }
+    let ctx0 = null;                                /* ③ 보고서용 판독 설정 / readout settings for the report */
     function run() {                                // 전체 사이클을 단계별로 실행함 / runs the whole cycle stage by stage
-      clearTimeout(runT); out = {}; STG.forEach(function (_, i) { stage(i, "", "대기"); }); $("#xMsg", el).textContent = "실행 중입니다."; // 초기화임 / reset
+      clearTimeout(runT); out = {}; if ($("#xRep", el)) $("#xRep", el).innerHTML = '<p class="small">실행 중입니다. 단계가 끝날 때마다 아래에 하나씩 쌓입니다.</p>'; STG.forEach(function (_, i) { stage(i, "", "대기"); }); $("#xMsg", el).textContent = "실행 중입니다."; // 초기화임 / reset
       const cfg = { d: v("xD"), runs: Number(v("xRuns")), diff: v("xDiff"), w0: v("xW0"), s0: v("xS0"), split: Number(v("xSplit")) / 100, q: v("xQ"), shots: Number(v("xShots")), noise: Number(v("xNoise")), model: v("xM"), eps: Number(v("xEp")), mt: Number(v("xMt")), per: Number(v("xP")), w: Number(v("xW")), s: Number(v("xS")), fa: Number(v("xFA")), fb: v("xFB"), meta: v("xMeta") }; // 설정을 읽음 / read the settings
       const method = cfg.q === "linear" ? "linear" : cfg.shots ? "shots" : cfg.q, ctx = cfg.shots ? { shots: cfg.shots, noise: cfg.noise, rand: QP.Sim.rng(7) } : null; // 양자 특징 방식과 판독 설정임 / quantum feature method and readout settings
-      if (cfg.q === "zz" && cfg.shots) { cfg.shots = 0; } // ZZ 회로는 정확 판독으로만 비교함 / the ZZ circuit is compared with exact readout only
+      if (cfg.q === "zz" && cfg.shots) { cfg.shots = 0; } ctx0 = ctx; // ZZ 회로는 정확 판독으로만 비교함 / the ZZ circuit is compared with exact readout only
       const tasks = [
         function () { const ds = cfg.d === "new" ? DS.makeGrounded(6000 + DS.list.length, cfg.runs, { diff: cfg.diff || undefined, weather: cfg.w0 === "" ? null : Number(cfg.w0), season: cfg.s0 === "" ? null : Number(cfg.s0) }) : DS.get(cfg.d); out.ds = ds; if (cfg.d === "new") { $("#xD", el).innerHTML = opt(dsList(), ds.id); showNew(); } stage(0, "done", ds.id + ", " + ds.stats.n.toLocaleString("ko-KR") + "행<br>위험 " + pct(ds.stats.rate) + ", 등급 " + ds.grade); }, // ① 데이터 / ① data
         function () { const rows = out.ds.rows, a = Math.floor(rows.length * cfg.split), b = Math.floor(rows.length * (cfg.split + .2)); const cap = function (x, n) { return x.length > n ? x.filter(function (_, i) { return i % Math.ceil(x.length / n) === 0; }) : x; }; out.sp = { train: cap(rows.slice(0, a), 4000), valid: cap(rows.slice(a, b), 1500), test: cap(rows.slice(b), 2500) }; stage(1, "done", "신호 20개 → 학습 16개<br>학습 " + out.sp.train.length + ", 기준 " + out.sp.valid.length + ", 시험 " + out.sp.test.length); }, // ② 신호화 / ② signal encoding
@@ -5735,13 +5775,13 @@ window.QP_I18N_EN = {
         function () { out.alarm = alarms(out.run); stage(5, "done", "사건 " + out.alarm.n + "건, 사전 경보 " + out.alarm.qHit + "/" + out.alarm.n + "<br>평균 " + out.alarm.qLead.toFixed(1) + "분 전(일반 " + out.alarm.lLead.toFixed(1) + "분)"); }, // ⑥ 경보 / ⑥ alarms
         function () { out.fb = cfg.fb === "on" ? out.run.steps.filter(function (_, i) { return i % 6 === 0; }).map(function (s) { return { x: s.sig, label: s.truth ? 1 : 0 }; }) : []; stage(6, "done", cfg.fb === "on" ? "확인, 신고 라벨 " + out.fb.length + "건 추가<br>(위험 " + out.fb.filter(function (r) { return r.label; }).length + "건)" : "반영 안 함"); }, // ⑦ 피드백 / ⑦ feedback
         function () { // ⑧ 재학습과 메타학습 / ⑧ retraining and meta-learning
-          const train2 = out.sp.train.concat(out.fb, out.fb, out.fb); out.Q2 = makeModel(train2, out.sp.valid, method, ctx, cfg.model, cfg.eps, cfg.fa); out.mQ2 = M.measure(out.sp.test, out.Q2.predict, out.Q2.threshold); // 피드백(3배 가중)을 더해 재학습함 / retrain with feedback added (3× weight)
-          const c2 = G.makeCourse(cfg.mt, 977 + cfg.mt), sim2 = G.simulate(c2, G.personas[cfg.per], G.weathers[cfg.w], { season: cfg.s }); const r1 = alarms(G.score(G.simulate(c2, G.personas[cfg.per], G.weathers[cfg.w], { season: cfg.s }), [{ key: "linear", predict: out.L.predict, threshold: out.L.threshold }, { key: "quantum", predict: out.Q.predict, threshold: out.Q.threshold }])), r2 = alarms(G.score(sim2, [{ key: "linear", predict: out.L.predict, threshold: out.L.threshold }, { key: "quantum", predict: out.Q2.predict, threshold: out.Q2.threshold }])); out.re = { before: r1, after: r2 }; // 같은 산의 다른 날(새 코스 씨앗)에서 재학습 전후를 비교함 / compare before/after retraining on another day of the same mountain (new course seed)
+          const train2 = out.sp.train.concat(out.fb, out.fb, out.fb); out.Q2 = makeModel(train2, out.sp.valid, method, ctx, cfg.model, cfg.eps, cfg.fa); out.mQ2 = M.measure(out.sp.test, out.Q2.predict, out.Q2.threshold); out.L2 = makeModel(train2, out.sp.valid, "linear", null, cfg.model, cfg.eps, cfg.fa); out.mL2 = M.measure(out.sp.test, out.L2.predict, out.L2.threshold); /* 공정 비교: 일반 AI도 같은 피드백으로 재학습 / fair comparison: the classical AI is retrained with the same feedback */ // 피드백(3배 가중)을 더해 재학습함 / retrain with feedback added (3× weight)
+          const c2 = G.makeCourse(cfg.mt, 977 + cfg.mt), sim2 = G.simulate(c2, G.personas[cfg.per], G.weathers[cfg.w], { season: cfg.s }); const r1 = alarms(G.score(G.simulate(c2, G.personas[cfg.per], G.weathers[cfg.w], { season: cfg.s }), [{ key: "linear", predict: out.L.predict, threshold: out.L.threshold }, { key: "quantum", predict: out.Q.predict, threshold: out.Q.threshold }])), r2 = alarms(G.score(sim2, [{ key: "linear", predict: out.L2.predict, threshold: out.L2.threshold }, { key: "quantum", predict: out.Q2.predict, threshold: out.Q2.threshold }])); out.re = { before: r1, after: r2 }; // 같은 산의 다른 날(새 코스 씨앗)에서 재학습 전후를 비교함 / compare before/after retraining on another day of the same mountain (new course seed)
           if (cfg.meta === "both") { const m = QP.Meta.create(cfg.per * 13 + 5); for (let k = 0; k < 200; k++) QP.Meta.metaStep(m, 4); out.meta = QP.Meta.evaluate(m, cfg.per + 31); } else out.meta = null; // 메타러너 개인 적응임 / meta-learner personal adaptation
           stage(7, "done", "재학습 탐지율 " + pct(out.mQ.recall) + " → <b>" + pct(out.mQ2.recall) + "</b>" + (out.meta ? "<br>메타 1걸음 " + pct(out.meta.meta[1]) : "")); drawRe(cfg);
         }
       ];
-      let k = 0; (function next() { if (!alive) return; stage(k, "on", "실행 중…"); runT = setTimeout(function () { if (!alive) return; try { tasks[k](); } catch (e) { stage(k, "err", "오류: " + e.message); $("#xMsg", el).textContent = "오류가 났습니다: " + e.message; return; } const box = $("#xs" + k, el), stx = box ? box.querySelector("span").textContent : ""; QP.Pace.say(STG[k] + " 단계를 마쳤습니다. " + stx.replace(/→/g, "에서").replace(/\s+/g, " ") + ". 아래 표에 이 단계의 실제 데이터가 나타납니다."); k++; if (k < tasks.length) QP.Pace.wait(4500, next, function () { return alive; }); else { $("#xMsg", el).textContent = "전체 사이클 실험 완료(" + new Date().toLocaleTimeString("ko-KR") + ")"; say("전체 사이클 실험이 끝났습니다. 같은 오경보 예산에서 탐지율은 일반 인공지능 " + Math.round(out.mL.recall * 100) + "퍼센트, 선택한 양자 특징 인공지능 " + Math.round(out.mQ.recall * 100) + "퍼센트이며, 피드백을 반영해 재학습하면 " + Math.round(out.mQ2.recall * 100) + "퍼센트입니다. 배포 산행에서는 사건 " + out.alarm.n + "건 중 " + out.alarm.qHit + "건을 평균 " + out.alarm.qLead.toFixed(1) + "분 전에 알렸습니다."); } }, 650); })(); // 단계마다 0.65초 간격으로 실행해 진행이 보이게 함 / run each stage 0.65 s apart so progress is visible
+      let k = 0; (function next() { if (!alive) return; stage(k, "on", "실행 중…"); runT = setTimeout(function () { if (!alive) return; try { tasks[k](); } catch (e) { stage(k, "err", "오류: " + e.message); $("#xMsg", el).textContent = "오류가 났습니다: " + e.message; return; } try { report(k, cfg, method); } catch (er) { console.error(er); } const box = $("#xs" + k, el), stx = box ? box.querySelector("span").innerHTML.replace(/<br\s*\/?>/g, ", ").replace(/<[^>]+>/g, "") : ""; QP.Pace.say(STG[k] + " 단계를 마쳤습니다. " + stx.replace(/→/g, "에서").replace(/\s+/g, " ") + ". 아래 표에 이 단계의 실제 데이터가 나타납니다."); k++; if (k < tasks.length) QP.Pace.wait(4500, next, function () { return alive; }); else { $("#xMsg", el).textContent = "전체 사이클 실험 완료(" + new Date().toLocaleTimeString("ko-KR") + ")"; say("전체 사이클 실험이 끝났습니다. 같은 오경보 예산에서 탐지율은 일반 인공지능 " + Math.round(out.mL.recall * 100) + "퍼센트, 선택한 양자 특징 인공지능 " + Math.round(out.mQ.recall * 100) + "퍼센트이며, 피드백을 반영해 재학습하면 " + Math.round(out.mQ2.recall * 100) + "퍼센트입니다. 배포 산행에서는 사건 " + out.alarm.n + "건 중 " + out.alarm.qHit + "건을 평균 " + out.alarm.qLead.toFixed(1) + "분 전에 알렸습니다."); } }, 650); })(); // 단계마다 0.65초 간격으로 실행해 진행이 보이게 함 / run each stage 0.65 s apart so progress is visible
       say("전체 사이클 실험을 시작합니다. 위쪽 여덟 단계 상자가 차례로 켜지며 각 단계의 결과가 표시됩니다.");
     }
     function alarms(r) {                            // ⑥ 사건별 사전 경보와 선행 시간, 불필요 경보 시간을 셈 / ⑥ counts per-event pre-alarms, lead time and unnecessary alarm time
@@ -5811,6 +5851,169 @@ window.QP_I18N_EN = {
 
   QP.ViewDefs = (QP.ViewDefs || []); const at = QP.ViewDefs.findIndex(function (d) { return d.id === "lab"; }); QP.ViewDefs.splice(at < 0 ? QP.ViewDefs.length : at, 0, { id: "ecolab", group: "양자AI 실험실", title: "전체 사이클 실험(실험 실시와 관제)", render: ecolab }); // 안내형 실험보다 앞(실험실의 첫 화면)에 등록함 / registered before the guided experiment (first screen of the lab)
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace
+
+</script>
+<script>
+/* Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved.
+ * 행정안전부 재난안전연구개발사업 산행안전 과제 결과물. 이용 조건은 프로젝트 루트의 LICENSE를 따름.
+ * [English] Training internals viewer: when the AI is trained on a dataset, shows every inner step with graphics:
+ *           features (classical 16 vs quantum 22, qubit animation), logistic learning curves and weights, alarm threshold,
+ *           DNN epoch-by-epoch weights, meta-learning adaptation, and final test results.
+ *
+ * trainviz.js : "이 데이터로 AI 학습"을 누르면 학습의 내부 과정을 단계별 그림과 애니메이션으로 모두 보여 줌
+ *   Ⓐ 특징 만들기(일반 16개 vs 양자 22개, 큐비트 회전과 CNOT)  Ⓑ 로지스틱 학습 곡선과 가중치  Ⓒ 경보 문턱 정하기
+ *   Ⓓ DNN 반복 학습(층별 가중치 변화)  Ⓔ 메타학습(사람마다 빠른 적응)  Ⓕ 시험 결과(일반 vs 양자)
+ */
+(function (QP) {
+  const M = QP.Models, D = QP.Data, A = QP.Anim;     // 모듈 / modules
+  const FONT = "Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif";
+  const CL = "#4d6b8c", CQ = "#6e4c82";             // 일반, 양자 색 / classical and quantum colors
+  const pct = function (v) { return (v * 100).toFixed(1) + "%"; };
+  function names() {                                // 특징 이름 22개 / names of the 22 features
+    const base = D.signals.map(function (s, i) { return [i, s[1]]; }).filter(function (x) { return !D.exclusions.has(x[0]); }).map(function (x) { return x[1]; });
+    return base.concat(D.pairs.map(function (p) { return "⟨Z⟩ " + D.signals[p[0]][1] + "×" + D.signals[p[1]][1]; }));
+  }
+  function canvas(c, h) { return A.canvas(c, h); }
+  function open(ds) {                               // 학습 과정 창 열기 / open the training process window
+    const old = document.getElementById("tvx"); if (old) old.remove();
+    const R = QP.State.results, L = R.find(function (m) { return m.key === "linear"; }), Q = R.find(function (m) { return m.key === "quantum"; });
+    const w = document.createElement("div"); w.id = "tvx"; w.className = "tvx";
+    w.innerHTML = '<div class="tvbox"><div class="tvh"><b>AI 학습의 내부 과정: ' + ds.id + " " + ds.name + '</b><span class="small">왼쪽(청) = 일반 AI, 오른쪽(자두) = 양자 특징 AI</span><button id="tvClose">✕ 닫기</button></div><div class="tvsteps" id="tvSteps"></div><div id="tvBody"></div></div>';
+    document.body.appendChild(w);
+    const STEPS = ["Ⓐ 특징 만들기", "Ⓑ 로지스틱 학습", "Ⓒ 경보 문턱", "Ⓓ DNN 반복 학습", "Ⓔ 메타학습", "Ⓕ 시험 결과"];
+    document.getElementById("tvSteps").innerHTML = STEPS.map(function (s, i) { return '<span id="tvs' + i + '">' + s + "</span>"; }).join("");
+    let alive = true, stops = []; document.getElementById("tvClose").onclick = function () { alive = false; stops.forEach(function (f) { try { f(); } catch (e) { } }); w.remove(); QP.Voice.stop(); };
+    const body = document.getElementById("tvBody"), live = function () { return alive; };
+    const sec = function (i, title, html) { document.getElementById("tvs" + i).className = "on"; for (let k = 0; k < i; k++) document.getElementById("tvs" + k).className = "done"; body.insertAdjacentHTML("beforeend", '<div class="tvsec" id="tvx' + i + '"><h3>' + STEPS[i] + ": " + title + "</h3>" + html + "</div>"); const e = document.getElementById("tvx" + i); e.scrollIntoView({ block: "nearest", behavior: "smooth" }); return e; };
+    const tr = ds.split.train, va = ds.split.valid, te = ds.split.test, NM = names();
+    const sample = (tr.find(function (r) { return r.label; }) || tr[0]).x;
+    const steps = [
+      function (next) {                             // Ⓐ 특징 만들기 / features
+        const fl = M.features(sample, "linear"), fq = M.features(sample, "quantum");
+        const e = sec(0, "같은 1분 기록을 두 AI의 입력으로 바꿈", '<div class="tv2"><div class="tvc"><b>일반 AI 입력 16개</b><canvas id="tvA1"></canvas></div><div class="tvq"><b>양자 특징 AI 입력 22개 = 같은 16개 + 큐비트 회로 6개</b><canvas id="tvA2"></canvas></div></div><p class="small">위험 정답이 붙은 학습 행 하나를 예로 들었습니다. 오른쪽 아래 6개 원은 신호 쌍을 큐비트 두 개로 돌리고(RY) CNOT으로 엮어 읽은 겹침 점수 ⟨Z⟩입니다.</p>');
+        const bars = function (c, f, col, extra) { const P = canvas(c, extra ? 300 : 230), g = P.g, n = f.length, bh = (P.h - 10) / n; f.forEach(function (v, i) { const y = 5 + i * bh, isQ = i >= 16; g.fillStyle = "#1d2a4d"; g.font = "10.5px " + FONT; g.textAlign = "right"; g.fillText(NM[i].slice(0, 14), 150, y + bh * .7); g.fillStyle = "#eef0f6"; g.fillRect(156, y + 1, P.w - 200, bh - 2); g.fillStyle = isQ ? CQ : col; const val = isQ ? (v + 1) / 2 : v; g.fillRect(156, y + 1, (P.w - 200) * val, bh - 2); g.textAlign = "left"; g.fillStyle = "#1d2a4d"; g.fillText((+v).toFixed(2), P.w - 40, y + bh * .7); }); };
+        bars(document.getElementById("tvA1"), fl, CL, false);
+        let t = 0; const stop = A.loop(function (dt) { t += dt; const c = document.getElementById("tvA2"); if (!c) return; bars(c, fq.map(function (v, i) { return i < 16 ? v : (t > 1.5 + (i - 16) * .5 ? v : 1); }), CL, true);
+          const P = c.getContext("2d"); }); stops.push(stop);
+        QP.Pace.say("먼저 특징 만들기입니다. 같은 1분 기록을 일반 인공지능은 신호 열여섯 개로, 양자 특징 인공지능은 같은 열여섯 개에 큐비트 회로 여섯 개의 겹침 점수를 더한 스물두 개로 받습니다. 아래 겹침 점수가 하나씩 채워지는 것이 큐비트 두 개를 돌리고 씨낫으로 엮어 읽는 과정입니다.");
+        QP.Pace.wait(7000, next, live);
+      },
+      function (next) {                             // Ⓑ 로지스틱 / logistic
+        const e = sec(1, "경사하강법 160번 반복: 손실이 줄고 가중치가 자람", '<div class="tv2"><div><b>손실 곡선(낮을수록 잘 맞춤)</b><canvas id="tvB1"></canvas></div><div><b>가장 크게 학습된 가중치 10개</b><canvas id="tvB2"></canvas></div></div>');
+        let k = 0; const stop = A.loop(function (dt) { k = Math.min(L.loss.length, k + dt * 60); const c1 = document.getElementById("tvB1"); if (!c1) return; QP.Charts.line(c1, [{ values: L.loss.slice(0, Math.max(2, Math.floor(k))), color: CL }, { values: Q.loss.slice(0, Math.max(2, Math.floor(k))), color: CQ }, { values: new Array(L.loss.length).fill(L.loss[L.loss.length - 1] * .9), color: "rgba(0,0,0,0)" }], { height: 220, min: 0, xLabel: "반복 " + Math.floor(k) + " / " + L.loss.length + "  (청 일반, 자두 양자)" });
+          const c2 = document.getElementById("tvB2"), P = canvas(c2, 220), g = P.g, fr = k / L.loss.length; const top = Q.w.slice(1).map(function (v, i) { return [i, v, i < 16 ? L.w[i + 1] : null]; }).sort(function (a, b) { return Math.abs(b[1]) - Math.abs(a[1]); }).slice(0, 10), mx = Math.max.apply(null, top.map(function (x) { return Math.abs(x[1]); }).concat([1e-6])), mid = 190 + (P.w - 200) / 2, half = (P.w - 210) / 2;
+          top.forEach(function (x, j) { const y = 6 + j * 21; g.fillStyle = "#1d2a4d"; g.font = "11px " + FONT; g.textAlign = "right"; g.fillText(NM[x[0]].slice(0, 18), 185, y + 13); g.fillStyle = "#c9cfe0"; g.fillRect(mid, y, 1, 18); g.fillStyle = CQ; g.fillRect(x[1] >= 0 ? mid : mid - half * Math.abs(x[1]) / mx * fr, y + 1, half * Math.abs(x[1]) / mx * fr, 8); if (x[2] != null) { g.fillStyle = CL; g.fillRect(x[2] >= 0 ? mid : mid - half * Math.abs(x[2]) / mx * fr, y + 10, half * Math.abs(x[2]) / mx * fr, 7); } else { g.fillStyle = "#6d5e55"; g.font = "10px " + FONT; g.textAlign = "left"; g.fillText("일반 AI에는 없는 입력", mid + 4, y + 17); } }); });
+        stops.push(stop); QP.Pace.say("두 번째는 로지스틱 학습입니다. 두 인공지능이 같은 학습률로 백육십 번 반복하며 손실을 줄입니다. 오른쪽은 가장 크게 학습된 가중치 열 개이며, 위 막대가 양자, 아래 막대가 일반입니다. 겹침 점수 가중치는 일반 인공지능에는 없는 입력입니다.");
+        QP.Pace.wait(9000, next, live);
+      },
+      function (next) {                             // Ⓒ 문턱 / threshold
+        const e = sec(2, "기준 표본으로 오경보 10% 경보 문턱 정하기", '<div class="tv2"><div class="tvc"><b>일반 AI 점수 분포</b><canvas id="tvC1"></canvas></div><div class="tvq"><b>양자 특징 AI 점수 분포</b><canvas id="tvC2"></canvas></div></div><p class="small">청록 = 정상 표본, 붉은색 = 위험 표본, 세로 점선 = 경보 문턱(정상 표본의 90%가 그 아래). 붉은 막대가 점선 오른쪽에 많을수록 위험을 잘 잡습니다.</p>');
+        const hist = function (c, m, col) { const P = canvas(c, 190), g = P.g, nb = 30, pos = new Array(nb).fill(0), neg = new Array(nb).fill(0); va.forEach(function (r) { const s = m.predict(r.x), b = Math.min(nb - 1, Math.floor(s * nb)); (r.label ? pos : neg)[b]++; }); const mx = Math.max.apply(null, pos.concat(neg)), bw = (P.w - 20) / nb; for (let b = 0; b < nb; b++) { g.fillStyle = "rgba(38,166,154,.6)"; g.fillRect(10 + b * bw, P.h - 20 - neg[b] / mx * (P.h - 40), bw * .48, neg[b] / mx * (P.h - 40)); g.fillStyle = "rgba(198,40,40,.7)"; g.fillRect(10 + b * bw + bw * .5, P.h - 20 - pos[b] / mx * (P.h - 40), bw * .48, pos[b] / mx * (P.h - 40)); } const tx = 10 + m.threshold * (P.w - 20); g.strokeStyle = col; g.lineWidth = 2.5; g.setLineDash([5, 4]); g.beginPath(); g.moveTo(tx, 6); g.lineTo(tx, P.h - 18); g.stroke(); g.setLineDash([]); g.fillStyle = col; g.font = "bold 12px " + FONT; g.textAlign = "left"; g.fillText("문턱 " + m.threshold.toFixed(3), Math.min(P.w - 90, tx + 4), 16); g.fillStyle = "#6d5e55"; g.font = "11px " + FONT; g.fillText("0 점수 →", 10, P.h - 4); g.textAlign = "right"; g.fillText("1", P.w - 10, P.h - 4); };
+        hist(document.getElementById("tvC1"), L, CL); hist(document.getElementById("tvC2"), Q, CQ);
+        QP.Pace.say("세 번째는 경보 문턱입니다. 학습에 쓰지 않은 기준 표본에서, 정상 표본의 열 퍼센트만 경보가 울리도록 문턱을 정합니다. 두 인공지능에 똑같은 오경보 예산을 주는 공정한 비교입니다.");
+        QP.Pace.wait(7000, next, live);
+      },
+      function (next) {                             // Ⓓ DNN
+        const e = sec(3, "심층 신경망 22 → 12 → 8 → 6 → 1, 반복마다 가중치가 바뀜", '<div class="tv2w"><canvas id="tvD1"></canvas><div><canvas id="tvD2"></canvas><p id="tvD3" class="small"></p></div></div><p class="small">선 색: 청 = 양의 가중치, 장밋빛 = 음의 가중치, 노랑 = 이번 반복에 크게 바뀐 연결. 같은 씨앗으로 다시 학습하므로 실험실이 실제로 쓰는 신경망과 같은 결과입니다.</p>');
+        const DN = QP.DNN; DN.method = "quantum"; DN.reset("quantum"); DN.setData(tr, te); const lin = M.mlpCreate(16, 10, 5), linRows = M.mlpRows(tr, "linear"); let ep = 0;
+        const draw = function () { const c = document.getElementById("tvD1"); if (!c) return; const P = canvas(c, 330), g = P.g, m = DN.model; A.deepNet(g, m, { x0: 130, x1: P.w - 40, y0: 14, y1: P.h - 24, labels: NM, deltas: m.deltas }); g.fillStyle = "#1d2a4d"; g.font = "bold 13px " + FONT; g.textAlign = "left"; g.fillText("반복 " + ep + " / 25", 8, P.h - 6);
+          QP.Charts.line(document.getElementById("tvD2"), [{ values: m.loss.length ? m.loss : [.7], color: "#a9482a" }, { values: m.acc.length ? m.acc : [.5], color: "#003087" }], { height: 200, min: 0, max: 1, xLabel: "반복 → 주황 손실, 청 학습 정확도" }); };
+        draw(); const tick = function () { if (!alive) return; if (ep >= 25) { const ta = DN.testAcc(); let ok = 0, tp = 0, P2 = 0; const lt = M.mlpRows(te, "linear"); lt.forEach(function (r) { const o = M.mlpForward(lin, r.f).o; if ((o >= .5 ? 1 : 0) === r.label) ok++; if (r.label) { P2++; if (o >= .5) tp++; } }); document.getElementById("tvD3").innerHTML = "시험 결과(0.5 기준): <b style='color:" + CQ + "'>양자 특징 DNN 정확도 " + pct(ta.acc) + ", 탐지율 " + pct(ta.recall) + "</b>, <b style='color:" + CL + "'>일반 DNN(입력 16개) 정확도 " + pct(ok / lt.length) + ", 탐지율 " + pct(tp / Math.max(1, P2)) + "</b>"; QP.Pace.wait(4000, next, live); return; } DN.step(); M.mlpEpoch(lin, linRows, .3); ep++; draw(); setTimeout(tick, 450); };
+        QP.Pace.say("네 번째는 심층 신경망 학습입니다. 입력 스물두 개가 은닉층 세 개를 지나 위험 점수가 됩니다. 반복할 때마다 역전파로 가중치를 고치며, 노란 선이 이번 반복에 크게 바뀐 연결입니다. 비교를 위해 입력 열여섯 개인 일반 신경망도 같은 방식으로 함께 학습합니다.");
+        setTimeout(tick, 1500);
+      },
+      function (next) {                             // Ⓔ 메타 / meta
+        const e = sec(4, "여러 사람에게서 공통 시작점 θ를 배우고, 새 사람은 몇 걸음 만에 맞춤", '<div class="tv2"><div><b>메타학습 바깥 루프(사람 4명씩)</b><canvas id="tvE1"></canvas></div><div><b>새 사람 적응 곡선: 메타 시작 vs 무작위 시작</b><canvas id="tvE2"></canvas></div></div>');
+        const m = QP.Meta.create(77), hist = []; let it = 0;
+        const tick = function () { if (!alive) return; for (let k = 0; k < 5; k++) { QP.Meta.metaStep(m, 4); it++; } const ev = QP.Meta.evaluate(m, 31); hist.push(ev.meta[1]); QP.Charts.line(document.getElementById("tvE1"), [{ values: hist.length > 1 ? hist : [hist[0], hist[0]], color: "#a9482a" }], { height: 190, min: 0, max: 1, xLabel: "바깥 루프 " + it + "회 → 새 사람 1걸음 정확도" }); QP.Charts.line(document.getElementById("tvE2"), [{ values: ev.meta, color: "#a9482a" }, { values: ev.rand, color: "#9aa3ba" }], { height: 190, min: 0, max: 1, xLabel: "적응 걸음 0~10 (주황 메타, 회색 무작위)" }); if (it < 150) setTimeout(tick, 250); else QP.Pace.wait(3000, next, live); };
+        QP.Pace.say("다섯 번째는 메타학습입니다. 여러 산행자에게서 공통 시작점을 배우는 바깥 루프가 돌아가면서, 처음 보는 사람에게 한 걸음만 적응했을 때의 정확도가 올라갑니다. 오른쪽은 메타 시작점과 무작위 시작점의 적응 곡선 비교입니다.");
+        tick();
+      },
+      function (next) {                             // Ⓕ 결과 / results
+        const row = function (n, a, b, f, low) { const d = b - a, good = low ? d < 0 : d > 0; return "<tr><td>" + n + "</td><td>" + f(a) + "</td><td><b>" + f(b) + "</b></td><td class='" + (Math.abs(d) < 1e-9 ? "" : good ? "xgood" : "xbad") + "'>" + (d >= 0 ? "+" : "−") + f(Math.abs(d)) + "</td></tr>"; }, F3 = function (v) { return v.toFixed(3); };
+        sec(5, "처음 보는 시험 표본 " + te.length + "개로 채점", '<table class="labtbl xcmpt"><tr><th>지표</th><th style="color:' + CL + '">일반 AI</th><th style="color:' + CQ + '">양자 특징 AI</th><th>차이(양자−일반)</th></tr>' + row("탐지율", L.recall, Q.recall, pct) + row("오경보율", L.falseAlarm, Q.falseAlarm, pct, true) + row("정밀도", L.precision, Q.precision, pct) + row("F1", L.f1, Q.f1, F3) + row("AUC", L.auc, Q.auc, F3) + '</table><p class="small">이 결과가 관제실, 성적표 등 모든 화면에 바로 쓰입니다. 지금의 2큐비트 회로는 정확 판독에서 cos×cos 대조군과 같은 값이므로, 차이는 겹침을 함께 보는 특징 덕분입니다.</p>');
+        QP.Pace.say("마지막으로 처음 보는 시험 표본으로 채점했습니다. 탐지율은 일반 인공지능 " + Math.round(L.recall * 100) + "퍼센트, 양자 특징 인공지능 " + Math.round(Q.recall * 100) + "퍼센트입니다. 이 결과가 모든 화면에 바로 쓰입니다.");
+        document.getElementById("tvs5").className = "done"; next && next();
+      }
+    ];
+    let si = 0; (function go() { if (!alive || si >= steps.length) return; const f = steps[si++]; f(function () { go(); }); })();
+  }
+  QP.TrainViz = { open: open };
+})(window.QP = window.QP || {});
+
+</script>
+  <script>
+/* Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved. */
+/* [English] Live summit weather and hiking score for the top-100 mountains, rotating in the bottom live bar. */
+/**
+ * liveweather.js : 100대 명산(대표 16곳) 정상의 "지금" 날씨와 산행 점수를 아래 실시간 관제 띠에 산별로 돌아가며 보여 줌
+ *
+ * 자료 출처 : Open-Meteo 예보 API(무료, 키 없음, 기상청 KMA 등 여러 수치모델을 합친 값), 정상 표고로 기온을 보정함.
+ *             기상청 공공데이터포털(단기예보, 산악기상) API는 서비스 키가 필요하므로, 키를 받으면 fetchKMA()로 바꾸어 끼울 수 있음.
+ * 산행 점수 : 100점에서 기온, 체감온도, 바람, 강수, 뇌우/눈, 일몰까지 남은 시간에 따라 감점(규칙 기반, 학습 안 함).
+ * 인터넷이 없거나 단일 HTML(claude.ai 게시본)처럼 외부 접속이 막히면 "연결 안 됨"을 표시하고 가상 관제만 계속함.
+ */
+(function () {
+  "use strict";
+  const QP = window.QP = window.QP || {};
+  // [이름, 대표 봉우리, 표고 m, 위도, 경도] (봉우리 좌표, 공개 지도 기준 근삿값) / [name, peak, elevation, lat, lon]
+  const MT = [
+    ["북한산", "백운대", 836, 37.6588, 126.9779], ["도봉산", "자운봉", 740, 37.6987, 127.0154], ["관악산", "연주대", 632, 37.4446, 126.9637],
+    ["설악산", "대청봉", 1708, 38.1192, 128.4654], ["오대산", "비로봉", 1563, 37.7949, 128.5434], ["치악산", "비로봉", 1288, 37.3653, 128.0553],
+    ["태백산", "장군봉", 1567, 37.0951, 128.9155], ["소백산", "비로봉", 1439, 36.9573, 128.4847], ["속리산", "천왕봉", 1058, 36.5434, 127.8706],
+    ["덕유산", "향적봉", 1614, 35.8604, 127.7464], ["지리산", "천왕봉", 1915, 35.3369, 127.7307], ["가야산", "칠불봉", 1433, 35.8226, 128.1185],
+    ["무등산", "천왕봉", 1187, 35.1342, 126.9884], ["월출산", "천황봉", 809, 34.7684, 126.7116], ["내장산", "신선봉", 763, 35.4793, 126.8907], ["한라산", "백록담", 1947, 33.3617, 126.5292]
+  ];
+  const WX = function (c) {                         // 날씨 코드(WMO) → 한글 / WMO weather code → Korean
+    if (c === 0) return "맑음"; if (c <= 2) return "구름 조금"; if (c === 3) return "흐림"; if (c <= 48) return "안개";
+    if (c <= 57) return "이슬비"; if (c <= 67) return "비"; if (c <= 77) return "눈"; if (c <= 82) return "소나기"; if (c <= 86) return "눈보라"; return "뇌우";
+  };
+  function score(w, now) {                          // 산행 점수(0~100)와 감점 이유 / hiking score and reasons
+    let s = 100; const why = [];
+    const t = w.t, a = w.at, wd = w.wind, p = w.p, c = w.code;
+    if (a < -15) { s -= 35; why.push("혹한(체감 " + Math.round(a) + "°C)"); } else if (a < -5) { s -= 15; why.push("추위"); } else if (t > 30) { s -= 25; why.push("폭염"); } else if (t > 27) { s -= 10; why.push("더위"); }
+    if (wd > 14) { s -= 35; why.push("강풍 " + wd.toFixed(0) + "m/s"); } else if (wd > 9) { s -= 15; why.push("바람 " + wd.toFixed(0) + "m/s"); }
+    if (p > 5) { s -= 30; why.push("강한 비, 눈"); } else if (p > 0.2) { s -= 12; why.push("강수"); }
+    if (c >= 95) { s -= 50; why.push("뇌우(낙뢰)"); } else if ((c >= 71 && c <= 77) || c >= 85) { s -= 15; why.push("눈"); } else if (c >= 45 && c <= 48) { s -= 8; why.push("안개(시야)"); }
+    if (t <= 0 && p > 0) { s -= 10; why.push("결빙 우려"); }
+    if (w.sunset) { const h = (w.sunset - now) / 3.6e6; if (h < 0) { s -= 30; why.push("일몰 후"); } else if (h < 2) { s -= 15; why.push("일몰 " + Math.round(h * 60) + "분 전"); } }
+    s = Math.max(0, Math.min(100, Math.round(s)));
+    return { s: s, why: why, grade: s >= 80 ? "좋음" : s >= 60 ? "보통" : s >= 40 ? "주의" : "위험", cls: s >= 80 ? "ok" : s >= 60 ? "mid" : s >= 40 ? "warn" : "bad" };
+  }
+  const st = { data: null, err: null, at: null, i: 0 };
+  function fetchAll() {                             // 16곳을 한 번에 요청함 / request all 16 at once
+    const q = function (k) { return MT.map(function (m) { return m[k]; }).join(","); };
+    const url = "https://api.open-meteo.com/v1/forecast?latitude=" + q(3) + "&longitude=" + q(4) + "&elevation=" + q(2) +
+      "&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&daily=sunset&timezone=Asia%2FSeoul&wind_speed_unit=ms&forecast_days=1";
+    if (!window.fetch) { st.err = "브라우저 미지원"; return; }
+    fetch(url).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(function (j) {
+      const arr = Array.isArray(j) ? j : [j];
+      st.data = arr.map(function (x, k) { const c = x.current || {}; const ss = x.daily && x.daily.sunset ? new Date(x.daily.sunset[0] + ":00+09:00") : null;
+        return { m: MT[k], t: c.temperature_2m, at: c.apparent_temperature, rh: c.relative_humidity_2m, p: c.precipitation || 0, code: c.weather_code || 0, wind: c.wind_speed_10m || 0, sunset: ss }; });
+      st.err = null; st.at = new Date(); show();
+    }).catch(function (e) { st.err = "실시간 날씨 연결 안 됨(오프라인 또는 외부 접속 차단)"; show(); });
+  }
+  function el() {                                   // 표시 칸을 만들거나 찾음 / create or find the display slot
+    let e = document.getElementById("wxTag"); if (e) return e;
+    const live = document.getElementById("live"); if (!live) return null;
+    e = document.createElement("div"); e.id = "wxTag"; e.className = "wxtag"; e.title = "100대 명산 정상의 지금 날씨와 산행 점수(Open-Meteo, 정상 표고 보정). 클릭하면 다음 산"; e.onclick = function () { st.i++; show(); };
+    live.appendChild(e); return e;
+  }
+  function show() {
+    const e = el(); if (!e) return;
+    if (!st.data) { e.innerHTML = '<span class="wxh">⛰ 지금 명산 날씨</span> ' + (st.err || "불러오는 중…"); e.className = "wxtag"; return; }
+    const d = st.data[st.i % st.data.length], now = new Date(), r = score(d, now), m = d.m;
+    const hm = function (x) { return String(x.getHours()).padStart(2, "0") + ":" + String(x.getMinutes()).padStart(2, "0"); };
+    e.className = "wxtag " + r.cls;
+    const no = st.i % st.data.length + 1; e.innerHTML = '<span class="wxh">⛰ 지금 날씨 ' + no + "/" + st.data.length + "</span> <b>No." + no + " " + m[0] + " " + m[1] + "(" + m[2] + "m)</b> " + WX(d.code) + ", " +
+      "<b>" + (d.t != null ? d.t.toFixed(1) : "?") + "°C</b>(체감 " + (d.at != null ? d.at.toFixed(0) : "?") + "°C), 바람 " + d.wind.toFixed(1) + "m/s, 강수 " + d.p.toFixed(1) + "mm, 습도 " + (d.rh != null ? d.rh : "?") + "%" +
+      (d.sunset ? ", 일몰 " + hm(d.sunset) : "") + ' | <b class="wxs">산행 점수 ' + r.s + "점, " + r.grade + "</b>" + (r.why.length ? " (" + r.why.join(", ") + ")" : "") +
+      ' <small>' + hm(st.at) + " 기준</small>";
+  }
+  function start() { el(); show(); fetchAll(); setInterval(fetchAll, 15 * 60 * 1000); setInterval(function () { if (st.data) { st.i++; show(); } }, 7000); }
+  QP.LiveWx = { MT: MT, score: score, state: st, refresh: fetchAll };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(start, 1500); }); else setTimeout(start, 1500);
+})();
 
 </script>
 <script>
@@ -6033,10 +6236,10 @@ window.QP_I18N_EN = {
     same: [[/항상 같아요|코사인/, ".proof"], [/대조군은/, ".qa"], [/샷|잡음|다른 회로/, ".tint-plum"], [/지지 특징|탐지율/, "#yC"]],
     bench: [[/탐지율|오경보|정밀도|에프원|에이유씨/, ".metric-desc"], [/에프원은/, "#bT"]],
     persona: [[/심박 백사십|서른한|예순여덟/, "#pCards"], [/최대심박|여성/, "#pCards .card:nth-child(1)"], [/인공지능이라도|경보가 달라/, "#pC"]],
-    meta: [[/관계도|워치|씨낫|겹침 점수를 만듭니다|고정/, "#mFlow"], [/신경망 그림|노란 선/, "#mNet"], [/가중치 공간|금색|주황 선/, "#mPar"], [/적응 곡선|무작위 시작점/, "#mAd"]],
+    meta: [[/관계도|워치|씨낫|겹침 점수를 만듭니다|고정/, "#mFlow"], [/신경망 그림|초록 선/, "#mNet"], [/가중치 공간|진분홍|남색 선/, "#mPar"], [/적응 곡선|무작위 시작점/, "#mAd"]],
     ecolab: [[/풀다운|왼쪽/, ".ecoctl"], [/여덟 단계 상자|차례로 켜/, "#xPipe"], [/배포|실시간 채점|현장 경보/, "#xRun2"], [/재학습|메타러너|피드백/, "#xRe"], [/로지스틱|심층/, "#xT"]],
     lab: [[/일곱 단계|왼쪽/, "#lSteps"], [/자동 실험/, "#lAuto"], [/다음 단계/, "#lNext"]],
-    dnn: [[/입력 신호|은닉|위험 점수/, "#dNet"], [/노란 선|굵기/, "#dNet"], [/문제 풀기|여덟|막대|체크|맞힌/, "#dQuiz"], [/손실이|손실/, "#dCur"], [/사백사십일|가중치/, "#dW"]],
+    dnn: [[/입력 신호|은닉|위험 점수/, "#dNet"], [/초록 선|굵기/, "#dNet"], [/문제 풀기|여덟|막대|체크|맞힌/, "#dQuiz"], [/손실이|손실/, "#dCur"], [/사백사십일|가중치/, "#dW"]],
     vqc: [[/다이얼|각도/, "#vC"], [/기울기|측정하면/, ".qa"]],
     eco: [[/수집|신호화|양자 특징|학습|배포|경보|피드백|메타/, "#eC"], [/자두색|장밋빛|안전 규칙/, "#eC"]],
     datamgr: [[/교과서|하는 일/, ".dmflow"], [/근거 기반 산행 시계열|생성할 때/, ".dmv>.card:nth-child(2)"], [/등급|검사/, "#gD"], [/연속 생성|학습 곡선/, "#gC"]],
@@ -6205,7 +6408,7 @@ window.QP_I18N_EN = {
     c.pois.forEach(function (q) { if (q.type === "stamp") return; h.fillStyle = "#c76b67"; h.fillRect(X(q.x) - 1.5, Y(QP.Mountain.elevAt(c, q.x)) - 5, 3, 3); }); // 위험 지점을 빨간 점으로 표시함 / mark risk points with red dots
     h.fillStyle = risk ? "#c62828" : al ? "#6e4c82" : "#ffb500"; h.beginPath(); h.arc(X(s0.x), Y(s0.elev) - 2, 4, 0, 7); h.fill(); h.strokeStyle = "#003087"; h.stroke(); // 산행자 위치(위험이면 빨강, 경보면 자두)임 / hiker position (red if risk, plum if alarm)
     h.fillStyle = "#003087"; h.font = "bold 10px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; h.fillText(s0.up ? "↗" : "↘", X(s0.x) + 6, Y(s0.elev) - 4); // 오르막, 내리막 방향임 / uphill or downhill direction
-    $("liveTag").innerHTML = "<b>" + live.course.name + " " + live.course.peak + "</b> 고도 " + Math.round(s0.elev) + "m, 경사 " + Math.round(s0.grade * 100) + "%, <b>심박 " + Math.round(s0.hr) + " bpm</b>(%HRR " + Math.round(s0.pHRR * 100) + "), 기온 " + s0.T.toFixed(1) + "°C, 비 " + s0.rain.toFixed(1) + " mm/h | <span class='c-dusk'>일반 " + Math.round(s0.lin * 100) + "%</span> <span class='c-plum'>양자 " + Math.round(s0.qf * 100) + "%</span> " + (risk ? "<b class='c-rose'>⚠ 위험 구간</b>" : al ? "<b class='c-plum'>⚠ 양자 경보</b>" : "정상"); // 상태 글자(크게, 자세히)임 / status text (large and detailed)
+    $("liveTag").innerHTML = "<small style=\"color:#8892ad\">[가상 시뮬레이션]</small> <b>" + live.course.name + " " + live.course.peak + "</b> 고도 " + Math.round(s0.elev) + "m, 경사 " + Math.round(s0.grade * 100) + "%, <b>심박 " + Math.round(s0.hr) + " bpm</b>(%HRR " + Math.round(s0.pHRR * 100) + "), 기온 " + s0.T.toFixed(1) + "°C, 비 " + s0.rain.toFixed(1) + " mm/h | <span class='c-dusk'>일반 " + Math.round(s0.lin * 100) + "%</span> <span class='c-plum'>양자 " + Math.round(s0.qf * 100) + "%</span> " + (risk ? "<b class='c-rose'>⚠ 위험 구간</b>" : al ? "<b class='c-plum'>⚠ 양자 경보</b>" : "정상"); // 상태 글자(크게, 자세히)임 / status text (large and detailed)
     $("live").className = "live" + (risk ? " risk" : al ? " warn" : ""); // 위험이면 깜빡임 / flash if risky
   }
   setInterval(liveTick, 260);                       // 0.12초마다 갱신함 / update every 0.12 s
