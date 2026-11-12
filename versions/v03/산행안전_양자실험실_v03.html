@@ -411,7 +411,8 @@ button,select,input,textarea{font-family:inherit}
 /* ---- 100대 명산 실시간 산행 가능성 박스(우측 상단), 패널, 띠 (2026-11-12) ---- */
 .main>.top{height:auto;min-height:56px;gap:10px}
 .wxbox{flex:1 1 auto;max-width:720px;min-width:360px;margin:4px 8px 4px auto;padding:4px 10px;border-radius:10px;border:1px solid #cfd8ea;border-left:6px solid #2e7d32;background:#f6fbf6;font-size:12.3px;line-height:1.45;color:var(--ink);cursor:pointer;overflow:hidden}
-.wxbox.lv1{border-left-color:#1e63c6;background:#f3f7fe} .wxbox.lv2{border-left-color:#e08a00;background:#fff8ea} .wxbox.lv3{border-left-color:#c62828;background:#fdf1ef}
+.wxbox.wxl1{border-left-color:#1e63c6;background:#f3f7fe} .wxbox.wxl2{border-left-color:#e08a00;background:#fff8ea}
+.wxbox.wxl3{border-left-color:#c62828;background:#fdf1ef;animation:wxamb 7s ease-in-out infinite alternate} @keyframes wxamb{0%{background:#fdf3f1;border-left-color:#c62828;border-color:#efd4d0}50%{background:#fbe6e2;border-left-color:#d9534f;border-color:#e9c3bd}100%{background:#fcefe9;border-left-color:#b23a48;border-color:#efd4d0}}
 .wxb-h{font-weight:800;color:var(--maple);display:flex;align-items:center;gap:6px;white-space:nowrap} .wxb-h small{font-weight:500;color:#7a849e}
 .wxb-btn{margin-left:auto;display:flex;gap:3px} .wxb-btn button{font-size:11.5px;padding:1px 7px;border-radius:6px}
 .wxb-l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .wxb-l small{color:#4f5a75}
@@ -430,6 +431,14 @@ button,select,input,textarea{font-family:inherit}
 @media (max-width:1150px){.wxbox{display:none}}
 .main{grid-template-rows:auto auto 1fr auto auto 48px!important} .main>.top{padding-top:2px;padding-bottom:2px}
 .wxb-h .wxb-t{flex:none} .wxb-h .wxb-l{flex:1;min-width:0;font-weight:500;color:var(--ink)}
+/* ---- 3과 게이트 카드 동적 실험대(gatelab.js, 2026-11-12) ---- */
+.glab{grid-template-columns:300px minmax(0,1fr);align-items:start} .glab-left{gap:8px} .glab-ctl{display:flex;flex-direction:column;gap:4px} .glab-ctl .gate{padding:5px 8px}
+.glab-ctl .gate b{font-size:13.5px} .glab-ctl .gate small{font-size:11.6px}
+.glsteps{display:flex;flex-direction:column;gap:3px;margin-top:6px} .glsteps button{text-align:left;font-size:12.5px;padding:3px 8px} .glsteps button.on{background:#fff4d6;border-color:#ffb500;font-weight:800} .glsteps button.done{color:#6b7591}
+.glab-right #glC{width:100%;display:block} .glleg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px} .glleg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-2px}
+.glx{font-size:13.2px;line-height:1.55;background:#f7f8fc;border-radius:8px;padding:6px 10px;min-height:84px} .glx p{margin:2px 0}
+.top-btn button,.top-btn #uBtn{white-space:nowrap} .wxbox{min-width:0;flex:1 1 420px;max-width:640px} .glx{min-height:0}
+.zcap{font-size:12.6px;line-height:1.5;margin:2px 0 4px;padding:4px 8px;border-radius:8px;background:#f2f5fc;color:#1d2a4d} .zcap.on{background:#fff4d6;border-left:4px solid #ffb500}
 
 </style>                    <!-- 디자인 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet"> <!-- 한글: 본명조 계열 Noto Serif KR(인터넷이 없으면 바탕으로 대신 표시) / Korean font -->
@@ -3171,7 +3180,9 @@ window.QP_I18N_EN = {
  *            신경망은 8 → 16 → 12 → 8 → 1(은닉층 3개)이고, 정답은 나이, 안정시 심박, 체력, 산행 이력에 따라 사람마다 다름.
  *            즉 양자 특징 AI가 만든 "겹침 신호"를 메타러너가 받아, 사람마다 그
  *            신호를 얼마나 무겁게 볼지를 빠르게 조정함.
- * 근거 : Finn, Abbeel & Levine, ICML 2017(MAML) / Nichol et al., arXiv:1803.02999(1차 근사)
+ * 근거 : Finn, Abbeel & Levine, ICML 2017(MAML) / Nichol et al., arXiv:1803.02999(1차 근사) / Kingma & Ba, ICLR 2015(Adam, 바깥 루프)
+ * 조정(2026-11-12) : 바깥 갱신을 SGD 0.3 → Adam 0.05로 바꿈. 150회 메타 후 처음 보는 사람(씨앗 3종 평균) 5걸음 정확도
+ *            메타 0.70 → 0.82, 무작위 시작 0.59(차이 10%p → 22%p). 적응 전 0.66 → 1걸음 0.80으로 적응 효과도 뚜렷함.
  *        Tanaka 2001, Gulati 2010(최대심박), Karvonen(%HRR)
  * ===================================================================== */
 (function (QP) {                                    // QP 이름공간에 메타학습 기능을 붙임 / attaches meta-learning to the QP namespace
@@ -3217,12 +3228,18 @@ window.QP_I18N_EN = {
   function step(t, g, lr) { for (let l = 0; l < t.W.length; l++) for (let j = 0; j < t.W[l].length; j++) { t.b[l][j] -= lr * g.b[l][j]; for (let i = 0; i < t.W[l][j].length; i++) t.W[l][j][i] -= lr * g.W[l][j][i]; } return t; } // 가중치 갱신 / update weights
   function adapt(t, support, k, lr) { const a = copy(t), path = [copy(a)]; for (let s = 0; s < k; s++) { step(a, grad(a, support).g, lr); path.push(copy(a)); } return { a: a, path: path }; } // 안쪽 루프 / inner loop
   function acc(t, data) { let ok = 0; data.forEach(function (d) { if ((fwd(t, d.f).o >= .5 ? 1 : 0) === d.y) ok++; }); return ok / data.length; } // 정확도 / accuracy
-  function create(seed) { const r = QP.Sim.rng(seed || 77); return { r: r, theta: init(r), it: 0, loss: [], last: [], inner: 5, lrIn: .5, lrOut: .3 }; } // 메타학습기 / meta-learner
+  function adam(m, g) {                             // Adam 바깥 갱신(Kingma & Ba 2015) / Adam outer update
+    const b1 = .9, b2 = .999, eps = 1e-8; if (!m.mA) { m.mA = { W: g.W.map(function (Wl) { return Wl.map(function (r) { return r.map(function () { return 0; }); }); }), b: g.b.map(function (bl) { return bl.map(function () { return 0; }); }) }; m.vA = copy(m.mA); m.tA = 0; }
+    m.tA++; const c1 = 1 - Math.pow(b1, m.tA), c2 = 1 - Math.pow(b2, m.tA);
+    const up = function (P, G, A, V, i) { A[i] = b1 * A[i] + (1 - b1) * G[i]; V[i] = b2 * V[i] + (1 - b2) * G[i] * G[i]; P[i] -= m.lrOut * (A[i] / c1) / (Math.sqrt(V[i] / c2) + eps); };
+    for (let l = 0; l < m.theta.W.length; l++) for (let j = 0; j < m.theta.W[l].length; j++) { up(m.theta.b[l], g.b[l], m.mA.b[l], m.vA.b[l], j); for (let i = 0; i < m.theta.W[l][j].length; i++) up(m.theta.W[l][j], g.W[l][j], m.mA.W[l][j], m.vA.W[l][j], i); }
+  }
+  function create(seed) { const r = QP.Sim.rng(seed || 77); return { r: r, theta: init(r), it: 0, loss: [], last: [], inner: 5, lrIn: .5, lrOut: .05 }; } // 메타학습기(바깥 Adam 0.05, 2026-11-12 조정: 메타 0.70→0.82) / meta-learner
   function metaStep(m, nTasks) {                    // 바깥 루프 한 번(FOMAML) / one outer loop (FOMAML)
     const gs = [], tasks = []; let L = 0;
     for (let k = 0; k < (nTasks || 4); k++) { const p = newPerson(m.r), sup = sample(p, 10, m.r), qry = sample(p, 30, m.r), ad = adapt(m.theta, sup, m.inner, m.lrIn), q = grad(ad.a, qry); gs.push(q.g); L += q.L; tasks.push({ p: p, path: ad.path, before: acc(m.theta, qry), after: acc(ad.a, qry) }); }
     const avg = { W: m.theta.W.map(function (Wl, l) { return Wl.map(function (r, j) { return r.map(function (_, i) { return gs.reduce(function (s, g) { return s + g.W[l][j][i]; }, 0) / gs.length; }); }); }), b: m.theta.b.map(function (bl, l) { return bl.map(function (_, j) { return gs.reduce(function (s, g) { return s + g.b[l][j]; }, 0) / gs.length; }); }) };
-    m.prev = copy(m.theta); step(m.theta, avg, m.lrOut); m.it++; m.loss.push(L / gs.length); m.last = tasks; return m;
+    m.prev = copy(m.theta); adam(m, avg); m.it++; m.loss.push(L / gs.length); m.last = tasks; return m;
   }
   function evaluate(m, seed) {                      // 처음 보는 사람 12명: 메타 시작점 vs 무작위 시작점 / 12 new people: meta start vs random start
     const r = QP.Sim.rng(seed || 999), cM = new Array(11).fill(0), cR = new Array(11).fill(0), N = 12;
@@ -4044,7 +4061,10 @@ window.QP_I18N_EN = {
   QP.Anim = { loop: loop, stopAll: stopAll, lerp: lerp, dial: dial, pair: pair, canvas: canvas, deepNet: deepNet }; // 공개함 / make public
   /* 설명과 같이 가기: 최소 시간이 지나고, 읽던 설명이 끝나야 다음 단계로 감 / keep pace with narration: next step only after a minimum time and after the current speech ends */
   QP.Pace = {
-    say: function (text) { const av = document.getElementById("autoVoice"); if (text && !(QP.State && QP.State.touring) && (!av || av.checked) && QP.Voice) QP.Voice.speak(text, true); }, // 단계 설명 읽기 / read the step explanation
+    say: function (text) { const av = document.getElementById("autoVoice"); if (!text || !QP.Voice || (av && !av.checked)) return; const St = QP.State || {};
+      if (!St.touring) { QP.Voice.speak(text, true); return; }
+      if (St.hold) { const h0 = St.holdId; (function q() { if (!St.hold || St.holdId !== h0) return; if (QP.Voice.isActive && QP.Voice.isActive()) { setTimeout(q, 400); return; } QP.Voice.speak(text, true, true); })(); } }, // 단계 설명 읽기(투어 중에는 화면 시연이 붙잡은 경우만, 앞 설명이 끝난 뒤 이어 읽음) / read the step explanation (during the tour only for held demos, after the current speech)
+    hold: function (on) { const St = QP.State || {}; St.hold = !!on; if (on) St.holdId = (St.holdId || 0) + 1; }, // 화면 시연이 끝날 때까지 투어를 붙잡음 / hold the tour until the screen demo finishes
     wait: function (minMs, cb, alive) { const t0 = Date.now(); (function w() { if (alive && !alive()) return; const talking = QP.Voice && QP.Voice.isActive && QP.Voice.isActive(); if (Date.now() - t0 < minMs || (talking && Date.now() - t0 < 90000)) { setTimeout(w, 400); return; } cb(); })(); } // 기다렸다가 실행 / wait then run
   };
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace
@@ -4708,7 +4728,7 @@ window.QP_I18N_EN = {
   /* ===== 4큐비트 위험구역 회로 (세미나 부록) / 4-qubit risk-zone circuit (seminar appendix)  ===== */
   function zone4q(el) {
     el.innerHTML = '<div class="grid z4"><div class="z4left">' + // 왼쪽: 산행 장면+입력, 왜 측정하나 / 오른쪽: 큰 회로, 결과 박스 3개 / left: hiking scene + inputs, why measure / right: large circuit, three result boxes
-      '<div class="card z4in"><h3>입력(거리 m): 산행자가 걸어가면 세 위험 지점까지 거리가 바뀜</h3><canvas id="zScene"></canvas><div class="z4sl">' + ['위험구역|z0|15', '야생동물 신고 지역|z1|260', '낙석 구간|z2|190'].map(function (t) { const p = t.split("|"); return '<div class="slider"><span>' + p[0] + '</span><input id="' + p[1] + '" type="range" min="0" max="300" value="' + p[2] + '"><output></output></div>'; }).join("") +
+      '<div class="card z4in"><h3>입력(거리 m): 산행자가 걸어가면 세 위험 지점까지 거리가 바뀜</h3><canvas id="zScene"></canvas><p id="zCap" class="zcap">▶ 산행 따라 걷기를 누르면 눈송이가 입구부터 끝까지 세 지점을 모두 지나며 설명합니다.</p><div class="z4sl">' + ['위험구역|z0|15', '야생동물 신고 지역|z1|260', '낙석 구간|z2|190'].map(function (t) { const p = t.split("|"); return '<div class="slider"><span>' + p[0] + '</span><input id="' + p[1] + '" type="range" min="0" max="300" value="' + p[2] + '"><output></output></div>'; }).join("") +
       '<div class="slider"><span>위치 신뢰도</span><input id="zq" type="range" min="0" max="100" value="95"><output></output></div></div><div class="row"><label class="tog"><input type="checkbox" id="zClosed"> 공식 출입 통제</label><label class="tog"><input type="checkbox" id="zMiss"> 위험구역 자료 없음</label><b>세미나 예시</b><div class="btns"><button data-f="15,260,190">위험구역</button><button data-f="220,20,170">야생동물</button><button data-f="240,300,12">낙석</button><button data-f="220,270,180">안전</button><button id="zAuto" data-autoplay="1">▶ 산행 따라 걷기</button></div></div></div>' + '<div class="card tint-plum zwhy"><h3>왜 이것을 측정하나</h3><ul class="why4"><li><b>q0~q2 = 세 위험까지의 거리</b>: 산행 앱이 GPS로 아는 거리를 각도로 넣어, 가까울수록 1 쪽으로 돎</li><li><b>q3 = 위치 신뢰도</b>: GPS 오차가 크면(숲, 계곡) 거리 자체를 믿을 수 없어 판독을 보류함 → 헛경보 방지</li><li><b>CNOT 3개</b>: 세 위험 상태를 보조 큐비트 하나에 모아 “위험 지점이 하나라도 가까운가”를 한 번에 읽음. q3 판독이 높으면 <b>안심 신호</b>(신뢰도 높고 가까운 위험 없음)</li><li><b>현실 쓰임</b>: 갈림길, 절벽 근처에서 위험 종류를 동시에 비교해 가장 가까운 것부터 안내</li></ul></div></div><div class="z4right">' +
       '<div class="card z4c"><h3>4큐비트 회로(진폭 16개): 회전 → CNOT 3개 → 보정 → 판독</h3><canvas id="zCv"></canvas></div>' +
       '<div class="z4out"><div class="card"><h3>상태벡터 16칸(진폭²)</h3><canvas id="zSv"></canvas></div><div class="card"><h3>고전 거리 점수 vs 양자 판독</h3><canvas id="zBars"></canvas><div class="legend"><span style="--c:#4d6b8c">고전</span><span style="--c:#6e4c82">양자 P(1)</span></div></div><div class="card"><h3>지금 판단(현실 의미)</h3><div id="zAct" class="banner info"></div><p id="zTxt"></p><div id="zB"></div></div></div></div></div></div>';
@@ -4742,12 +4762,34 @@ window.QP_I18N_EN = {
       if (walker.complete && walker.naturalWidth) g.drawImage(walker, X(walkX) - 14, Y(walkX) - 44, 28, 36); else { g.fillStyle = "#003087"; g.beginPath(); g.arc(X(walkX), Y(walkX) - 20, 6, 0, 7); g.fill(); } // 걷는 눈송이임 / walking Snowflake
       g.textAlign = "left"; g.fillStyle = "#1d2a4d"; g.font = "11px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText("가까울수록 큐비트가 1 쪽으로 돌아감 → 아래 회로", 8, 12); // 연결 설명임 / link explanation
     }
-    $("#zAuto", el).onclick = function () { if (zt) { clearInterval(zt); zt = null; this.textContent = "▶ 산행 따라 걷기"; return; } this.textContent = "■ 걷기 멈춤"; let zPause = false, zLast = -1; const ZN = ["위험구역", "야생동물 신고 지역", "낙석 구간"]; zt = setInterval(function () { if (zPause) return; walkX = (walkX + 2) % 900; ["z0", "z1", "z2"].forEach(function (id, k) { $("#" + id, el).value = Math.min(300, Math.round(Math.abs(ZP[k] - walkX))); }); calc();
-      ZP.forEach(function (zp, k) { if (Math.abs(zp - walkX) < 2 && zLast !== k) { zLast = k; zPause = true; QP.Pace.say("눈송이가 " + ZN[k] + "에 다다랐습니다. 왼쪽 거리 막대가 영에 가까워지고, 오른쪽 회로의 큐 " + ["영", "일", "이"][k] + " 화살표가 일 쪽으로 돌아갑니다. 세 개의 씨낫이 이 상태를 보조 큐비트에 모으고, 오른쪽 아래 지금 판단 칸이 " + ZN[k] + " 안내로 바뀝니다."); QP.Pace.wait(7000, function () { zPause = false; }, function () { return document.body.contains(el); }); } }); /* 위험 지점마다 멈춰 설명하고, 다 읽은 뒤 다시 걷기 / stop at each risk point, explain, then walk on after the speech */
-    }, 200); }; // 눈송이가 걸어가며 세 지점까지 거리가 바뀌고, 회로가 그에 맞춰 회전함 / as Snowflake walks, the distances to the three points change and the circuit turns accordingly
+    // 눈송이가 입구(0 m)에서 끝(900 m)까지 걸으며 세 지점마다 멈춰 설명함(투어 중에도 끝까지 감) / Snowflake walks 0 → 900 m, stopping at all three points
+    const TALK = [
+      "① 출발: 눈송이가 등산로 입구에서 출발합니다. 앞에 위험구역(250 m), 야생동물 신고 지역(520 m), 낙석 구간(760 m)이 차례로 있습니다. 세 지점까지의 거리가 그대로 큐비트 세 개의 회전 각도가 됩니다.",
+      "② 위험구역 도착(0 m): 위험구역까지 거리가 0 m가 되어 q0 화살표가 1 쪽으로 완전히 돌아갔습니다. 나머지 두 지점은 아직 멀어 q1, q2는 0 쪽에 머뭅니다. 첫 번째 CNOT이 이 상태를 보조 큐비트 q3에 모으고, 지금 판단 칸이 위험구역 안내로 바뀝니다.",
+      "③ 야생동물 신고 지역 도착(0 m): 회로가 하는 일은 위험구역과 같아 반복처럼 보이지만, 이번에는 q1이 돌아가고 두 번째 CNOT이 쓰입니다. 위험구역은 이미 지나 거리가 다시 멀어졌으므로 q0은 0 쪽으로 돌아왔습니다. 감지 기준이 180 m로 가장 길어 더 멀리서부터 화살표가 기울기 시작한 점이 다릅니다.",
+      "④ 낙석 구간 도착(0 m): 같은 원리의 세 번째 반복이며, 이번에는 q2와 세 번째 CNOT입니다. 낙석은 감지 기준이 100 m로 가장 짧아 가까이 와서야 화살표가 급하게 돕니다. 낙석은 위에서 떨어지는 위험이라 머무르지 말고 빨리 지나가라는 안내가 맞습니다.",
+      "⑤ 끝 지점 도착: 세 위험 지점을 모두 지나 거리가 멀어졌으므로 q0, q1, q2가 모두 0 쪽으로 돌아왔고 경보가 꺼졌습니다. 정리하면 같은 회로가 세 번 반복되지만, 어느 큐비트가 도는지, 몇 m 앞부터 반응하는지, 현장 안내가 무엇인지가 지점마다 다릅니다."
+    ];
+    let zT0 = 0;
+    const ZN2 = ["위험구역", "야생동물 신고 지역", "낙석 구간"];
+    function cap(k) { const c = $("#zCap", el); if (c) { c.innerHTML = TALK[k]; c.className = "zcap on"; } }
+    function setD() { ["z0", "z1", "z2"].forEach(function (id, k) { $("#" + id, el).value = Math.min(300, Math.round(Math.abs(ZP[k] - walkX))); }); calc(); }
+    function endWalk(done) { clearInterval(zt); zt = null; QP.Pace.hold(false); const b = $("#zAuto", el); if (b) b.textContent = done ? "▶ 처음부터 다시 걷기" : "▶ 산행 따라 걷기"; }
+    $("#zAuto", el).onclick = function () {
+      if (zt) { endWalk(false); return; }
+      this.textContent = "■ 걷기 멈춤"; if (walkX >= 898) walkX = 0; QP.Pace.hold(true);
+      let zPause = true, zLast = -1; setD(); cap(0); QP.Pace.say(TALK[0].replace(/^①\s*/, "")); QP.Pace.wait(6000, function () { zPause = false; }, function () { return document.body.contains(el); });
+      zt = setInterval(function () {
+        const now = performance.now(), dts = Math.min(1, (now - (zT0 || now)) / 1000); zT0 = now;
+        if (zPause || !document.body.contains(el)) return;
+        const near = ZP.some(function (zp) { return Math.abs(zp - walkX) < 40; }); walkX = Math.min(900, walkX + dts * (near ? 14 : 42)); setD();   // 시간 기준 속도: 멀 때 초속 42 m, 지점 근처 14 m / time-based speed
+        ZP.forEach(function (zp, k) { if (walkX >= zp - .5 && zLast < k) { zLast = k; walkX = zp; setD(); zPause = true; cap(k + 1); QP.Pace.say(TALK[k + 1].replace(/^[②③④]\s*/, "")); QP.Pace.wait(8000, function () { zPause = false; }, function () { return document.body.contains(el); }); } });
+        if (walkX >= 900) { zPause = true; cap(4); QP.Pace.say(TALK[4].replace(/^⑤\s*/, "")); QP.Pace.wait(7000, function () { endWalk(true); }, function () { return document.body.contains(el); }); }
+      }, 100); zT0 = 0;
+    };
     const sceneStop = A.loop(scene);                // 장면을 계속 그림 / keep drawing the scene
     calc();                                         // 처음 계산함 / first computation
-    return function () { stop(); sceneStop(); clearInterval(zt); }; // 떠날 때 루프와 걷기를 멈춤 / stop the loop and walking when leaving
+    return function () { stop(); sceneStop(); clearInterval(zt); QP.Pace.hold(false); }; // 떠날 때 루프와 걷기를 멈춤 / stop the loop and walking when leaving
   }
 
   QP.ViewDefs = (QP.ViewDefs || []).concat([        // 화면 정의를 등록함 / register the screen definitions
@@ -4756,6 +4798,159 @@ window.QP_I18N_EN = {
     { id: "zone4q", group: "산행 관제실", title: "4큐비트 위험구역 회로", render: zone4q }
   ]);
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace
+
+</script>
+<script>
+/* Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved.
+ * 행정안전부 재난안전연구개발사업 산행안전 과제 결과물. 이용 조건은 프로젝트 루트의 LICENSE를 따름. */
+/* [English] Gate-card lab (lesson 3): animated two-qubit dials, rotation trails, amplitude and probability bars,
+ * a growing circuit diagram, entanglement link (concurrence) and falling measurement shots, with an automatic narrated lesson. */
+/* =====================================================================
+ * gatelab.js : 큐비트 용어 교실 3과 "게이트 카드" 동적 실험대 (2026-11-12 신규, 레고 부품)
+ * ---------------------------------------------------------------------
+ * 화면 구성(번호는 캔버스 안 번호와 같음)
+ *  ① 큐비트 A(제어), B(대상) 다이얼 : 화살표가 돌아간 길을 색 궤적으로 남김(남색 = A, 진분홍 = B)
+ *  ② 각 큐비트의 진폭(cos, sin)과 확률 막대(파랑 = 0, 주황 = 1)
+ *  ③ 두 큐비트 결과 4가지(00, 01, 10, 11) 확률 막대 : 에뮬레이터 상태벡터를 그대로 읽음
+ *  ④ 얽힘 고리 : 동시 발생도(concurrence) C = 2|a00·a11 − a01·a10| (Wootters 1998), 굵을수록 강하게 얽힘
+ *  ⑤ 회로도 : 지금까지 적용한 게이트가 시간 순서대로 쌓이고 노란 점이 방금 지난 게이트로 이동함
+ *  ⑥ 측정 상자 : 측정 결과 공이 하나씩 떨어져 쌓임(20번 측정 = 확률이 눈에 보임)
+ * 자동 수업 : 화면이 열리면 10단계를 음성 설명과 같은 속도(QP.Pace.say, QP.Pace.wait)로 진행함.
+ * 근거 : Nielsen & Chuang(2010) 1.3절(게이트), 2.2.3절(측정), Wootters, PRL 80, 2245(1998)(동시 발생도)
+ * ===================================================================== */
+(function (QP) {
+  "use strict";
+  const S = QP.Sim, A = QP.Anim;
+  const PI = Math.PI, CA = "#003087", CB = "#d81b60", C0 = "#1e63c6", C1 = "#ef7d00", CY = "#ffb500";   // A 남색, B 진분홍, 0 파랑, 1 주황, 진행 점 노랑
+  const OUTC = ["#1e63c6", "#2e7d32", "#8e24aa", "#ef7d00"];   // 00 파랑, 10 초록, 01 보라, 11 주황(결과 4가지, 서로 다른 천연색)
+  const pct = function (v) { return (v * 100).toFixed(1) + "%"; };
+  const NUM = "①②③④⑤⑥⑦⑧⑨⑩";
+  function mount(body, opt) {
+    opt = opt || {};
+    body.innerHTML = '<div class="grid glab">' +
+      '<div class="stack glab-left"><div class="card glab-ctl"><b>게이트 카드(눌러서 적용)</b>' +
+      [["xa", "① X(A) 뒤집기", "A 화살표를 위↔아래로 180° 돌림"], ["xb", "② X(B) 뒤집기", "B 화살표를 위↔아래로 180° 돌림"], ["ry", "③ RY(+45°) 돌리기(A)", "A 화살표를 45°씩 돌림, 산행 신호를 넣는 방법"],
+        ["h", "④ H 반반 섞기(A)", "0을 0과 1이 반반인 상태로(옆으로 눕힘)"], ["cx", "⑤ CNOT(A → B)", "A가 1인 부분에서만 B를 뒤집음 → 얽힘"], ["m1", "⑥ 측정 1번", "하나로 정해짐(상태가 무너짐)"],
+        ["m20", "⑦ 측정 20번", "같은 준비를 20번 반복해 확률을 눈으로 확인"], ["rs", "⑧ 처음으로 |00⟩", "두 화살표를 위(0)로 되돌림"]].map(function (c) {
+          return '<button class="gate" data-g="' + c[0] + '"><b>' + c[1] + "</b><small>" + c[2] + "</small></button>"; }).join("") +
+      '</div><div class="card glab-auto"><div class="row"><button id="glAuto" class="primary">▶ 자동 수업 다시 보기</button><button id="glStop">❚❚ 멈춤</button></div><div id="glSteps" class="glsteps"></div></div></div>' +
+      '<div class="card stack glab-right"><h3 id="glT">게이트 카드 실험대</h3><div id="glX" class="glx"></div><canvas id="glC"></canvas>' +
+      '<div class="glleg"><span><i style="background:' + CA + '"></i>큐비트 A(제어) 화살표, 궤적</span><span><i style="background:' + CB + '"></i>큐비트 B(대상) 화살표, 궤적</span><span><i style="background:' + C0 + '"></i>0이 나올 확률</span><span><i style="background:' + C1 + '"></i>1이 나올 확률</span><span><i style="background:' + CY + '"></i>지금 계산 위치(회로도)</span><span><i style="background:#7b1fa2"></i>얽힘 고리(굵을수록 강함)</span></div>' +
+      '</div></div>';
+    const $ = function (s) { return body.querySelector(s); };
+    let st = S.createState(2), hist = [], shots = [], drops = [], cur = { a: 0, b: 0 }, trail = [], flash = 0, dot = 0, alive = true, auto = null, stepNo = -1;
+    // 상태에서 읽는 값들 / values read from the state
+    function amp(i) { return st.re[i]; }                                   // 이 실험대의 게이트는 실수 진폭만 만듦(X, RY, H, CNOT) / these gates keep amplitudes real
+    function pr() { return Array.from(S.probs(st)); }                                  // [00, 10, 01, 11] 순서(인덱스 0..3, q0 = A가 낮은 비트) / index order 0..3 (q0 = A is the low bit)
+    function pA1() { const p = pr(); return p[1] + p[3]; }
+    function pB1() { const p = pr(); return p[2] + p[3]; }
+    function conc() { return Math.min(1, 2 * Math.abs(amp(0) * amp(3) - amp(1) * amp(2))); }   // 동시 발생도 / concurrence
+    function zB() { return 1 - 2 * pB1(); }                                 // ⟨Z_B⟩ = P(B=0) − P(B=1)
+    const ang = function (p) { return 2 * Math.asin(Math.sqrt(Math.max(0, Math.min(1, p)))); };
+    function snap() { const p = pr(); return { a: pA1(), b: pB1(), p: p.slice(), c: conc() }; }
+    function apply(g, quiet) {                                              // 게이트 적용 + 설명 / apply a gate and explain
+      const b0 = snap(), fromA = ang(b0.a), fromB = ang(b0.b); let title = "", what = "", why = "";
+      if (g === "xa") { S.x(st, 0); title = "X(A) 뒤집기"; why = "X는 0과 1의 진폭을 맞바꿉니다. 그래서 A 화살표가 위아래로 반 바퀴(180°) 돕니다."; }
+      if (g === "xb") { S.x(st, 1); title = "X(B) 뒤집기"; why = "B의 0과 1 진폭을 맞바꿉니다. B 화살표가 반 바퀴 돕니다."; }
+      if (g === "ry") { S.ry(st, 0, PI / 4); title = "RY(+45°) 돌리기(A)"; why = "RY(θ)는 화살표를 θ만큼 돌립니다. 1이 나올 확률은 sin²(각도/2)이라 45° 돌릴 때마다 확률이 고르게 늘지 않고 S자로 늘어납니다. 산행 신호 0~1을 각도 π×신호로 바꿔 넣을 때 이 게이트를 씁니다."; }
+      if (g === "h") { S.h(st, 0); title = "H 반반 섞기(A)"; why = "H는 |0⟩을 (|0⟩ + |1⟩)/√2로 만듭니다. 두 진폭이 모두 0.707이고, 제곱하면 50%, 50%입니다. 실수 진폭만 쓰는 이 화면에서는 RY(90°)를 0에 적용한 것과 결과가 같습니다."; }
+      if (g === "cx") { S.cx(st, 0, 1); title = "CNOT(A → B) 조건부 뒤집기"; why = "A가 1인 갈래에서만 B를 뒤집습니다. A가 0과 1을 동시에 가진 상태라면, 결과가 ‘A=0이면 B=0, A=1이면 B=1’처럼 짝지어져 따로 떼어 설명할 수 없게 됩니다. 이것이 얽힘이며, 보라색 고리가 굵게 나타납니다."; }
+      if (g === "rs") { st = S.createState(2); hist = []; shots = []; drops = []; title = "처음으로 |00⟩"; why = "두 큐비트를 모두 0(위)으로 되돌렸습니다. 1이 나올 확률은 둘 다 0%입니다."; }
+      if (g === "m1") { const p = pr(), r = Math.random(); let k = 0, s = 0; for (; k < 4; k++) { s += p[k]; if (r < s) break; } k = Math.min(3, k); st = S.createState(2); st.re[0] = 0; st.re[k] = 1; flash = 1; drops.push({ k: k, y: 0, v: 0 }); title = "측정 1번 → 결과 " + S.label(k, 2); why = "측정하면 여러 가능성 중 하나(" + S.label(k, 2) + ")로 정해지고, 상태도 그 결과로 무너집니다(측정 후 상태). 얽혀 있었다면 A를 읽는 순간 B도 함께 정해집니다. 다시 측정하면 같은 결과가 나옵니다."; }
+      if (g === "m20") { const p = pr(); shots = []; drops = []; for (let n = 0; n < 20; n++) { const r = Math.random(); let k = 0, s = 0; for (; k < 4; k++) { s += p[k]; if (r < s) break; } shots.push(Math.min(3, k)); } title = "측정 20번(같은 준비를 20번 반복)"; const cnt = [0, 0, 0, 0]; shots.forEach(function (k) { cnt[k]++; }); why = "한 번 측정은 하나의 결과만 주므로, 같은 상태를 20번 준비해 측정한 횟수로 확률을 봅니다. 결과 공이 하나씩 떨어집니다. 이번 결과: " + [0, 1, 2, 3].map(function (k) { return S.label(k, 2) + " " + cnt[k] + "번"; }).join(", ") + ". 정확 확률은 " + [0, 1, 2, 3].map(function (k) { return S.label(k, 2) + " " + pct(p[k]); }).join(", ") + "입니다."; }
+      if (g !== "rs" && g !== "m20") hist.push(g); if (hist.length > 12) hist.shift();
+      const a0 = snap();
+      trail.push({ q: "a", from: fromA, to: ang(a0.a), life: 1 }); trail.push({ q: "b", from: fromB, to: ang(a0.b), life: 1 }); dot = 0;
+      what = "A의 1 확률 " + pct(b0.a) + " → <b>" + pct(a0.a) + "</b>, B의 1 확률 " + pct(b0.b) + " → <b>" + pct(a0.b) + "</b>, 얽힘 정도 C " + b0.c.toFixed(2) + " → <b>" + a0.c.toFixed(2) + "</b>, 결과 확률(00, 10, 01, 11) = " + a0.p.map(pct).join(", ");
+      $("#glT").textContent = title;
+      $("#glX").innerHTML = "<p><b>1. 무엇을 했나</b> " + title + "</p><p><b>2. 무엇이 바뀌었나</b> " + what + "</p><p><b>3. 왜 그렇게 되나</b> " + why + "</p>";
+      if (!quiet) QP.Pace.say(title + ". " + why.replace(/[|⟩⟨]/g, " "));
+      return { title: title, why: why };
+    }
+    // 자동 수업 10단계 / automatic 10-step lesson
+    const LESSON = [
+      ["처음 상태", function () { apply("rs", true); }, "처음 상태입니다. 두 화살표 모두 위쪽 영을 가리키므로, 일이 나올 확률은 둘 다 영 퍼센트입니다. 오른쪽 결과 막대도 영영 하나만 백 퍼센트입니다."],
+      ["X로 뒤집기", function () { apply("xa", true); }, "엑스 게이트를 큐비트 에이에 적용합니다. 남색 화살표가 반 바퀴 돌아 아래쪽 일을 가리킵니다. 남은 궤적이 돈 길을 보여 주며, 결과는 일영이 백 퍼센트가 됩니다."],
+      ["다시 뒤집기", function () { apply("xa", true); }, "엑스를 한 번 더 적용하면 원래대로 돌아옵니다. 뒤집기를 두 번 하면 제자리라는 뜻입니다."],
+      ["RY로 45° 돌리기", function () { apply("ry", true); }, "알와이 게이트로 화살표를 사십오 도 돌립니다. 일이 나올 확률은 사인 제곱 이십이 점 오 도, 약 십사 점 육 퍼센트입니다. 노란 부채꼴과 주황 막대가 그만큼 차오릅니다."],
+      ["RY로 한 번 더(90°)", function () { apply("ry", true); }, "한 번 더 돌려 구십 도가 되었습니다. 화살표가 옆으로 누워 영과 일이 반반, 오십 퍼센트씩입니다. 각도는 똑같이 사십오 도씩 늘었지만 확률은 십사 점 육에서 오십으로, 에스 자 모양으로 늘어납니다."],
+      ["H로 반반 섞기", function () { apply("rs", true); apply("h", true); }, "처음으로 되돌린 뒤 하다마드 게이트를 적용합니다. 영 상태를 영과 일이 반반인 상태로 바로 만듭니다. 진폭은 둘 다 영 점 칠 영 칠, 제곱하면 오십 퍼센트입니다."],
+      ["CNOT으로 얽기", function () { apply("cx", true); }, "씨낫 게이트를 적용합니다. 에이가 일인 갈래에서만 비를 뒤집으므로, 결과는 영영과 일일만 오십 퍼센트씩 남습니다. 두 큐비트가 짝지어 움직이는 얽힘 상태이며, 보라색 고리가 가장 굵게, 얽힘 정도 씨는 일이 됩니다. 각각의 화살표는 옆으로 누워 있지만, 둘을 따로 보면 이 짝 관계가 보이지 않습니다."],
+      ["측정 20번", function () { apply("m20", true); }, "같은 얽힘 상태를 스무 번 준비해 측정합니다. 결과 공이 하나씩 떨어지는데, 영영과 일일만 나오고 영일이나 일영은 한 번도 나오지 않습니다. 두 큐비트가 항상 같은 값으로 읽힌다는 뜻입니다."],
+      ["측정 1번(무너짐)", function () { apply("m1", true); }, "이번에는 한 번만 측정합니다. 결과가 하나로 정해지면 상태도 그 결과로 무너집니다. 에이를 읽는 순간 비도 같은 값으로 정해지는 것이 얽힘의 특징입니다."],
+      ["산행 신호 넣기", function () { apply("rs", true); S.ry(st, 0, PI * .8); S.ry(st, 1, PI * .7); hist.push("ry"); hist.push("ryb"); apply("cx", true); $("#glX").innerHTML += "<p><b>4. 산행 신호로 읽기</b> 비 0.8 → A를 π×0.8 = 144° 회전, 경사 0.7 → B를 π×0.7 = 126° 회전, CNOT 뒤 B를 읽은 겹침 점수 ⟨Z_B⟩ = P(B=0) − P(B=1) = <b>" + zB().toFixed(3) + "</b>, 공식 cos(π×0.8)×cos(π×0.7) = " + (Math.cos(PI * .8) * Math.cos(PI * .7)).toFixed(3) + "과 같음. 두 신호가 함께 높을 때 양수로 커지는 이 값이 양자 특징 AI의 겹침 점수입니다.</p>"; },
+        "마지막으로 실제 산행 신호를 넣어 봅니다. 비의 세기 영 점 팔은 에이를 백사십사 도, 경사 영 점 칠은 비를 백이십육 도 돌립니다. 씨낫 뒤에 비를 읽은 값이 겹침 점수이며, 코사인 곱 공식과 정확히 같은 값이 나옵니다. 두 신호가 함께 높을수록 이 점수가 커져, 양자 특징 인공지능이 겹친 위험을 알아챕니다."]
+    ];
+    function steps() { $("#glSteps").innerHTML = LESSON.map(function (s, k) { return '<button data-k="' + k + '" class="' + (k === stepNo ? "on" : k < stepNo ? "done" : "") + '">' + (k < 10 ? NUM[k] : k + 1) + " " + s[0] + "</button>"; }).join(""); body.querySelectorAll("#glSteps button").forEach(function (b) { b.onclick = function () { stopAuto(); run(+b.dataset.k, false); }; }); }
+    function run(k, chain) {
+      if (!alive) return; stepNo = k; steps();
+      if (!chain) for (let j = 0; j < k; j++) if (j !== 7 && j !== 8) LESSON[j][1]();   // 단계를 바로 고르면 앞 단계 상태를 조용히 다시 만듦(측정 단계는 건너뜀) / rebuild earlier state silently when jumping
+      if (!chain && k === 8) { /* 측정 1번은 얽힘 상태에서 해야 의미가 있음 */ }
+      LESSON[k][1]();
+      $("#glT").textContent = NUM[k] + " " + LESSON[k][0] + " (" + (k + 1) + "/" + LESSON.length + ")";
+      QP.Pace.say(LESSON[k][2]);
+      if (chain) { auto = { k: k }; QP.Pace.wait(k === 7 ? 9000 : 7000, function () { if (auto && auto.k === k) { if (k + 1 < LESSON.length) run(k + 1, true); else { auto = null; $("#glAuto").textContent = "▶ 자동 수업 다시 보기"; if (opt.onDone) setTimeout(opt.onDone, 1500); } } }, function () { return alive && !!auto; }); }
+    }
+    function stopAuto() { auto = null; $("#glAuto").textContent = "▶ 자동 수업 다시 보기"; }
+    $("#glAuto").onclick = function () { $("#glAuto").textContent = "자동 수업 진행 중…"; run(0, true); };
+    $("#glStop").onclick = function () { stopAuto(); QP.Voice && QP.Voice.stop && QP.Voice.stop(); };
+    body.querySelectorAll(".glab-ctl .gate").forEach(function (b) { b.onclick = function () { stopAuto(); stepNo = -1; steps(); apply(b.dataset.g, false); }; });
+    // 그리기 / drawing
+    let shownA = 0, shownB = 0, sh = [0, 0, 0, 0], shotT = 0;
+    const stopLoop = A.loop(function (dt) {
+      const cv = $("#glC"); if (!cv || !cv.isConnected) return;
+      const P = A.canvas(cv, 432), g = P.g, W = P.w, p = pr(), tA = ang(pA1()), tB = ang(pB1()), c = conc();
+      const k = Math.min(1, dt * 3.2); shownA += (tA - shownA) * k; shownB += (tB - shownB) * k; for (let i = 0; i < 4; i++) sh[i] += (p[i] - sh[i]) * k;
+      dot = Math.min(1, dot + dt * 1.2); flash = Math.max(0, flash - dt * 1.5);
+      g.font = "12.5px Times New Roman, Noto Serif KR, serif"; g.textAlign = "left";
+      // ① 다이얼과 궤적 / dials and trails
+      const r = 58, xa = W * .14, xb = W * .43, yd = 92;
+      [[xa, shownA, "a", CA, "A(제어)"], [xb, shownB, "b", CB, "B(대상)"]].forEach(function (d) {
+        trail.filter(function (t) { return t.q === d[2] && t.life > 0; }).forEach(function (t) {
+          g.strokeStyle = d[3]; g.globalAlpha = .55 * t.life; g.lineWidth = 7; const s0 = -PI / 2 + Math.min(t.from, t.to), s1 = -PI / 2 + Math.max(t.from, t.to);
+          if (Math.abs(t.to - t.from) > .01) { g.beginPath(); g.arc(d[0], yd, r + 9, s0, s1); g.stroke(); const e = -PI / 2 + t.to; g.beginPath(); g.arc(d[0] + Math.cos(e) * (r + 9), yd + Math.sin(e) * (r + 9), 5, 0, 7); g.fillStyle = d[3]; g.fill(); }
+          g.globalAlpha = 1; });
+        A.dial(g, d[0], yd, r, d[1], "", d[3], .5);
+        g.fillStyle = d[3]; g.font = "bold 13px Times New Roman, Noto Serif KR, serif"; g.textAlign = "center"; g.fillText("① 큐비트 " + d[4], d[0], 16);
+        g.font = "12px Times New Roman, Noto Serif KR, serif"; g.fillStyle = "#1d2a4d"; g.fillText("각도 " + Math.round(d[1] * 180 / PI) + "°", d[0] + r + 34, yd - 4);
+      });
+      trail.forEach(function (t) { t.life -= dt * .25; }); trail = trail.filter(function (t) { return t.life > 0; });
+      // ④ 얽힘 고리 / entanglement link
+      if (c > .02) { g.strokeStyle = "#7b1fa2"; g.lineWidth = 2 + 8 * c; g.setLineDash([10, 6]); g.lineDashOffset = -performance.now() / 40; g.beginPath(); g.moveTo(xa + r + 4, yd + 26); g.quadraticCurveTo((xa + xb) / 2, yd + 70, xb - r - 4, yd + 26); g.stroke(); g.setLineDash([]); g.fillStyle = "#7b1fa2"; g.textAlign = "center"; g.font = "bold 12.5px Times New Roman, Noto Serif KR, serif"; g.fillText("④ 얽힘 C = " + c.toFixed(2), (xa + xb) / 2, yd + 62); }
+      // ② 확률 막대 / probability bars
+      [[xa, pA1(), shownA, "A"], [xb, pB1(), shownB, "B"]].forEach(function (d) {
+        const bx = d[0] - 70, by = 178, bw = 140, p1 = Math.pow(Math.sin(d[2] / 2), 2);
+        g.fillStyle = "#eef1f7"; g.fillRect(bx, by, bw, 14); g.fillStyle = C0; g.fillRect(bx, by, bw * (1 - p1), 14); g.fillStyle = C1; g.fillRect(bx + bw * (1 - p1), by, bw * p1, 14);
+        g.fillStyle = "#1d2a4d"; g.font = "11.5px Times New Roman, Noto Serif KR, serif"; g.textAlign = "center";
+        g.fillText("② P(0) " + pct(1 - p1) + ", P(1) " + pct(p1), d[0], by + 29); g.fillText("진폭 cos " + Math.cos(d[2] / 2).toFixed(2) + ", sin " + Math.sin(d[2] / 2).toFixed(2), d[0], by + 44);
+      });
+      // ③ 결과 4가지 확률 / four-outcome probabilities
+      const ox = W * .62, ow = W * .36, oy = 30, oh = 150; g.textAlign = "left"; g.fillStyle = "#003087"; g.font = "bold 13px Times New Roman, Noto Serif KR, serif"; g.fillText("③ 두 큐비트 결과 확률(A B 순서)", ox, 16);
+      for (let i = 0; i < 4; i++) { const bw = ow / 4 - 12, x = ox + i * (ow / 4), hh = oh * sh[i]; g.fillStyle = "#f2f4f9"; g.fillRect(x, oy, bw, oh); g.fillStyle = OUTC[i]; g.fillRect(x, oy + oh - hh, bw, hh); g.fillStyle = "#1d2a4d"; g.textAlign = "center"; g.font = "bold 13px Times New Roman, serif"; g.fillText(S.label(i, 2), x + bw / 2, oy + oh + 16); g.font = "11.5px Times New Roman, serif"; g.fillText(pct(sh[i]), x + bw / 2, oy + oh - hh - 4 < oy + 10 ? oy + 12 : oy + oh - hh - 4); }
+      g.textAlign = "left"; g.fillStyle = "#4a5470"; g.font = "11.5px Times New Roman, Noto Serif KR, serif"; g.fillText("⟨Z_B⟩ = P(B=0) − P(B=1) = " + zB().toFixed(3), ox, oy + oh + 34);
+      // ⑤ 회로도 / circuit
+      const cy0 = 262, cy1 = 302, cx0 = 70, cx1 = W - 30; g.fillStyle = "#003087"; g.font = "bold 13px Times New Roman, Noto Serif KR, serif"; g.fillText("⑤ 회로도(왼쪽 → 오른쪽 시간 순서)", 12, 238);
+      g.strokeStyle = "#9aa3ba"; g.lineWidth = 1.5; [cy0, cy1].forEach(function (y, q) { g.beginPath(); g.moveTo(cx0, y); g.lineTo(cx1, y); g.stroke(); g.fillStyle = q ? CB : CA; g.font = "bold 12.5px Times New Roman, serif"; g.fillText(q ? "B |0⟩" : "A |0⟩", 18, y + 4); });
+      const gap = Math.min(64, (cx1 - cx0 - 20) / Math.max(1, hist.length)), gx = function (i) { return cx0 + 30 + i * gap; };
+      hist.forEach(function (h, i) { const x = gx(i), last = i === hist.length - 1; g.lineWidth = last ? 2.5 : 1.2;
+        if (h === "cx") { g.strokeStyle = "#1d2a4d"; g.beginPath(); g.moveTo(x, cy0); g.lineTo(x, cy1 + 11); g.stroke(); g.fillStyle = "#1d2a4d"; g.beginPath(); g.arc(x, cy0, 5, 0, 7); g.fill(); g.beginPath(); g.arc(x, cy1, 11, 0, 7); g.fillStyle = "#fff"; g.fill(); g.stroke(); g.beginPath(); g.moveTo(x - 11, cy1); g.lineTo(x + 11, cy1); g.moveTo(x, cy1 - 11); g.lineTo(x, cy1 + 11); g.stroke(); }
+        else { const y = h === "xb" || h === "ryb" ? cy1 : cy0, lab = { xa: "X", xb: "X", ry: "RY", ryb: "RY", h: "H", m1: "측정" }[h] || h; g.fillStyle = last ? "#fff4d6" : "#fff"; g.strokeStyle = last ? CY : "#1d2a4d"; g.fillRect(x - 17, y - 13, 34, 26); g.strokeRect(x - 17, y - 13, 34, 26); g.fillStyle = "#1d2a4d"; g.textAlign = "center"; g.font = "bold 12px Times New Roman, Noto Serif KR, serif"; g.fillText(lab, x, y + 4); g.textAlign = "left"; } });
+      if (hist.length) { const xe = gx(hist.length - 1), xs = hist.length > 1 ? gx(hist.length - 2) : cx0, xd = xs + (xe - xs) * dot + 24 * dot; g.fillStyle = CY; g.shadowColor = CY; g.shadowBlur = 12; [cy0, cy1].forEach(function (y) { g.beginPath(); g.arc(xd, y, 6, 0, 7); g.fill(); }); g.shadowBlur = 0; }
+      // ⑥ 측정 상자 / measurement bins
+      const my = 342, mh = 70; g.fillStyle = "#003087"; g.font = "bold 13px Times New Roman, Noto Serif KR, serif"; g.textAlign = "left"; g.fillText("⑥ 측정 결과 상자(공 1개 = 측정 1번)", 12, my - 8);
+      if (shots.length) { shotT += dt; if (shotT > .18) { shotT = 0; drops.push({ k: shots.shift(), y: 0, v: 0 }); } }
+      const cnt = [0, 0, 0, 0];
+      for (let i = 0; i < 4; i++) { const x = 40 + i * (W - 60) / 4, bw = (W - 60) / 4 - 20; g.strokeStyle = OUTC[i]; g.lineWidth = 1.5; g.strokeRect(x, my, bw, mh); g.fillStyle = OUTC[i]; g.font = "bold 12.5px Times New Roman, serif"; g.textAlign = "center"; g.fillText(S.label(i, 2), x + bw / 2, my + mh + 14); }
+      drops.forEach(function (d) { const i = d.k, x0 = 40 + i * (W - 60) / 4, bw = (W - 60) / 4 - 20, n = cnt[i]++, perRow = Math.max(1, Math.floor(bw / 16)), tx = x0 + 10 + (n % perRow) * 16, ty = my + mh - 9 - Math.floor(n / perRow) * 16; d.v += dt * 900; d.y = Math.min(ty, (d.y || my - 30) + d.v * dt); g.fillStyle = OUTC[i]; g.beginPath(); g.arc(tx, d.y, 7, 0, 7); g.fill(); });
+      g.fillStyle = "#1d2a4d"; g.font = "12px Times New Roman, Noto Serif KR, serif"; for (let i = 0; i < 4; i++) { const x = 40 + i * (W - 60) / 4, bw = (W - 60) / 4 - 20; g.fillText(cnt[i] + "번", x + bw - 14, my + 14); }
+      if (flash > 0) { g.fillStyle = "rgba(255,181,0," + (.25 * flash) + ")"; g.fillRect(0, 0, W, 220); }
+    });
+    steps(); apply("rs", true);
+    setTimeout(function () { if (alive) { $("#glAuto").textContent = "자동 수업 진행 중…"; run(0, true); } }, 600);   // 화면이 열리면 바로 자동 수업 / start the lesson right away
+    return function () { alive = false; auto = null; stopLoop(); };
+  }
+  QP.GateLab = { mount: mount };
+})(window.QP = window.QP || {});
 
 </script>
 <script>
@@ -4879,7 +5074,7 @@ window.QP_I18N_EN = {
     const L = {                                     // 과별 내용임 / content per lesson
       1: function () { body.innerHTML = '<div class="grid two"><div class="card stack"><h3>비트(bit)</h3><p>0 아니면 1. 스위치 꺼짐/켜짐, 탁자 위 동전 앞/뒤.</p><div class="bits" id="bb"></div><button id="bf">스위치 누르기</button></div><div class="card stack"><h3>큐비트(qubit)</h3><p>측정 전에는 0과 1의 <b>가능성을 동시에</b> 가진 상태(중첩). 화살표의 방향이 상태입니다. 위=0, 아래=1, 옆=반반.</p><canvas id="bq"></canvas><p class="small">화살표는 자동으로 천천히 돕니다. 측정하면 0 또는 1 하나로 정해집니다.</p></div>' + '<div class="card" style="grid-column:1/-1"><b>핵심 차이</b> 비트 n개는 2ⁿ가지 중 <b>하나</b>만 저장, 큐비트 n개의 상태는 2ⁿ개 진폭 <b>전부</b>로 표현됨(그래서 에뮬레이터는 2ⁿ개 숫자를 저장해야 함).</div></div>'; let v = 0; const draw = function () { $("#bb", body).innerHTML = '<span class="bit ' + (v ? "on" : "") + '">' + v + "</span>"; }; draw(); $("#bf", body).onclick = function () { v = 1 - v; draw(); }; let th = 0; return A.loop(function (dt) { th += dt * .8; const P = A.canvas($("#bq", body), 225), g = P.g; const t = (Math.sin(th) + 1) / 2 * Math.PI; A.dial(g, P.w / 2, 96, 70, t, "P(1) = " + pct(Math.pow(Math.sin(t / 2), 2)), "#6e4c82", .5); }); },
       2: function () { body.innerHTML = '<div class="grid two"><div class="card stack"><h3>진폭(amplitude)과 확률</h3><canvas id="ba"></canvas><input id="bs" type="range" min="0" max="180" value="60"></div><div class="card stack"><p>상태 = <b>cos(θ/2)</b>, |0⟩ + <b>sin(θ/2)</b>, |1⟩</p><p>그림의 화살표를 세로축(|0⟩)과 가로축(|1⟩)에 비춘 그림자 길이가 <b>진폭</b>입니다.</p><p>진폭을 <b>제곱</b>하면 확률: P(0)=cos²(θ/2), P(1)=sin²(θ/2). 두 확률의 합은 항상 1(피타고라스).</p><p id="bv" class="kpi c-plum"></p><p class="small">진폭은 음수도 될 수 있어서 서로 상쇄(간섭)될 수 있지만, 확률은 항상 0 이상입니다.</p></div></div>'; let sh = 0; return A.loop(function () { const th = Number($("#bs", body).value) * Math.PI / 180; sh = A.lerp(sh, th, .12); const P = A.canvas($("#ba", body), 230), g = P.g, cx = 110, cy = 120, r = 90; g.strokeStyle = "#ccd3e4"; g.beginPath(); g.arc(cx, cy, r, 0, 7); g.stroke(); const c = Math.cos(sh / 2), s = Math.sin(sh / 2); g.strokeStyle = "#003087"; g.lineWidth = 3; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + s * r, cy - c * r); g.stroke(); g.lineWidth = 6; g.strokeStyle = "rgba(0,48,135,.35)"; g.beginPath(); g.moveTo(cx - 100, cy); g.lineTo(cx - 100, cy - c * r); g.stroke(); g.strokeStyle = "rgba(255,181,0,.8)"; g.beginPath(); g.moveTo(cx, cy + 105); g.lineTo(cx + s * r, cy + 105); g.stroke(); g.fillStyle = "#1d2a4d"; g.font = "11px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText("|0⟩ 진폭 " + c.toFixed(2), cx - 100, 14); g.fillText("|1⟩ 진폭 " + s.toFixed(2), cx + 10, cy + 100); g.fillStyle = "rgba(0,48,135,.25)"; g.fillRect(230, 200 - c * c * 160, 50, c * c * 160); g.fillStyle = "rgba(255,181,0,.6)"; g.fillRect(290, 200 - s * s * 160, 50, s * s * 160); g.fillStyle = "#1d2a4d"; g.fillText("P(0)", 240, 214); g.fillText("P(1)", 300, 214); $("#bv", body).textContent = "θ=" + Math.round(sh * 180 / Math.PI) + "° → 진폭 (" + c.toFixed(2) + ", " + s.toFixed(2) + ") → 확률 (" + pct(c * c) + ", " + pct(s * s) + ")"; }); },
-      3: function () { const cards = [["X", "뒤집기(NOT)", "0↔1을 맞바꿉니다. 화살표가 위↔아래로 180° 돕니다."], ["RY(θ)", "돌리기", "화살표를 θ만큼 돌립니다. 산행 신호(0~1)를 각도 π, 신호로 넣을 때 씁니다."], ["H", "반반 섞기", "0을 0과 1이 반반인 상태로 만들어요(옆으로 눕힘)."], ["CNOT", "조건부 뒤집기", "제어 큐비트가 1이면 대상 큐비트를 X로 뒤집어요(얽힘)."], ["측정", "읽기", "화살표를 0 또는 1 하나로 정해 읽습니다. 여러 번 하면 확률이 보입니다."]]; body.innerHTML = '<div class="grid gates"><div class="stack">' + cards.map(function (c, i) { return '<button class="gate" data-g="' + i + '"><b>' + c[0] + '</b> ' + c[1] + '<small>' + c[2] + '</small></button>'; }).join("") + '</div><div class="card stack"><h3 id="gt">게이트 카드를 눌러 적용해 보세요</h3><canvas id="gc"></canvas><p id="gx"></p></div></div>'; let q = [0, 0], tq = [0, 0]; body.querySelectorAll(".gate").forEach(function (b) { b.onclick = function () { const k = Number(b.dataset.g); if (k === 0) tq[0] = Math.PI - tq[0]; if (k === 1) tq[0] = Math.min(Math.PI, tq[0] + Math.PI / 4); if (k === 2) tq[0] = Math.PI / 2; if (k === 3 && Math.pow(Math.sin(tq[0] / 2), 2) > .5) tq[1] = Math.PI - tq[1]; if (k === 4) { tq[0] = Math.random() < Math.pow(Math.sin(tq[0] / 2), 2) ? Math.PI : 0; } $("#gt", body).textContent = cards[k][0] + " 적용"; $("#gx", body).textContent = cards[k][2]; say(cards[k][0] + ". " + cards[k][1] + ". " + cards[k][2]); }; }); return A.loop(function () { q[0] = A.lerp(q[0], tq[0], .08); q[1] = A.lerp(q[1], tq[1], .08); const P = A.canvas($("#gc", body), 230), g = P.g; A.dial(g, P.w * .3, 100, 64, q[0], "큐비트 A(제어)", "#003087", .4); A.dial(g, P.w * .7, 100, 64, q[1], "큐비트 B(대상)", "#6e4c82", .4); }); },
+      3: function () { return QP.GateLab.mount(body, { onDone: function () { if (QP.State.basicsAuto && body.isConnected) QP.App.go("basics-4"); } }); }, // 3과: 동적 게이트 실험대(gatelab.js, 자동 수업 10단계) / lesson 3: animated gate lab
       4: function () { body.innerHTML = '<div class="grid two"><div class="card stack"><h3>2큐비트 상태벡터 = 진폭 4개 목록</h3><div class="slider"><span>A 각도</span><input id="sa" type="range" min="0" max="100" value="60"><output></output></div><div class="slider"><span>B 각도</span><input id="sb" type="range" min="0" max="100" value="30"><output></output></div><label class="tog"><input type="checkbox" id="sc"> CNOT 적용</label><table id="sv" class="ct"></table></div><div class="card stack"><p>결과 이름 “10”은 <b>A=1, B=0</b>(왼쪽부터 A, B 순서)입니다.</p><p>컴퓨터 안에서는 이 4칸 숫자 목록만 저장하면 모든 것을 계산할 수 있습니다. 큐비트가 n개면 2ⁿ칸입니다.</p><canvas id="svc"></canvas></div></div>'; const up = function () { const a = $("#sa", body).value / 100, b = $("#sb", body).value / 100; $("#sa", body).nextSibling.value = $("#sa", body).value; $("#sb", body).nextSibling.value = $("#sb", body).value; const st = S.createState(2); S.ry(st, 0, Math.PI * a); S.ry(st, 1, Math.PI * b); if ($("#sc", body).checked) S.cx(st, 0, 1); const p = S.probs(st); $("#sv", body).innerHTML = "<tr><th>결과(A B)</th><th>진폭</th><th>확률=진폭²</th></tr>" + [0, 1, 2, 3].map(function (i) { return "<tr><td>" + S.label(i, 2) + "</td><td>" + st.re[i].toFixed(3) + "</td><td>" + pct(p[i]) + "</td></tr>"; }).join("") + "<tr><td>합계</td><td></td><td>" + pct(S.norm(st)) + "</td></tr>"; C.bars($("#svc", body), [0, 1, 2, 3].map(function (i) { return { label: S.label(i, 2), values: [p[i]] }; }), [{ color: "#6e4c82" }], { height: 170, max: 1 }); }; ["sa", "sb", "sc"].forEach(function (id) { $("#" + id, body).oninput = up; $("#" + id, body).onchange = up; }); up(); return null; },
       5: function () {                              // 5과: 회로도를 한 단계씩 따라가며 무엇이 왜 바뀌는지 보여 줌 / lesson 5: walk the circuit step by step, showing what changes and why
         const EN = QP.I18N && QP.I18N.lang() === "en"; // 영문 모드인지임 / English mode?
@@ -4950,7 +5145,7 @@ window.QP_I18N_EN = {
     };
     stop = L[tab]();                                // 선택한 과를 그림 / draws the chosen lesson
     let demo = null;                                // 과마다 화면이 저절로 움직이게 하는 시연 타이머임 / demo timer making each lesson move by itself
-    if (tab === 3) { let k = 0; demo = setInterval(function () { const bs = body.querySelectorAll(".gate"); if (bs.length) { const b = bs[k++ % bs.length]; b.classList.add("on"); setTimeout(function () { b.classList.remove("on"); }, 900); QP.State.touring = true; b.click(); QP.State.touring = false; } }, 5000); } // 3과: 게이트 카드를 차례로 눌러 화살표가 돌아가게 함(카드 음성은 끔) / lesson 3: click the gate cards in turn to rotate the arrow (card voice off)
+    // 3과는 gatelab.js가 화면이 열리자마자 자동 수업 10단계를 스스로 진행함 / lesson 3 runs its own 10-step lesson on open
     if (tab === 4) { let ph = 0; demo = setInterval(function () { ph += .25; const a = body.querySelector("#sa"), b = body.querySelector("#sb"), c = body.querySelector("#sc"); if (!a) return; a.value = Math.round(50 + 45 * Math.sin(ph)); b.value = Math.round(50 + 45 * Math.sin(ph * .7 + 1)); c.checked = Math.sin(ph * .3) > 0; a.oninput(); }, 1400); } // 4과: 두 각도와 CNOT을 바꿔 가며 진폭 표가 계속 변하게 함 / lesson 4: vary two angles and CNOT so the amplitude table keeps changing
     if (tab === 2) { let ph = 0; demo = setInterval(function () { const r = body.querySelector("#bs"); if (!r) return; ph += .05; r.value = Math.round(90 + 85 * Math.sin(ph)); }, 120); } // 2과: 각도가 천천히 오가며 진폭과 확률이 바뀜 / lesson 2: the angle sweeps slowly, changing amplitudes and probabilities
     // 5과 자동 수업: 1과부터 시작해 각 과의 설명을 목소리로 끝까지 읽고, 다 읽으면 1.5초 뒤 다음 과로 넘어감 / 5-lesson auto class: from lesson 1, read each lesson's explanation to the end, then go to the next lesson 1.5 s later
@@ -4975,7 +5170,7 @@ window.QP_I18N_EN = {
       QP.State.basicsAuto = true;                   // 자동 수업을 켬 / turn on the auto class
       if (tab === 1) { bA.textContent = "■ 자동 수업 멈춤 (1/5과 진행 중)"; lesson(); } else QP.App.go("basics-1"); // 1과부터 시작함(이미 1과면 바로 읽음) / start from lesson 1 (read at once if already there)
     };
-    if (QP.State.basicsAuto && !QP.State.touring) autoT = setTimeout(lesson, 500); // 자동 수업 중이면 이 과에 도착하자마자 설명을 시작함 / during the auto class, start explaining as soon as this lesson opens
+    if (QP.State.basicsAuto && !QP.State.touring && tab !== 3) autoT = setTimeout(lesson, 500); // 자동 수업 중이면 이 과에 도착하자마자 설명을 시작함 / during the auto class, start explaining as soon as this lesson opens
     return function () { if (stop) stop(); clearTimeout(autoT); clearInterval(demo); }; // 떠날 때 정리함 / clean up when leaving
   }
 
@@ -5506,7 +5701,7 @@ window.QP_I18N_EN = {
       $("#mPeople", el).innerHTML = "<b>이번 산행자 " + m.last.length + "명</b> (적응 전 → 5걸음 뒤): " + m.last.map(function (t, i) { return (i === cur ? "▶" : "") + (t.p.sex === "F" ? "여" : "남") + t.p.age + "세 " + pct(t.before) + "→<b>" + pct(t.after) + "</b>"; }).join(", "); // 사람 카드임 / person cards
     }
     function drawAll() { drawFlow(); drawNet(); drawPar(); drawSide(); } // 전부 그림 / draw everything
-    $("#mB", el).innerHTML = B.box({ data: "가상 산행자(여/남, 25~79세, 안정심박 52~81, 체력, 산행 이력): 입력 8개 [심박/200, 피로, 경사, 강수, 일몰 여유 부족, 결빙, 양자 ⟨Z⟩(심박×피로), 양자 ⟨Z⟩(강수×경사)], 신경망 8→16→12→8→1(tanh, 출력 sigmoid), 정답은 개인 %HRR, 체력, 이력 기준(사람마다 경계가 다름). 실제 적용 시 아이나비 개인 워치 기록으로 교체", method: "FOMAML: 사람(과제)마다 기록 10개로 5걸음 적응(안쪽 루프, 학습률 0.5) → 평가 기록 30개의 역전파 기울기를 평균해 θ 갱신(바깥 루프, 0.3)", formula: "θ′ = θ − α∇L_support(θ),  θ ← θ − β×평균∇L_query(θ′),  ⟨Z⟩ = cos(πa)cos(πb)", code: "meta.js create(), metaStep(), evaluate() / views_ai.js meta()", ref: "Finn, Abbeel & Levine, ICML 2017(MAML), Nichol et al. 2018(1차 근사), Gulati 2010, Tanaka 2001", note: "양자 회로는 고정된 특징 생성기이고, 학습되는 것은 메타러너의 가중치 31개임. 정확도는 가상 자료 기준이며 실측 검증 전임" }, "메타학습 근거");
+    $("#mB", el).innerHTML = B.box({ data: "가상 산행자(여/남, 25~79세, 안정심박 52~81, 체력, 산행 이력): 입력 8개 [심박/200, 피로, 경사, 강수, 일몰 여유 부족, 결빙, 양자 ⟨Z⟩(심박×피로), 양자 ⟨Z⟩(강수×경사)], 신경망 8→16→12→8→1(tanh, 출력 sigmoid), 정답은 개인 %HRR, 체력, 이력 기준(사람마다 경계가 다름). 실제 적용 시 아이나비 개인 워치 기록으로 교체", method: "FOMAML: 사람(과제)마다 기록 10개로 5걸음 적응(안쪽 루프, 학습률 0.5) → 평가 기록 30개의 역전파 기울기를 평균해 θ 갱신(바깥 루프, Adam 학습률 0.05)", formula: "θ′ = θ − α∇L_support(θ),  θ ← Adam(θ, 평균∇L_query(θ′), β = 0.05),  ⟨Z⟩ = cos(πa)cos(πb)", code: "meta.js create(), metaStep(), evaluate() / views_ai.js meta()", ref: "Finn, Abbeel & Levine, ICML 2017(MAML), Nichol et al. 2018(1차 근사), Kingma & Ba 2015(Adam), Gulati 2010, Tanaka 2001", note: "양자 회로는 고정된 특징 생성기이고, 학습되는 것은 메타러너의 가중치 461개임. 정확도는 가상 자료 기준이며 실측 검증 전임" }, "메타학습 근거");
     function tick() {                                // 0.7초마다: 적응 걸음을 한 칸 보여 주고, 끝나면 다음 사람, 한 바퀴 돌면 메타 갱신 / every 0.7 s: show one adaptation step; then the next person; after a full round, a meta update
       sub++; if (!m.last.length || sub > m.inner) { sub = 0; cur++; if (cur >= m.last.length) { cur = 0; for (let k = 0; k < 25; k++) { QP.Meta.metaStep(m, 4); if (k % 5 === 0) hist.push(proj(m.theta)); } ev = QP.Meta.evaluate(m); } } // 다음 단계로 감 / go to the next step
       drawAll(); if (m.it >= 600 && timer) { clearInterval(timer); timer = null; } // 그림을 갱신하고 충분하면 멈춤 / update the drawing and stop when enough
@@ -6106,7 +6301,7 @@ window.QP_I18N_EN = {
     }
     const n = st.data.length, x = st.data[((st.i % n) + n) % n];
     if (box) {
-      box.className = "wxbox lv" + x.jn.lv;
+      box.className = "wxbox wxl" + x.jn.lv;
       box.innerHTML = '<div class="wxb-h"><span class="wxb-t">⛰ 100대 명산 산행 가능성 <small>' + (st.i % n + 1) + "/" + n + ", " + hm(st.at) + ' 기준</small></span><span class="wxb-l">' + line1(x) + '</span><span class="wxb-btn"><button data-a="prev" title="앞 산">◀</button><button data-a="next" title="다음 산">▶</button><button data-a="list" title="100곳 전체와 권역별 요약 펼치기">☰ 전체 100곳</button></span></div>' +
         '<div class="wxb-l">' + line2(x) + "</div>" +
         '<div class="wxb-l">' + chip(x.jn, "① 지금 출발") + ' <small>' + why(x.jn) + "</small> " + chip(x.jt, "② 내일") + " <small>" + why(x.jt) + "</small></div>";
@@ -6335,6 +6530,7 @@ window.QP_I18N_EN = {
     const m = /^(.*?)(?:-(\d+))?$/.exec(hash || "home"); // id와 하위 번호를 나눔 / split id and sub number
     const v = QP.ViewDefs.find(function (x) { return x.id === m[1]; }) || QP.ViewDefs.find(function (x) { return x.id === "home"; }); // 화면 정의임 / screen definition
     if (cleanup) { try { cleanup(); } catch (e) { } cleanup = null; } if ($("view")._cleanup) { try { $("view")._cleanup(); } catch (e) { } $("view")._cleanup = null; } QP.Anim.stopAll(); // 이전 화면 정리임 / clean up the previous screen
+    State.hold = false;                             // 화면 시연 붙잡기를 풂(새 화면) / release the demo hold on a new screen
     if (!tourOn) QP.Voice.stop();                   // 투어가 아니면 음성을 멈춤 / stop the voice unless touring
     if (State.basicsAuto && m[1] !== "basics") State.basicsAuto = false; // 다른 화면으로 가면 자동 수업을 끝냄 / leaving the screen ends the auto class
     current = v; sub = m[2] || null;                // 현재 화면 기록임 / record the current screen
@@ -6496,6 +6692,7 @@ window.QP_I18N_EN = {
         if (tok !== TB.token || !tourOn) return;    // 다른 단계로 옮겼거나 종료했으면 끝냄 / stop if moved to another step or ended
         if (TB.paused) { TB.timer = setTimeout(wait, 500); return; } // 멈춤 중이면 기다림(사용자가 멈춘 경우만 멈춤) / wait while paused (only when the user paused)
         if (QP.Voice.isActive() && Date.now() < deadline) { TB.timer = setTimeout(wait, 500); return; } // 아직 읽는 중이면 기다림 / wait while still reading
+        if (State.hold && Date.now() < deadline + 300000) { TB.timer = setTimeout(wait, 700); return; } // 화면 시연(눈송이 걷기 등)이 끝까지 가도록 기다림(최대 5분) / wait until the screen demo finishes (max 5 min)
         TB.timer = setTimeout(function () { if (tok !== TB.token) return; if (TB.i < TB.steps.length - 1) tourGo(TB.i + 1); else if ($("tLoop").checked) tourGo(0); else tourEnd(true); }, 1500); // 다음 단계(마지막이면 반복 설정에 따라 처음으로)로 감 / go to the next step (at the end, to the start if looping)
       };
       TB.timer = setTimeout(wait, 1500);            // 기다리기 시작함 / start waiting

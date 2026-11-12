@@ -103,6 +103,7 @@
     const m = /^(.*?)(?:-(\d+))?$/.exec(hash || "home"); // id와 하위 번호를 나눔 / split id and sub number
     const v = QP.ViewDefs.find(function (x) { return x.id === m[1]; }) || QP.ViewDefs.find(function (x) { return x.id === "home"; }); // 화면 정의임 / screen definition
     if (cleanup) { try { cleanup(); } catch (e) { } cleanup = null; } if ($("view")._cleanup) { try { $("view")._cleanup(); } catch (e) { } $("view")._cleanup = null; } QP.Anim.stopAll(); // 이전 화면 정리임 / clean up the previous screen
+    State.hold = false;                             // 화면 시연 붙잡기를 풂(새 화면) / release the demo hold on a new screen
     if (!tourOn) QP.Voice.stop();                   // 투어가 아니면 음성을 멈춤 / stop the voice unless touring
     if (State.basicsAuto && m[1] !== "basics") State.basicsAuto = false; // 다른 화면으로 가면 자동 수업을 끝냄 / leaving the screen ends the auto class
     current = v; sub = m[2] || null;                // 현재 화면 기록임 / record the current screen
@@ -264,6 +265,7 @@
         if (tok !== TB.token || !tourOn) return;    // 다른 단계로 옮겼거나 종료했으면 끝냄 / stop if moved to another step or ended
         if (TB.paused) { TB.timer = setTimeout(wait, 500); return; } // 멈춤 중이면 기다림(사용자가 멈춘 경우만 멈춤) / wait while paused (only when the user paused)
         if (QP.Voice.isActive() && Date.now() < deadline) { TB.timer = setTimeout(wait, 500); return; } // 아직 읽는 중이면 기다림 / wait while still reading
+        if (State.hold && Date.now() < deadline + 300000) { TB.timer = setTimeout(wait, 700); return; } // 화면 시연(눈송이 걷기 등)이 끝까지 가도록 기다림(최대 5분) / wait until the screen demo finishes (max 5 min)
         TB.timer = setTimeout(function () { if (tok !== TB.token) return; if (TB.i < TB.steps.length - 1) tourGo(TB.i + 1); else if ($("tLoop").checked) tourGo(0); else tourEnd(true); }, 1500); // 다음 단계(마지막이면 반복 설정에 따라 처음으로)로 감 / go to the next step (at the end, to the start if looping)
       };
       TB.timer = setTimeout(wait, 1500);            // 기다리기 시작함 / start waiting

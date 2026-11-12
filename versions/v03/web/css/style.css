@@ -395,7 +395,8 @@ button,select,input,textarea{font-family:inherit}
 /* ---- 100대 명산 실시간 산행 가능성 박스(우측 상단), 패널, 띠 (2026-11-12) ---- */
 .main>.top{height:auto;min-height:56px;gap:10px}
 .wxbox{flex:1 1 auto;max-width:720px;min-width:360px;margin:4px 8px 4px auto;padding:4px 10px;border-radius:10px;border:1px solid #cfd8ea;border-left:6px solid #2e7d32;background:#f6fbf6;font-size:12.3px;line-height:1.45;color:var(--ink);cursor:pointer;overflow:hidden}
-.wxbox.lv1{border-left-color:#1e63c6;background:#f3f7fe} .wxbox.lv2{border-left-color:#e08a00;background:#fff8ea} .wxbox.lv3{border-left-color:#c62828;background:#fdf1ef}
+.wxbox.wxl1{border-left-color:#1e63c6;background:#f3f7fe} .wxbox.wxl2{border-left-color:#e08a00;background:#fff8ea}
+.wxbox.wxl3{border-left-color:#c62828;background:#fdf1ef;animation:wxamb 7s ease-in-out infinite alternate} @keyframes wxamb{0%{background:#fdf3f1;border-left-color:#c62828;border-color:#efd4d0}50%{background:#fbe6e2;border-left-color:#d9534f;border-color:#e9c3bd}100%{background:#fcefe9;border-left-color:#b23a48;border-color:#efd4d0}}
 .wxb-h{font-weight:800;color:var(--maple);display:flex;align-items:center;gap:6px;white-space:nowrap} .wxb-h small{font-weight:500;color:#7a849e}
 .wxb-btn{margin-left:auto;display:flex;gap:3px} .wxb-btn button{font-size:11.5px;padding:1px 7px;border-radius:6px}
 .wxb-l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .wxb-l small{color:#4f5a75}
@@ -414,3 +415,11 @@ button,select,input,textarea{font-family:inherit}
 @media (max-width:1150px){.wxbox{display:none}}
 .main{grid-template-rows:auto auto 1fr auto auto 48px!important} .main>.top{padding-top:2px;padding-bottom:2px}
 .wxb-h .wxb-t{flex:none} .wxb-h .wxb-l{flex:1;min-width:0;font-weight:500;color:var(--ink)}
+/* ---- 3과 게이트 카드 동적 실험대(gatelab.js, 2026-11-12) ---- */
+.glab{grid-template-columns:300px minmax(0,1fr);align-items:start} .glab-left{gap:8px} .glab-ctl{display:flex;flex-direction:column;gap:4px} .glab-ctl .gate{padding:5px 8px}
+.glab-ctl .gate b{font-size:13.5px} .glab-ctl .gate small{font-size:11.6px}
+.glsteps{display:flex;flex-direction:column;gap:3px;margin-top:6px} .glsteps button{text-align:left;font-size:12.5px;padding:3px 8px} .glsteps button.on{background:#fff4d6;border-color:#ffb500;font-weight:800} .glsteps button.done{color:#6b7591}
+.glab-right #glC{width:100%;display:block} .glleg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px} .glleg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-2px}
+.glx{font-size:13.2px;line-height:1.55;background:#f7f8fc;border-radius:8px;padding:6px 10px;min-height:84px} .glx p{margin:2px 0}
+.top-btn button,.top-btn #uBtn{white-space:nowrap} .wxbox{min-width:0;flex:1 1 420px;max-width:640px} .glx{min-height:0}
+.zcap{font-size:12.6px;line-height:1.5;margin:2px 0 4px;padding:4px 8px;border-radius:8px;background:#f2f5fc;color:#1d2a4d} .zcap.on{background:#fff4d6;border-left:4px solid #ffb500}

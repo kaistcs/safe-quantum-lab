@@ -139,7 +139,7 @@
     }
     const n = st.data.length, x = st.data[((st.i % n) + n) % n];
     if (box) {
-      box.className = "wxbox lv" + x.jn.lv;
+      box.className = "wxbox wxl" + x.jn.lv;
       box.innerHTML = '<div class="wxb-h"><span class="wxb-t">⛰ 100대 명산 산행 가능성 <small>' + (st.i % n + 1) + "/" + n + ", " + hm(st.at) + ' 기준</small></span><span class="wxb-l">' + line1(x) + '</span><span class="wxb-btn"><button data-a="prev" title="앞 산">◀</button><button data-a="next" title="다음 산">▶</button><button data-a="list" title="100곳 전체와 권역별 요약 펼치기">☰ 전체 100곳</button></span></div>' +
         '<div class="wxb-l">' + line2(x) + "</div>" +
         '<div class="wxb-l">' + chip(x.jn, "① 지금 출발") + ' <small>' + why(x.jn) + "</small> " + chip(x.jt, "② 내일") + " <small>" + why(x.jt) + "</small></div>";

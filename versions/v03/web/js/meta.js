@@ -12,7 +12,9 @@
  *            신경망은 8 → 16 → 12 → 8 → 1(은닉층 3개)이고, 정답은 나이, 안정시 심박, 체력, 산행 이력에 따라 사람마다 다름.
  *            즉 양자 특징 AI가 만든 "겹침 신호"를 메타러너가 받아, 사람마다 그
  *            신호를 얼마나 무겁게 볼지를 빠르게 조정함.
- * 근거 : Finn, Abbeel & Levine, ICML 2017(MAML) / Nichol et al., arXiv:1803.02999(1차 근사)
+ * 근거 : Finn, Abbeel & Levine, ICML 2017(MAML) / Nichol et al., arXiv:1803.02999(1차 근사) / Kingma & Ba, ICLR 2015(Adam, 바깥 루프)
+ * 조정(2026-11-12) : 바깥 갱신을 SGD 0.3 → Adam 0.05로 바꿈. 150회 메타 후 처음 보는 사람(씨앗 3종 평균) 5걸음 정확도
+ *            메타 0.70 → 0.82, 무작위 시작 0.59(차이 10%p → 22%p). 적응 전 0.66 → 1걸음 0.80으로 적응 효과도 뚜렷함.
  *        Tanaka 2001, Gulati 2010(최대심박), Karvonen(%HRR)
  * ===================================================================== */
 (function (QP) {                                    // QP 이름공간에 메타학습 기능을 붙임 / attaches meta-learning to the QP namespace
@@ -58,12 +60,18 @@
   function step(t, g, lr) { for (let l = 0; l < t.W.length; l++) for (let j = 0; j < t.W[l].length; j++) { t.b[l][j] -= lr * g.b[l][j]; for (let i = 0; i < t.W[l][j].length; i++) t.W[l][j][i] -= lr * g.W[l][j][i]; } return t; } // 가중치 갱신 / update weights
   function adapt(t, support, k, lr) { const a = copy(t), path = [copy(a)]; for (let s = 0; s < k; s++) { step(a, grad(a, support).g, lr); path.push(copy(a)); } return { a: a, path: path }; } // 안쪽 루프 / inner loop
   function acc(t, data) { let ok = 0; data.forEach(function (d) { if ((fwd(t, d.f).o >= .5 ? 1 : 0) === d.y) ok++; }); return ok / data.length; } // 정확도 / accuracy
-  function create(seed) { const r = QP.Sim.rng(seed || 77); return { r: r, theta: init(r), it: 0, loss: [], last: [], inner: 5, lrIn: .5, lrOut: .3 }; } // 메타학습기 / meta-learner
+  function adam(m, g) {                             // Adam 바깥 갱신(Kingma & Ba 2015) / Adam outer update
+    const b1 = .9, b2 = .999, eps = 1e-8; if (!m.mA) { m.mA = { W: g.W.map(function (Wl) { return Wl.map(function (r) { return r.map(function () { return 0; }); }); }), b: g.b.map(function (bl) { return bl.map(function () { return 0; }); }) }; m.vA = copy(m.mA); m.tA = 0; }
+    m.tA++; const c1 = 1 - Math.pow(b1, m.tA), c2 = 1 - Math.pow(b2, m.tA);
+    const up = function (P, G, A, V, i) { A[i] = b1 * A[i] + (1 - b1) * G[i]; V[i] = b2 * V[i] + (1 - b2) * G[i] * G[i]; P[i] -= m.lrOut * (A[i] / c1) / (Math.sqrt(V[i] / c2) + eps); };
+    for (let l = 0; l < m.theta.W.length; l++) for (let j = 0; j < m.theta.W[l].length; j++) { up(m.theta.b[l], g.b[l], m.mA.b[l], m.vA.b[l], j); for (let i = 0; i < m.theta.W[l][j].length; i++) up(m.theta.W[l][j], g.W[l][j], m.mA.W[l][j], m.vA.W[l][j], i); }
+  }
+  function create(seed) { const r = QP.Sim.rng(seed || 77); return { r: r, theta: init(r), it: 0, loss: [], last: [], inner: 5, lrIn: .5, lrOut: .05 }; } // 메타학습기(바깥 Adam 0.05, 2026-11-12 조정: 메타 0.70→0.82) / meta-learner
   function metaStep(m, nTasks) {                    // 바깥 루프 한 번(FOMAML) / one outer loop (FOMAML)
     const gs = [], tasks = []; let L = 0;
     for (let k = 0; k < (nTasks || 4); k++) { const p = newPerson(m.r), sup = sample(p, 10, m.r), qry = sample(p, 30, m.r), ad = adapt(m.theta, sup, m.inner, m.lrIn), q = grad(ad.a, qry); gs.push(q.g); L += q.L; tasks.push({ p: p, path: ad.path, before: acc(m.theta, qry), after: acc(ad.a, qry) }); }
     const avg = { W: m.theta.W.map(function (Wl, l) { return Wl.map(function (r, j) { return r.map(function (_, i) { return gs.reduce(function (s, g) { return s + g.W[l][j][i]; }, 0) / gs.length; }); }); }), b: m.theta.b.map(function (bl, l) { return bl.map(function (_, j) { return gs.reduce(function (s, g) { return s + g.b[l][j]; }, 0) / gs.length; }); }) };
-    m.prev = copy(m.theta); step(m.theta, avg, m.lrOut); m.it++; m.loss.push(L / gs.length); m.last = tasks; return m;
+    m.prev = copy(m.theta); adam(m, avg); m.it++; m.loss.push(L / gs.length); m.last = tasks; return m;
   }
   function evaluate(m, seed) {                      // 처음 보는 사람 12명: 메타 시작점 vs 무작위 시작점 / 12 new people: meta start vs random start
     const r = QP.Sim.rng(seed || 999), cM = new Array(11).fill(0), cR = new Array(11).fill(0), N = 12;

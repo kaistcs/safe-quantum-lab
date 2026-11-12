@@ -267,7 +267,7 @@
   /* ===== 4큐비트 위험구역 회로 (세미나 부록) / 4-qubit risk-zone circuit (seminar appendix)  ===== */
   function zone4q(el) {
     el.innerHTML = '<div class="grid z4"><div class="z4left">' + // 왼쪽: 산행 장면+입력, 왜 측정하나 / 오른쪽: 큰 회로, 결과 박스 3개 / left: hiking scene + inputs, why measure / right: large circuit, three result boxes
-      '<div class="card z4in"><h3>입력(거리 m): 산행자가 걸어가면 세 위험 지점까지 거리가 바뀜</h3><canvas id="zScene"></canvas><div class="z4sl">' + ['위험구역|z0|15', '야생동물 신고 지역|z1|260', '낙석 구간|z2|190'].map(function (t) { const p = t.split("|"); return '<div class="slider"><span>' + p[0] + '</span><input id="' + p[1] + '" type="range" min="0" max="300" value="' + p[2] + '"><output></output></div>'; }).join("") +
+      '<div class="card z4in"><h3>입력(거리 m): 산행자가 걸어가면 세 위험 지점까지 거리가 바뀜</h3><canvas id="zScene"></canvas><p id="zCap" class="zcap">▶ 산행 따라 걷기를 누르면 눈송이가 입구부터 끝까지 세 지점을 모두 지나며 설명합니다.</p><div class="z4sl">' + ['위험구역|z0|15', '야생동물 신고 지역|z1|260', '낙석 구간|z2|190'].map(function (t) { const p = t.split("|"); return '<div class="slider"><span>' + p[0] + '</span><input id="' + p[1] + '" type="range" min="0" max="300" value="' + p[2] + '"><output></output></div>'; }).join("") +
       '<div class="slider"><span>위치 신뢰도</span><input id="zq" type="range" min="0" max="100" value="95"><output></output></div></div><div class="row"><label class="tog"><input type="checkbox" id="zClosed"> 공식 출입 통제</label><label class="tog"><input type="checkbox" id="zMiss"> 위험구역 자료 없음</label><b>세미나 예시</b><div class="btns"><button data-f="15,260,190">위험구역</button><button data-f="220,20,170">야생동물</button><button data-f="240,300,12">낙석</button><button data-f="220,270,180">안전</button><button id="zAuto" data-autoplay="1">▶ 산행 따라 걷기</button></div></div></div>' + '<div class="card tint-plum zwhy"><h3>왜 이것을 측정하나</h3><ul class="why4"><li><b>q0~q2 = 세 위험까지의 거리</b>: 산행 앱이 GPS로 아는 거리를 각도로 넣어, 가까울수록 1 쪽으로 돎</li><li><b>q3 = 위치 신뢰도</b>: GPS 오차가 크면(숲, 계곡) 거리 자체를 믿을 수 없어 판독을 보류함 → 헛경보 방지</li><li><b>CNOT 3개</b>: 세 위험 상태를 보조 큐비트 하나에 모아 “위험 지점이 하나라도 가까운가”를 한 번에 읽음. q3 판독이 높으면 <b>안심 신호</b>(신뢰도 높고 가까운 위험 없음)</li><li><b>현실 쓰임</b>: 갈림길, 절벽 근처에서 위험 종류를 동시에 비교해 가장 가까운 것부터 안내</li></ul></div></div><div class="z4right">' +
       '<div class="card z4c"><h3>4큐비트 회로(진폭 16개): 회전 → CNOT 3개 → 보정 → 판독</h3><canvas id="zCv"></canvas></div>' +
       '<div class="z4out"><div class="card"><h3>상태벡터 16칸(진폭²)</h3><canvas id="zSv"></canvas></div><div class="card"><h3>고전 거리 점수 vs 양자 판독</h3><canvas id="zBars"></canvas><div class="legend"><span style="--c:#4d6b8c">고전</span><span style="--c:#6e4c82">양자 P(1)</span></div></div><div class="card"><h3>지금 판단(현실 의미)</h3><div id="zAct" class="banner info"></div><p id="zTxt"></p><div id="zB"></div></div></div></div></div></div>';
@@ -301,12 +301,34 @@
       if (walker.complete && walker.naturalWidth) g.drawImage(walker, X(walkX) - 14, Y(walkX) - 44, 28, 36); else { g.fillStyle = "#003087"; g.beginPath(); g.arc(X(walkX), Y(walkX) - 20, 6, 0, 7); g.fill(); } // 걷는 눈송이임 / walking Snowflake
       g.textAlign = "left"; g.fillStyle = "#1d2a4d"; g.font = "11px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText("가까울수록 큐비트가 1 쪽으로 돌아감 → 아래 회로", 8, 12); // 연결 설명임 / link explanation
     }
-    $("#zAuto", el).onclick = function () { if (zt) { clearInterval(zt); zt = null; this.textContent = "▶ 산행 따라 걷기"; return; } this.textContent = "■ 걷기 멈춤"; let zPause = false, zLast = -1; const ZN = ["위험구역", "야생동물 신고 지역", "낙석 구간"]; zt = setInterval(function () { if (zPause) return; walkX = (walkX + 2) % 900; ["z0", "z1", "z2"].forEach(function (id, k) { $("#" + id, el).value = Math.min(300, Math.round(Math.abs(ZP[k] - walkX))); }); calc();
-      ZP.forEach(function (zp, k) { if (Math.abs(zp - walkX) < 2 && zLast !== k) { zLast = k; zPause = true; QP.Pace.say("눈송이가 " + ZN[k] + "에 다다랐습니다. 왼쪽 거리 막대가 영에 가까워지고, 오른쪽 회로의 큐 " + ["영", "일", "이"][k] + " 화살표가 일 쪽으로 돌아갑니다. 세 개의 씨낫이 이 상태를 보조 큐비트에 모으고, 오른쪽 아래 지금 판단 칸이 " + ZN[k] + " 안내로 바뀝니다."); QP.Pace.wait(7000, function () { zPause = false; }, function () { return document.body.contains(el); }); } }); /* 위험 지점마다 멈춰 설명하고, 다 읽은 뒤 다시 걷기 / stop at each risk point, explain, then walk on after the speech */
-    }, 200); }; // 눈송이가 걸어가며 세 지점까지 거리가 바뀌고, 회로가 그에 맞춰 회전함 / as Snowflake walks, the distances to the three points change and the circuit turns accordingly
+    // 눈송이가 입구(0 m)에서 끝(900 m)까지 걸으며 세 지점마다 멈춰 설명함(투어 중에도 끝까지 감) / Snowflake walks 0 → 900 m, stopping at all three points
+    const TALK = [
+      "① 출발: 눈송이가 등산로 입구에서 출발합니다. 앞에 위험구역(250 m), 야생동물 신고 지역(520 m), 낙석 구간(760 m)이 차례로 있습니다. 세 지점까지의 거리가 그대로 큐비트 세 개의 회전 각도가 됩니다.",
+      "② 위험구역 도착(0 m): 위험구역까지 거리가 0 m가 되어 q0 화살표가 1 쪽으로 완전히 돌아갔습니다. 나머지 두 지점은 아직 멀어 q1, q2는 0 쪽에 머뭅니다. 첫 번째 CNOT이 이 상태를 보조 큐비트 q3에 모으고, 지금 판단 칸이 위험구역 안내로 바뀝니다.",
+      "③ 야생동물 신고 지역 도착(0 m): 회로가 하는 일은 위험구역과 같아 반복처럼 보이지만, 이번에는 q1이 돌아가고 두 번째 CNOT이 쓰입니다. 위험구역은 이미 지나 거리가 다시 멀어졌으므로 q0은 0 쪽으로 돌아왔습니다. 감지 기준이 180 m로 가장 길어 더 멀리서부터 화살표가 기울기 시작한 점이 다릅니다.",
+      "④ 낙석 구간 도착(0 m): 같은 원리의 세 번째 반복이며, 이번에는 q2와 세 번째 CNOT입니다. 낙석은 감지 기준이 100 m로 가장 짧아 가까이 와서야 화살표가 급하게 돕니다. 낙석은 위에서 떨어지는 위험이라 머무르지 말고 빨리 지나가라는 안내가 맞습니다.",
+      "⑤ 끝 지점 도착: 세 위험 지점을 모두 지나 거리가 멀어졌으므로 q0, q1, q2가 모두 0 쪽으로 돌아왔고 경보가 꺼졌습니다. 정리하면 같은 회로가 세 번 반복되지만, 어느 큐비트가 도는지, 몇 m 앞부터 반응하는지, 현장 안내가 무엇인지가 지점마다 다릅니다."
+    ];
+    let zT0 = 0;
+    const ZN2 = ["위험구역", "야생동물 신고 지역", "낙석 구간"];
+    function cap(k) { const c = $("#zCap", el); if (c) { c.innerHTML = TALK[k]; c.className = "zcap on"; } }
+    function setD() { ["z0", "z1", "z2"].forEach(function (id, k) { $("#" + id, el).value = Math.min(300, Math.round(Math.abs(ZP[k] - walkX))); }); calc(); }
+    function endWalk(done) { clearInterval(zt); zt = null; QP.Pace.hold(false); const b = $("#zAuto", el); if (b) b.textContent = done ? "▶ 처음부터 다시 걷기" : "▶ 산행 따라 걷기"; }
+    $("#zAuto", el).onclick = function () {
+      if (zt) { endWalk(false); return; }
+      this.textContent = "■ 걷기 멈춤"; if (walkX >= 898) walkX = 0; QP.Pace.hold(true);
+      let zPause = true, zLast = -1; setD(); cap(0); QP.Pace.say(TALK[0].replace(/^①\s*/, "")); QP.Pace.wait(6000, function () { zPause = false; }, function () { return document.body.contains(el); });
+      zt = setInterval(function () {
+        const now = performance.now(), dts = Math.min(1, (now - (zT0 || now)) / 1000); zT0 = now;
+        if (zPause || !document.body.contains(el)) return;
+        const near = ZP.some(function (zp) { return Math.abs(zp - walkX) < 40; }); walkX = Math.min(900, walkX + dts * (near ? 14 : 42)); setD();   // 시간 기준 속도: 멀 때 초속 42 m, 지점 근처 14 m / time-based speed
+        ZP.forEach(function (zp, k) { if (walkX >= zp - .5 && zLast < k) { zLast = k; walkX = zp; setD(); zPause = true; cap(k + 1); QP.Pace.say(TALK[k + 1].replace(/^[②③④]\s*/, "")); QP.Pace.wait(8000, function () { zPause = false; }, function () { return document.body.contains(el); }); } });
+        if (walkX >= 900) { zPause = true; cap(4); QP.Pace.say(TALK[4].replace(/^⑤\s*/, "")); QP.Pace.wait(7000, function () { endWalk(true); }, function () { return document.body.contains(el); }); }
+      }, 100); zT0 = 0;
+    };
     const sceneStop = A.loop(scene);                // 장면을 계속 그림 / keep drawing the scene
     calc();                                         // 처음 계산함 / first computation
-    return function () { stop(); sceneStop(); clearInterval(zt); }; // 떠날 때 루프와 걷기를 멈춤 / stop the loop and walking when leaving
+    return function () { stop(); sceneStop(); clearInterval(zt); QP.Pace.hold(false); }; // 떠날 때 루프와 걷기를 멈춤 / stop the loop and walking when leaving
   }
 
   QP.ViewDefs = (QP.ViewDefs || []).concat([        // 화면 정의를 등록함 / register the screen definitions
