@@ -83,7 +83,7 @@ button.info{width:16px;height:16px;padding:0;border-radius:50%;font-size:10px;fo
 .hero-emblem{position:absolute;right:16px;bottom:14px;height:74px;background:rgba(255,255,255,.85);border-radius:50%;padding:4px}
 .cards4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 /* 산행 관제실 */
-.ctrl-room{display:grid;height:100%;gap:7px;grid-template-columns:1fr 1fr 290px;grid-template-rows:auto minmax(190px,1.35fr) minmax(110px,.65fr) minmax(120px,.75fr)}
+.ctrl-room{display:grid;height:100%;gap:7px;grid-template-columns:1fr 1fr 290px;grid-template-rows:auto minmax(190px,1.3fr) minmax(185px,.85fr) minmax(120px,.7fr)}
 .ctrl-bar{grid-column:1/-1;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 10px} .ctrl-bar select{max-width:190px} .clock{margin-left:auto;font-weight:800;color:var(--blue)}
 .mtn{grid-column:1/3;padding:6px} .stat{grid-row:2/4;grid-column:3;overflow:auto;font-size:12px} .qub{grid-column:1/3;padding:5px} .nn{grid-column:3;grid-row:4;padding:5px} .ch1{grid-column:1;padding:5px} .ch2{grid-column:2;padding:5px}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:1px 8px;margin:4px 0} .kv span{color:var(--sub)} .stat h4{font-size:12px;margin:6px 0 2px;color:var(--maple)} .det{background:#f6f8fd;border-radius:6px;padding:3px 6px;margin:2px 0}
@@ -323,6 +323,33 @@ body[data-theme=winter] .databadge{background:#e8f3fd}
 .ybar tr.ysame td{background:#f6f0fa}
 .dq.sel{outline:2px solid #ffb500;outline-offset:-2px;background:#fffbea} .dq{cursor:pointer}
 .rcsl{display:inline-flex;align-items:center;gap:6px;font-size:13px;margin-left:10px} .rcsl input{width:130px} .rcsl output{min-width:26px;font-weight:700}
+/* 위험! 단계: 판단 지도 카드 테두리가 번쩍임 / danger level: the decision-map card border flashes */
+.dangerflash{animation:dflash .7s steps(2,jump-none) infinite} @keyframes dflash{0%{box-shadow:0 0 0 4px #d50000,0 0 22px rgba(213,0,0,.6)}100%{box-shadow:0 0 0 1px rgba(213,0,0,.2)}}
+.yfold summary{cursor:pointer;font-weight:800;color:var(--plum,#6e4c82);font-size:14.5px} .yfold[open] summary{margin-bottom:6px}
+.ghlink{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;margin-bottom:10px;background:#eef4ff;border-left:5px solid #003087} .ghlink b{font-size:15px;color:#003087} .ghlink a{font-weight:700;color:#0a4fd6;word-break:break-all}
+
+/* 관제실 큐비트 쌍 설명 줄(같은 번호로 연결) / control-room pair explanation row (linked by number) */
+.qx6{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:3px} .qx6 .qx{font-size:11px;line-height:1.35;background:#f6f7fb;border-radius:6px;padding:3px 5px;border:1px solid #e1e5ef;display:flex;flex-direction:column} .qx6 .qx b{font-size:11.5px;color:#1d2a4d} .qx6 .qr{color:#6e4c82;font-weight:700} .qx6 em{font-style:normal;color:#4a5470}
+.qx6 .qx.warm{background:#fff8e1;border-color:#ffd54f} .qx6 .qx.hot{background:#ffebee;border-color:#e57373} .qx6 .qx.hot em{color:#c62828;font-weight:800} .qx6 .qx.best{outline:2px solid #ffb500}
+/* 전체 사이클: 단계 데이터 미리보기 / full cycle: stage data preview */
+.xdata{margin-top:8px;border-top:1px dashed #c9cfe0;padding-top:6px;max-height:260px;overflow:auto} .xdh{margin:0 0 4px;font-size:13px} .xdt td,.xdt th{font-size:12px;padding:2px 6px} .xst.pick{outline:3px solid #ffb500;outline-offset:1px}
+.dmet{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;font-size:13px} .dmet small{color:#6d5e55;font-size:11px} .mn{display:inline-block;width:18px;height:18px;border-radius:50%;color:#fff;font-style:normal;text-align:center;line-height:18px;font-size:11px;font-weight:800}
+/* 안내형 실험: 따라하기 예시 / guided lab: follow-along example */
+.labex{margin-top:10px;border:2px dashed #ffb500;border-radius:10px;padding:8px 12px;background:#fffbea} .labex table{margin-top:6px} .lexok{color:#2e7d32;font-weight:900;font-size:16px} .labtype{outline:3px solid #ffb500!important;box-shadow:0 0 0 6px rgba(255,181,0,.3)!important}
+.ehist #eH{display:grid;grid-template-columns:1fr 1fr;gap:5px} .eh{font-size:12px;background:#f6f7fb;border-left:4px solid #6e4c82;padding:4px 8px;border-radius:5px;display:flex;flex-direction:column;animation:ehIn .5s} .eh.on{background:#fff8e1;border-left-color:#ffb500} .eh b{font-size:12.5px} .ehl a{color:#0a4fd6;cursor:pointer;text-decoration:underline} @keyframes ehIn{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.tour-b{margin:4px 0 8px;background:linear-gradient(135deg,#8ecae6,#cfe8ff);box-shadow:0 2px 0 #4d8fb8;font-size:13px} .tour-b small{display:block;font-weight:600;font-size:10.5px}
+/* 데이터 빠른 관리: 왼쪽 메뉴와 같은 풀다운 / quick data: pull-down styled like the left menu */
+.quick{background:none!important;border:0!important;padding:0!important}
+.quick .grp{border-radius:9px;margin-bottom:3px;background:rgba(255,255,255,.04)} .quick .grp.open{background:rgba(255,255,255,.07)}
+.quick .grp-h{width:100%;display:flex;justify-content:space-between;background:transparent;border:0;color:#fff;font-weight:700;padding:7px 9px;font-size:14px;cursor:pointer} .quick .grp-h:hover{background:rgba(255,255,255,.08)}
+.quick .grp-b{display:none;padding:0 4px 6px} .quick .grp.open .grp-b{display:block}
+.quick .grp-b a{display:block;color:#e3e9fb;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:13px} .quick .grp-b a:hover{background:rgba(255,255,255,.12)} .quick .qcur{color:#ffd27a;font-size:11.5px;margin:2px 12px 4px}
+/* 펼침 삼각형을 크게: 나이 드신 분도 쉽게 누르도록 / bigger expand triangles so older users can tap them easily */
+nav .grp-h,.quick .grp-h{align-items:center;min-height:40px} nav .grp-h i,.quick .grp-h i{font-style:normal;font-size:22px;line-height:1;width:34px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.14);color:#ffd27a;flex:none}
+nav .grp-h:hover i,.quick .grp-h:hover i{background:rgba(255,210,122,.35)}
+.gnote{display:flex;gap:10px;align-items:flex-start;background:#e8f5e9;border:2px solid #43a047;border-radius:10px;padding:10px 12px;margin:4px 0 8px} .gnote .gni{font-size:28px;line-height:1} .gnote b{font-size:15.5px;color:#1b5e20} .gnote p{margin:3px 0 0;font-size:13.5px;line-height:1.5} .gnote.pop{animation:gpop .9s} @keyframes gpop{0%{transform:scale(.96);box-shadow:0 0 0 0 rgba(67,160,71,.7)}60%{transform:scale(1.01);box-shadow:0 0 0 12px rgba(67,160,71,0)}100%{transform:scale(1)}}
+.quick .grp-b a.qmain{background:#ffb500;color:#00205e;font-weight:900;font-size:14px;margin:2px 0 4px} .quick .grp-b a.qmain:hover{background:#ffc94d} .quick .qhint{color:#cfd8f0;font-size:11px;margin:0 8px 4px;line-height:1.4} .quick .qhint b{color:#ffd27a}
+.quick .qsub{color:#ffd27a;font-weight:800;font-size:12px;margin:8px 8px 2px;border-top:1px dashed rgba(255,210,122,.5);padding-top:6px} .quick .grp-b a.qcyc{font-weight:800;color:#fff;background:rgba(110,76,130,.55)}
 
 </style>                    <!-- 디자인 -->
 </head>
@@ -1455,6 +1482,121 @@ window.QP_I18N_EN = {
 "어느 피씨에서나 같은 방법으로 설치하고 실행하는 개발 환경 안내입니다.": "A guide to the development environment, installed and run the same way on any PC.",
 "어떤 질문에 답할지 먼저 고릅니다. 실험은 하나의 질문에 하나의 답을 얻는 것입니다. 선택하신 실험은": "First choose which question to answer. An experiment gets one answer to one question. Your chosen experiment is",
 "얼마나 좋아졌나": "How much it improved",
+"AI DNN 학습 관제": "AI DNN training control",
+"AI 메타학습(사람마다 빠른 적응)": "AI meta-learning (fast adaptation per person)",
+"양자와 AI 학습 선순환(에코 사이클)": "Quantum and AI learning loop (eco-cycle)",
+"데이터로 학습하는 흐름(선순환)": "Learning from data (virtuous loop)",
+"🧠 AI DNN 학습": "🧠 AI DNN training",
+"🧬 AI 메타 학습": "🧬 AI meta-learning",
+"🔄 양자와 AI 학습 선순환 ›": "🔄 Quantum and AI learning loop ›",
+"데이터 생성 → 양자 특징 → AI DNN 학습 → 배포, 경보 → 피드백 → AI 메타 학습 → 다시 데이터로 돌아가는 고리입니다.": "Data → quantum features → AI DNN training → deployment and alarms → feedback → AI meta-learning → back to data.",
+"📂 데이터 관리 센터 열기 ›": "📂 Open the data management center ›",
+"📂 데이터 관리 센터 열기": "📂 Open the data management center",
+"아래 항목도 모두 오른쪽": "Every item below also opens the",
+"를 열고, 그 버튼을 눌러 결과를 크게 보여 드립니다.": "on the right, presses that button, and shows the result in large type.",
+"사용 중:": "In use:",
+"원자료를 0~1 신호로 바꿈(%HRR, 경사, POI 거리 등)": "turns raw data into 0~1 signals (%HRR, slope, POI distance, etc.)",
+"원자료를 #~# 신호로 바꿈(%HRR, 경사, POI 거리 등)": "turns raw data into #~# signals (%HRR, slope, POI distance, etc.)",
+"우리 실험은 #큐비트라 칸 #개, #바이트면 충분합니다. 그래서 일반 PC에서 정확히 흉내 낼 수 있습니다.": "Our experiment uses # qubits: # cells, # bytes. So an ordinary PC can emulate it exactly.",
+"우리 실험은 2큐비트라 칸 4개, 64바이트면 충분합니다. 그래서 일반 PC에서 정확히 흉내 낼 수 있습니다.": "Our experiment uses 2 qubits: 4 cells, 64 bytes. So an ordinary PC can emulate it exactly.",
+"(세로: 게이트를 거는 데 걸린 시간 ms, 가로: #~#큐비트)": "(vertical: time to apply gates in ms, horizontal: #~# qubits)",
+"(세로: 게이트를 거는 데 걸린 시간 ms, 가로: 4~22큐비트)": "(vertical: time to apply gates in ms, horizontal: 4~22 qubits)",
+": 왼쪽의 칸 수가 두 배가 되듯, 실제 계산 시간도 큐비트 2개마다 약 4배씩 늘어납니다. 20큐비트를 넘으면서 곡선이 급히 솟는 것이 바로 그 두 배 증가입니다.": ": just as the cells on the left double, the real compute time grows about 4× every 2 qubits. The sharp rise past 20 qubits is that doubling.",
+": 왼쪽의 칸 수가 두 배가 되듯, 실제 계산 시간도 큐비트 #개마다 약 #배씩 늘어납니다. #큐비트를 넘으면서 곡선이 급히 솟는 것이 바로 그 두 배 증가입니다.": ": just as the cells on the left double, the real compute time grows about #× every # qubits. The sharp rise past # qubits is that doubling.",
+"연속 생성을 시작했습니다": "Continuous generation started",
+"#초마다 산행 기록이 한 묶음씩 쌓입니다. 가운데 목록의 ‘연속 생성 누적’ 행 수가 늘어나고, 아래 학습 곡선에 점이 하나씩 이어집니다.": "Every # s a batch of hike records is added. The row count of 'continuous generation' in the middle list grows, and points are added to the learning curve below.",
+"4.5초마다 산행 기록이 한 묶음씩 쌓입니다. 가운데 목록의 ‘연속 생성 누적’ 행 수가 늘어나고, 아래 학습 곡선에 점이 하나씩 이어집니다.": "Every 4.5 s a batch of hike records is added. The row count of 'continuous generation' in the middle list grows, and points are added to the learning curve below.",
+"처음이면 가장 기본 질문인 E1부터 해 보시기 바랍니다": "If this is your first time, start with E1, the most basic question",
+"처음이면 가장 기본 질문인 E#부터 해 보시기 바랍니다": "If this is your first time, start with E#, the most basic question",
+"지나온 단계: 지금까지 본 화면이 에코 사이클의 어디에 해당하는가": "Stages passed: where the screens you saw fit in the eco-cycle",
+"본 화면:": "Screens:",
+"데이터 관리 센터": "Data management center",
+"실측을 위한 필요 데이터 명세": "Data specification for field measurement",
+"산행 관제(입력 신호)": "Hiking control (input signals)",
+"초개인화(%HRR)": "Hyper-personalization (%HRR)",
+"얽힘 짝꿍(CNOT)": "Entangled buddies (CNOT)",
+"일반 vs 양자": "Classical vs quantum",
+"DNN 학습 관제": "DNN training control",
+"왜 대조군과 같은가": "Why it equals the control",
+"스탬프 투어": "Stamp tour",
+"관제실 경보 띠": "Control-room alarm bands",
+"4큐비트 위험구역": "4-qubit risk zones",
+"전체 사이클 ⑦": "Full cycle ⑦",
+"전체 사이클 ⑧": "Full cycle ⑧",
+"메타학습": "Meta-learning",
+"② 신호화(20개)": "② Signal encoding (20)",
+"원자료를 0~1 신호로 바꿈(%HRR, 경사, POI 거리 등)": "turns raw data into 0~1 signals (%HRR, slope, POI distance, etc.)",
+"개인 기준선: 안정시 심박, 최대심박, 평소 속도": "personal baseline: resting HR, max HR, usual speed",
+"변환 규칙, 감지 거리": "conversion rules, detection distance",
+"손실": "loss",
+"(틀린 정도, 낮을수록 좋음)": "(how wrong; lower is better)",
+"학습 정확도": "training accuracy",
+"(공부한 문제를 맞힌 비율)": "(share of studied problems answered correctly)",
+"(처음 보는 문제에서 실제 위험을 잡은 비율)": "(share of real risks caught on unseen problems)",
+"시험 탐지율": "test detection rate",
+"✍ 따라하기 예시: 이렇게 입력하시면 됩니다": "✍ Follow-along example: enter it like this",
+"▶ 예시대로 입력해 보기": "▶ Enter the example for me",
+"순서": "Order",
+"입력 칸": "Field",
+"예시 값": "Example value",
+"왜 이 값인가": "Why this value",
+"실험 카드": "Experiment card",
+"처음이면 가장 기본 질문인 E1부터 해 보시기 바랍니다": "If this is your first time, start with E1, the most basic question",
+"실험 데이터": "Experiment data",
+"근거 등급 A는 심박 공식, 기온 감률, 보행 속도 점검을 모두 통과한 데이터입니다": "Grade A data passed all checks: heart-rate formula, lapse rate and walking speed",
+"장비 잡음": "Device noise",
+"현재 양자 장비의 대략적인 오류 수준을 가정한 값입니다": "assumes roughly today's quantum-device error level",
+"메타 학습 반복": "Meta-learning iterations",
+"300회 정도면 공통 시작점이 안정됩니다": "about 300 iterations make the shared starting point stable",
+"난수 씨앗": "Random seed",
+"같은 값을 넣으면 언제나 같은 결과가 재현됩니다": "the same value always reproduces the same result",
+"큐비트가 하나 늘 때마다 저장할 칸이 두 배": "Each extra qubit doubles the cells to store",
+"읽는 법": "How to read",
+"(세로: 게이트를 거는 데 걸린 시간 ms, 가로: 4~22큐비트)": "(vertical: time to apply gates in ms, horizontal: 4~22 qubits)",
+": 왼쪽의 칸 수가 두 배가 되듯, 실제 계산 시간도 큐비트 2개마다 약 4배씩 늘어납니다. 20큐비트를 넘으면서 곡선이 급히 솟는 것이 바로 그 두 배 증가입니다.": ": just as the cells on the left double, the real compute time grows about 4× every 2 qubits. The sharp rise past 20 qubits is that doubling.",
+"우리 실험은 2큐비트라 칸 4개, 64바이트면 충분합니다. 그래서 일반 PC에서 정확히 흉내 낼 수 있습니다.": "Our experiment uses 2 qubits: 4 cells, 64 bytes. So an ordinary PC can emulate it exactly.",
+"큐비트를 하나 더할 때마다 노란 칸이 이전과 같은 수만큼 새로 생겨 전체가 두 배가 됩니다.": "Each added qubit creates as many new yellow cells as before, doubling the total.",
+"30큐비트 근처면 일반 노트북 메모리(16 GB)를 다 씁니다. 에뮬레이터로 흉내 낼 수 있는 한계가 여기쯤입니다.": "Around 30 qubits a laptop's whole memory (16 GB) is used up. That is roughly the emulator's limit.",
+"40큐비트를 넘으면 서버 여러 대, 50큐비트면 최대급 슈퍼컴퓨터로도 담기 어렵습니다. 진짜 양자 장비가 필요한 이유가 이 두 배 증가입니다.": "Beyond 40 qubits it takes several servers; at 50 even the largest supercomputers struggle. This doubling is why real quantum hardware is needed.",
+"중강도": "moderate",
+"가벼움": "light",
+"격렬": "vigorous",
+"지금 #분째": "minute # now",
+"젖은 경사면 미끄러짐": "slipping on a wet slope",
+"체력 고갈(탈진)": "exhaustion",
+"어두워지기 전 하산 실패": "failing to descend before dark",
+"구조 요청 불가(통신, 배터리)": "unable to call for help (signal, battery)",
+"빙판 미끄러짐": "slipping on ice",
+"길 잃음과 추락": "getting lost and falling",
+"강수": "rain",
+"심박": "HR",
+"피로": "fatigue",
+"일몰": "sunset",
+"지연": "delay",
+"통신": "signal",
+"배터리": "battery",
+"결빙": "ice",
+"이탈": "off-route",
+"절벽": "cliff",
+"급경사": "steep slope",
+"둘 다 높음: 겹친 위험": "both high: overlapping risk",
+"한쪽만 높음: 아직 겹침 아님": "one high: not overlapping yet",
+"둘 다 낮음: 평온": "both low: calm",
+"🗂 데이터 빠른 관리": "🗂 Quick data",
+"⚡ 근거 데이터 생성": "⚡ Generate evidence data",
+"▶ 연속 생성": "▶ Continuous generation",
+"🧠 이 데이터로 AI 학습": "🧠 Train AI with this data",
+"⬇ 데이터 내보내기": "⬇ Export data",
+"📋 데이터 목록 보기": "📋 View data list",
+"▶ 에뮬레이팅 실험 자동 안내": "▶ Auto guide: emulation experiments",
+"데이터 생성 → 학습 → 배포, 경보 → 재학습을 차례로 보여 드림": "data → training → deployment and alarms → retraining, in order",
+"에뮬레이팅 실험 자동 안내: 소개 뒤 ③ 첫 화면부터 시작합니다.": "Emulation guide: after the intro it starts from the first screen of ③.",
+"에뮬레이팅 실험 자동 안내를 시작합니다.": "Starting the auto guide for the emulation experiments.",
+"POI 스탬프": "POI stamp",
+"POI = iNavi에 등록된 관심 지점(노란 점: 스탬프 인증 POI, 붉은 점: 위험 POI)": "POI = point of interest registered in iNavi (yellow: stamp POI, red: risk POI)",
+"양자 특징 AI를 써서 얼마나 좋아졌나": "How much the quantum-feature AI improved things",
+"GitHub - 산행안전 양자AI 실험실": "GitHub - Hiking-safety quantum AI lab",
+"웹 실험실:": "Web lab:", "소스 코드:": "Source code:",
 "얽기 단계에서 비 큐비트가 일일 가능성만큼 노란 연결선이 진해지며 경사 큐비트를 뒤집습니다.": "In the entangle step, the yellow link darkens as much as the rain qubit is likely to be one and flips the slope qubit.",
 "얽힘": "Entanglement",
 "얽힘 짝꿍 실험(CNOT)": "Entangled-pair experiment (CNOT)",
@@ -1686,6 +1828,10 @@ window.QP_I18N_EN = {
 "증상 보조": "symptom support",
 "지금 데이터에서 같은 오경보 조건일 때 위험 탐지율은 일반 인공지능 #퍼센트, 양자 특징 인공지능 #퍼센트입니다.": "On the current data at the same false-alarm condition, the risk detection rate is # percent for the classical AI and # percent for the quantum-feature AI.",
 "지금 데이터에서 다른 양자 회로인 지지 특징 맵은 탐지율 #퍼센트로, 회로 설계가 문제와 맞아야 좋아진다는 것을 보여 줍니다.": "On the current data, another quantum circuit, the ZZ feature map, reaches # percent, showing that the circuit design must fit the problem to help.",
+"지금 산행자: 비 #, 경사 # → 정상": "current hiker: rain #, slope # → normal",
+"지금 산행자: 비 #, 경사 # → 주의": "current hiker: rain #, slope # → caution",
+"지금 산행자: 비 #, 경사 # → ⚠ 위험!": "current hiker: rain #, slope # → ⚠ DANGER!",
+"정상": "normal", "주의": "caution", "⚠ 위험!": "⚠ DANGER!",
 "지금 산행자: 비 #, 경사 # → 경보": "current hiker: rain #, slope # → alarm",
 "지금 산행자: 비 #, 경사 # → 조용": "current hiker: rain #, slope # → quiet",
 "지금 생성을 누르면 근거 기반 산행 데이터가 만들어지고, 이 데이터로 인공지능 학습을 누르면 모든 화면에 반영됩니다.": "Press generate now to create evidence-based hiking data; press train the AI with this data and every screen reflects it.",
@@ -1745,6 +1891,10 @@ window.QP_I18N_EN = {
 "최대심박(Tanaka #−#×나이) 이하 비율 #%": "share below max HR (Tanaka #−#×age) #%",
 "최대심박은 남성과 기본은 이백팔 빼기 영점칠 곱하기 나이, 여성은 이백육 빼기 영점팔팔 곱하기 나이로 계산하고, 안정시 심박을 빼서 개인의 심박예비율을 구합니다.": "Max heart rate is 208 minus 0.7 times age for men and by default, and 206 minus 0.88 times age for women; subtracting the resting heart rate gives the personal heart-rate reserve.",
 "추가 → #%, 조용": "added → #%, quiet",
+"추가 → #%, 정상": "added → #%, normal",
+"추가 → #%, 주의": "added → #%, caution",
+"따로 더함 → #%, 정상": "added separately → #%, normal",
+"따로 더함 → #%, 주의": "added separately → #%, caution",
 "추정 오차의 표준편차 = √(p(#−p)/N) → #번이면 최대 #%p": "standard deviation of the estimate = √(p(#−p)/N) → at most #%p with # times",
 "출력": "Output",
 "출발 대비 고도 m / 기온 변화 °C": "altitude above start m / temperature change °C",
@@ -3555,7 +3705,7 @@ window.QP_I18N_EN = {
   function mix(a, b, t) {                           // 두 색(RGB 배열)을 t 비율로 섞음 / mixes two colors (RGB arrays) by ratio t
     return "rgb(" + a.map(function (v, i) { return Math.round(v + (b[i] - v) * t); }).join(",") + ")"; // 각 채널을 선형 보간함 / linear interpolation per channel
   }
-  const LOW = [251, 246, 236], MID = [233, 196, 140], HIGH = [169, 72, 42]; // 낮음=종이색, 중간=황토, 높음=단풍색 / low = paper, middle = ochre, high = maple
+  const LOW = [251, 246, 236], MID = [233, 196, 140], HIGH = [176, 70, 38], DEEP = [96, 8, 18]; // DEEP=가장 위험(검붉은색) / DEEP = most dangerous (dark crimson) // 낮음=종이색, 중간=황토, 높음=단풍색 / low = paper, middle = ochre, high = maple
 
   // 결정 지도: grid(점수 2차원), thr(경보 기준), opts.truth(정답 경계 함수), opts.mark([x,y] 현재 위치) / decision map: grid (2-D scores), thr (alarm threshold), opts.truth (true boundary function), opts.mark ([x,y] current position)
   // 등산객 배지 / hiker badge: 지금 산행자를 산과 함께 크게 그림(경사가 급할수록 산이 가파르고, 비가 셀수록 빗방울이 많음) / draws the current hiker large with a mountain (steeper mountain for higher slope, more drops for stronger rain)
@@ -3591,7 +3741,7 @@ window.QP_I18N_EN = {
     for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) { // 모든 칸을 칠함 / paint every cell
       const v = grid[r][c];                         // 칸의 점수임 / score of the cell
       const t = v < thr ? .5 * v / thr : .5 + .5 * (v - thr) / Math.max(1e-6, 1 - thr); // 경보 기준을 색의 한가운데(황토)에 맞춤 → 경보 영역이 뚜렷이 보임 / put the alarm threshold at the color midpoint (ochre) → alarm area stands out
-      g.fillStyle = t < .5 ? mix(LOW, MID, t * 2) : mix(MID, HIGH, (t - .5) * 2); // 기준 아래는 종이색→황토, 위는 황토→단풍색 / below threshold paper→ochre, above ochre→maple
+      g.fillStyle = t < .5 ? mix(LOW, MID, t * 2) : t < .75 ? mix(MID, HIGH, (t - .5) * 4) : mix(HIGH, DEEP, (t - .75) * 4); // 기준 아래 종이색→황토, 위로 갈수록 단풍색→검붉은색(위험 구역이 가장 진함) / below: paper→ochre; above: maple→dark crimson (danger zone darkest) // 기준 아래는 종이색→황토, 위는 황토→단풍색 / below threshold paper→ochre, above ochre→maple
       g.fillRect(pad + c * W / n, 4 + r * H / n, W / n + 1, H / n + 1); // 칸을 칠함 / paint the cell
     }
     g.strokeStyle = o.color || "#6e4c82"; g.lineWidth = 2.4; // 경보 경계선 색과 굵기임 / color and width of the alarm boundary
@@ -3604,6 +3754,11 @@ window.QP_I18N_EN = {
       if ((grid[r][c] >= thr) !== (grid[r + 1][c] >= thr)) { // 경계면 / boundary
         g.beginPath(); g.arc(pad + (c + .5) * W / n, 4 + (r + 1) * H / n, 1.5, 0, 7); g.stroke(); // 점을 찍음 / put a dot
       }
+    }
+    if (o.danger != null) {                         // ‘위험!’ 구역 경계(빨간 실선 점)를 그림 / draw the 'danger!' zone boundary (red dots)
+      g.fillStyle = "#ff3b30";
+      for (let r = 0; r < n; r++) for (let c = 0; c < n - 1; c++) if ((grid[r][c] >= o.danger) !== (grid[r][c + 1] >= o.danger)) { g.beginPath(); g.arc(pad + (c + 1) * W / n, 4 + (r + .5) * H / n, 2.2, 0, 7); g.fill(); }
+      for (let c = 0; c < n; c++) for (let r = 0; r < n - 1; r++) if ((grid[r][c] >= o.danger) !== (grid[r + 1][c] >= o.danger)) { g.beginPath(); g.arc(pad + (c + .5) * W / n, 4 + (r + 1) * H / n, 2.2, 0, 7); g.fill(); }
     }
     if (o.truth) {                                  // 정답 위험 경계(점선)를 그림 / draw the true risk boundary (dashed)
       g.setLineDash([5, 4]); g.strokeStyle = "#2e2420"; g.lineWidth = 1.5; g.beginPath(); // 점선 설정임 / dashed-line settings
@@ -3618,8 +3773,9 @@ window.QP_I18N_EN = {
     }
     if (o.mark) {                                   // 현재 상황 위치를 표시함 / mark the current situation
       const px = pad + o.mark[0] * W, py = 4 + (1 - o.mark[1]) * H; // 화면 좌표임 / screen coordinates
+      if (o.markDanger) { const ph = (performance.now() % 900) / 900; g.save(); g.strokeStyle = "rgba(255,40,40," + (1 - ph).toFixed(2) + ")"; g.lineWidth = 5; g.beginPath(); g.arc(px, py, 28 + 18 * ph, 0, 7); g.stroke(); g.restore(); } // 위험!이면 붉은 고리가 퍼짐 / red ring expands when in danger
       hikerBadge(g, px, py, o.mark[0], o.mark[1]);  // 등산객 배지: 작은 산(기울기=경사) 위의 등산객, 빗방울 수=비 / hiker badge: a hiker on a small mountain (tilt = slope), raindrops = rain
-      if (o.markLabel) { g.font = "bold 12px Malgun Gothic,sans-serif"; const tw = g.measureText(o.markLabel).width + 10, bx = Math.max(pad, Math.min(P.w - tw - 4, px - tw / 2)), by = py > 64 ? py - 58 : py + 32; g.fillStyle = "rgba(255,255,255,.93)"; g.strokeStyle = "#2e2420"; g.lineWidth = 1; g.fillRect(bx, by, tw, 20); g.strokeRect(bx, by, tw, 20); g.fillStyle = "#2e2420"; g.fillText(o.markLabel, bx + 5, by + 14); } // 말풍선: 지금 산행자의 상태와 판정임 / speech bubble: current hiker state and verdict
+      if (o.markLabel) { g.font = "bold 12px Malgun Gothic,sans-serif"; const tw = g.measureText(o.markLabel).width + 10, bx = Math.max(pad, Math.min(P.w - tw - 4, px - tw / 2)), by = py > 64 ? py - 58 : py + 32; const lv = o.markLevel || 0, BG = ["rgba(255,255,255,.93)", "#fff3c4", "#ffb74d", (performance.now() % 600 < 300) ? "#d50000" : "#7f0000"], FG = ["#2e2420", "#5d4300", "#3e1a00", "#fff"]; g.fillStyle = BG[lv]; g.strokeStyle = lv === 3 ? "#fff" : "#2e2420"; g.lineWidth = lv === 3 ? 2 : 1; g.fillRect(bx, by, tw, 20); g.strokeRect(bx, by, tw, 20); g.fillStyle = FG[lv]; g.fillText(o.markLabel, bx + 5, by + 14); /* 단계별 말풍선 색(위험!은 깜빡임) / bubble color per level (danger blinks) */ } // 말풍선: 지금 산행자의 상태와 판정임 / speech bubble: current hiker state and verdict
     }
     if (o.corners) { g.font = "bold 11.5px Malgun Gothic,sans-serif"; g.fillStyle = "rgba(46,36,32,.75)"; g.textAlign = "left"; g.fillText("맑고 완만(안전)", pad + 4, 4 + H - 6); g.textAlign = "right"; g.fillText("비 + 급경사(위험)", pad + W - 4, 18); g.fillText("비만 강함", pad + W - 4, 4 + H - 6); g.textAlign = "left"; g.fillText("경사만 급함", pad + 4, 18); } // 네 모서리의 뜻을 적음 / write the meaning of the four corners
     g.fillStyle = "#6d5e55";                        // 축 글씨 색임 / axis text color
@@ -3904,7 +4060,7 @@ window.QP_I18N_EN = {
   function home(el) {
     const L = QP.State.results.find(function (m) { return m.key === "linear"; }), Q = QP.State.results.find(function (m) { return m.key === "quantum"; }); // 두 결과임 / the two results
     el.innerHTML = '<div class="homev"><div class="hero2"><svg id="hS" viewBox="0 0 1000 420" preserveAspectRatio="xMidYMax slice"></svg><div class="hero-copy"><p class="eyebrow">' + BR.univ + " " + BR.lab + ' × 산행안전 연구</p><h2>눈송이와 함께 오르는 <span>100대 명산</span><br>양자 에뮬레이팅 AI가 위험을 <span>더 일찍, 더 분명하게</span></h2><p>비와 급경사, 일몰과 하산 지연처럼 <b>겹치는 위험</b>을 큐비트로 묶어 읽고, 일반 AI보다 먼저 알려 주는지 직접 확인하는 실험실</p><div class="btns"><button class="primary" data-go="sim">▶ 산행 관제실 바로 보기</button><button data-go="kid">처음이라면: 동전으로 배우기</button><button data-go="howto">사용 안내</button></div></div>' + BR.img("emblem", "hero-emblem", "숙명여자대학교 엠블럼") + '</div>' +
-      '<div class="cards4"><div class="card tint-dusk"><h3>무엇을 하나요</h3><p>산 단면 위를 걷는 눈송이 앞의 위험 지점(젖은 돌계단, 낙석, 절벽 등)을 몇 m 전부터 감지하고, 큐비트가 돌아가며 AI가 판단하는 과정을 애니메이션으로 보여 줍니다.</p></div><div class="card tint-plum"><h3>얼마나 좋아졌나</h3><p class="kpi"><span class="c-dusk">' + pct(L.recall) + '</span> → <span class="c-plum">' + pct(Q.recall) + '</span></p><p class="small">같은 오경보 예산에서 위험 탐지율(데이터: ' + QP.State.dataName + ')</p></div><div class="card tint-ochre"><h3>정직한 한계</h3><p>지금의 2큐비트 회로는 일반 수식과 같은 값을 만듭니다. 좋아진 이유는 “겹침을 함께 보는 특징”이며, 양자 장비만의 이점은 앞으로 검증할 질문입니다.</p></div><div class="card tint-rose"><h3>누가 만들었나</h3><p>' + BR.maker + '</p><p class="small">' + BR.funding + '</p></div></div></div>';
+      '<div class="cards4"><div class="card tint-dusk"><h3>무엇을 하나요</h3><p>산 단면 위를 걷는 눈송이 앞의 위험 지점(젖은 돌계단, 낙석, 절벽 등)을 몇 m 전부터 감지하고, 큐비트가 돌아가며 AI가 판단하는 과정을 애니메이션으로 보여 줍니다.</p></div><div class="card tint-plum"><h3>양자 특징 AI를 써서 얼마나 좋아졌나</h3><p class="kpi"><span class="c-dusk">' + pct(L.recall) + '</span> → <span class="c-plum">' + pct(Q.recall) + '</span></p><p class="small">같은 오경보 예산에서 위험 탐지율(데이터: ' + QP.State.dataName + ')</p></div><div class="card tint-ochre"><h3>정직한 한계</h3><p>지금의 2큐비트 회로는 일반 수식과 같은 값을 만듭니다. 좋아진 이유는 “겹침을 함께 보는 특징”이며, 양자 장비만의 이점은 앞으로 검증할 질문입니다.</p></div><div class="card tint-rose"><h3>누가 만들었나</h3><p>' + BR.maker + '</p><p class="small">' + BR.funding + '</p></div></div></div>';
     el.querySelectorAll("[data-go]").forEach(function (b) { b.onclick = function () { QP.App.go(b.dataset.go); }; }); // 이동 버튼임 / navigation buttons
     const chars = ["go", "cheer", "joy", "alert", "welcome"]; // 등산로에 세울 공식 눈송이 이미지들임 / official Snowflake images placed on the trail
     const snowman = '<g transform="translate(905,330)"><circle r="26" fill="#fff" stroke="#c9d6ee"/><circle cy="-36" r="17" fill="#fff" stroke="#c9d6ee"/><circle cx="-6" cy="-39" r="2" fill="#1d2a4d"/><circle cx="6" cy="-39" r="2" fill="#1d2a4d"/><path d="M0,-34 l10,3 -10,2z" fill="#e8892b"/><rect x="-13" y="-58" width="26" height="8" fill="#003087"/><rect x="-9" y="-72" width="18" height="16" fill="#003087"/><path d="M-12,-22 q12,8 24,0" stroke="#ffb500" stroke-width="5" fill="none"/></g>'; // 직접 그린 일반 눈사람 장식임 / hand-drawn snowman decoration
@@ -3937,7 +4093,7 @@ window.QP_I18N_EN = {
 
   /* ===== 사용 안내 / User guide  ===== */
   function howto(el) {
-    el.innerHTML = '<div class="grid two"><div class="card stack"><h3>설치와 실행 (어느 PC, 어느 폴더에서나 같음)</h3><ol class="steps-ol"><li><b>준비</b>: Python 3.10 이상 설치, 브라우저는 Microsoft Edge 권장</li><li><b>받기</b>: <code>git clone https://github.com/&lt;계정&gt;/&lt;저장소&gt;.git</code> 또는 배포 zip을 원하는 폴더에 풀기</li><li><b>처음 한 번</b>: 받은 폴더(프로젝트 루트)에서 Windows는 <code>setup.bat</code>, macOS, Linux는 <code>./setup.sh</code> 실행 (가상환경 .venv, 패키지 설치, 숙명 CI 이미지 내려받기, 자동 시험)</li><li><b>실행</b>: Windows <code>run.bat</code>, macOS, Linux <code>./run.sh</code> → 빈 포트를 찾아 브라우저가 자동으로 열림(주소 예: http://127.0.0.1:8765/)</li><li><b>음성 품질</b>: Edge로 열면 여성(SunHi), 남성(InJoon) 신경망 음성이 교대로 선택됨. MP3 녹음은 <code>make_voice.bat</code> 또는 <code>python tools/make_voice.py</code>(인터넷 필요)</li><li><b>끄기</b>: 실행 창에서 Ctrl+C 또는 창 닫기</li><li><b>휴대폰(같은 와이파이)</b>: <code>run.bat --lan</code> 또는 <code>./run.sh --lan</code></li><li><b>서버 없이</b>: <code>versions/v03/web/index.html</code>을 브라우저로 열기, 또는 한 파일 배포본 <code>versions/v03/산행안전_양자실험실_v03.html</code></ol></div>' +
+    el.innerHTML = '<div class="card ghlink" style="grid-column:1/-1"><b>GitHub - 산행안전 양자AI 실험실</b><span>웹 실험실: <a href="https://kaistcs.github.io/safe-quantum-lab/" target="_blank" rel="noopener">https://kaistcs.github.io/safe-quantum-lab/</a></span><span>소스 코드: <a href="https://github.com/kaistcs/safe-quantum-lab" target="_blank" rel="noopener">https://github.com/kaistcs/safe-quantum-lab</a></span></div><div class="grid two"><div class="card stack"><h3>설치와 실행 (어느 PC, 어느 폴더에서나 같음)</h3><ol class="steps-ol"><li><b>준비</b>: Python 3.10 이상 설치, 브라우저는 Microsoft Edge 권장</li><li><b>받기</b>: <code>git clone https://github.com/kaistcs/safe-quantum-lab.git</code> 또는 배포 zip을 원하는 폴더에 풀기</li><li><b>처음 한 번</b>: 받은 폴더(프로젝트 루트)에서 Windows는 <code>setup.bat</code>, macOS, Linux는 <code>./setup.sh</code> 실행 (가상환경 .venv, 패키지 설치, 숙명 CI 이미지 내려받기, 자동 시험)</li><li><b>실행</b>: Windows <code>run.bat</code>, macOS, Linux <code>./run.sh</code> → 빈 포트를 찾아 브라우저가 자동으로 열림(주소 예: http://127.0.0.1:8765/)</li><li><b>음성 품질</b>: Edge로 열면 여성(SunHi), 남성(InJoon) 신경망 음성이 교대로 선택됨. MP3 녹음은 <code>make_voice.bat</code> 또는 <code>python tools/make_voice.py</code>(인터넷 필요)</li><li><b>끄기</b>: 실행 창에서 Ctrl+C 또는 창 닫기</li><li><b>휴대폰(같은 와이파이)</b>: <code>run.bat --lan</code> 또는 <code>./run.sh --lan</code></li><li><b>서버 없이</b>: <code>versions/v03/web/index.html</code>을 브라우저로 열기, 또는 한 파일 배포본 <code>versions/v03/산행안전_양자실험실_v03.html</code></ol></div>' +
       '<div class="card stack"><h3>화면 사용법</h3><ol class="steps-ol"><li>왼쪽 메뉴 그룹을 눌러 펼치고(▸/▾) 항목을 고르면 오른쪽 한 화면이 바뀜</li><li>위쪽 <b>자세한 설명 듣기</b>, 카드마다 🔊 버튼, 아래 음성 막대(속도, 목소리)</li><li>왼쪽 아래 <b>자동 해설</b>을 켜면 화면을 열 때마다, 관제실 사건마다 자동으로 읽음</li><li>결과 옆 <b>근거</b>를 누르면 데이터, 처리 과정, 계산식, 코드 위치, 문헌이 펼쳐짐. <b>시험관 모드</b>는 모든 근거를 펼침</li><li>왼쪽 <b>③ 합성 데이터 생성과 실험 관제</b>에서 버튼 한 번으로 근거 기반 데이터를 만들고 AI를 다시 학습함</li><li><b>▶ 전체 자동 투어</b>: 모든 화면을 차례로 열며 설명함</li></ol><button class="primary" id="hT">▶ 전체 자동 투어 시작</button></div></div>';
     $("#hT", el).onclick = function () { QP.App.tour(); }; // 자동 투어 시작임 / start the auto tour
   }
@@ -3948,7 +4104,7 @@ window.QP_I18N_EN = {
     el.innerHTML = '<div class="grid dmv"><div class="card dmflow"><b>이 화면이 하는 일</b><span>AI가 공부할 <b>산행 기록 교과서</b>를 만들고 검사한 뒤 AI에게 공부시키는 곳입니다.</span><ol><li><b>① 만들기</b>: 시각, 성별, 나이, 산 난이도, 날씨, 계절, 환경을 섞어 가상 산행을 10초 단위로 기록</li><li><b>② 고르기</b>: 만든 교과서 목록에서 하나 선택</li><li><b>③ 검사</b>: 심박 공식, 보행 속도, 기온감률 같은 근거와 맞는지 자동 채점(등급 A~C)</li><li><b>④ AI 연결</b>: 🧠 버튼을 누르면 이 교과서로 일반 AI와 양자 특징 AI가 함께 다시 공부하고, 결과가 관제실, 성적표 등 모든 화면에 반영</li><li><b>⑤ 내보내기</b>: CSV, 근거 포함 JSON으로 저장해 다른 프로그램이나 보고서에 사용</li></ol></div><div class="card stack"><h3>① 데이터 만들기</h3><label>종류 <select id="gK"><option value="grounded">근거 기반 산행 시계열(신뢰도 높음)</option><option value="rule">규칙 균일 합성(기준선)</option></select></label><label>산 <select id="gM"><option value="">전체 무작위</option>' + G.mountains.map(function (m, i) { return '<option value="' + i + '">' + m[0] + '</option>'; }).join("") + '</select></label><label>날씨 <select id="gW"><option value="">전체 무작위</option>' + G.weathers.map(function (w, i) { return '<option value="' + i + '">' + w.name + '</option>'; }).join("") + '</select></label><label>산행 횟수(근거) / 행 수(규칙) <input id="gN" type="number" value="30"></label><label>씨앗 <input id="gS" type="number" value="' + (3000 + DS.list.length) + '"></label>' +
       '<div class="btns"><button id="gGo" class="primary">⚡ 지금 생성</button><button id="gStream" data-autoplay="1">▶ 연속 생성</button></div><label class="tog"><input type="checkbox" id="gAuto" checked> 연속 생성 중 AI 자동 재학습(학습 곡선)</label><label class="tog"><input type="file" id="gF" accept=".csv"> CSV 가져오기</label><p id="gMsg" class="small"></p></div>' +
       '<div class="card stack"><h3>② 교과서(데이터) 고르기 <span class="small">(누르면 오른쪽에 검사 결과)</span></h3><div id="gL" class="dslist"></div></div>' +
-      '<div class="card stack"><h3>③ 검사 결과 → ④ AI 연결 → ⑤ 내보내기</h3><div id="gD"></div><canvas id="gC"></canvas></div></div>';
+      '<div class="card stack"><h3>③ 검사 결과 → ④ AI 연결 → ⑤ 내보내기</h3><div id="gNote" class="gnote" hidden></div><div id="gD"></div><canvas id="gC"></canvas><div id="gCx" class="gcx"></div></div></div>';
     function list() {                               // 목록을 그림 / draw the list
       $("#gL", el).innerHTML = DS.list.map(function (d) { return '<button class="ds' + (d.id === selId ? " sel" : "") + (d.id === QP.State.dataId ? " use" : "") + '" data-id="' + d.id + '"><b>' + d.id + '</b> ' + d.name + '<span class="pill ' + (d.grade === "A" ? "plum" : d.grade === "B" ? "dusk" : "rose") + '">등급 ' + d.grade + '</span><small>' + d.stats.n.toLocaleString("ko-KR") + "행, 위험 " + pct(d.stats.rate) + (d.id === QP.State.dataId ? ", AI 학습에 사용 중" : "") + "</small></button>"; }).join(""); // 목록 버튼임 / list buttons
       $("#gL", el).querySelectorAll(".ds").forEach(function (b) { b.onclick = function () { selId = b.dataset.id; list(); detail(); }; }); // 선택하면 상세를 보임 / show details when selected
@@ -3957,21 +4113,27 @@ window.QP_I18N_EN = {
       const d = DS.get(selId) || DS.list[0]; if (!d) return; selId = d.id; // 대상임 / target
       $("#gD", el).innerHTML = "<p><b>" + d.id + " " + d.name + "</b><br><span class='small'>" + d.created + ", " + d.gradeText + "</span></p>" + '<div class="btns dmact"><button id="gT" class="primary">🧠 이 데이터로 AI 학습</button><button id="gX">⬇ 내보내기 CSV</button><button id="gXj">⬇ 근거 포함 JSON</button><button id="gXa">⬇ 전체 데이터 목록</button><button id="gSv">서버에 저장</button></div>' + "<table>" + d.checks.map(function (c) { return "<tr><td>" + (c.ok ? "✔" : "✖") + "</td><th>" + c.k + "</th><td>" + c.d + "</td></tr>"; }).join("") + "</table>" + (d.factors ? "<p class='small'><b>결합된 요인(균형 배치)</b><br>" + d.factors.map(function (f) { return "<b>" + f.factor + "</b>: " + f.levels.join(", "); }).join("<br>") + "</p>" : "") + "<p class='small'>근거: " + d.refs + "</p>" +
         "" + (d.history ? "<p class='small'>학습 기록: " + d.history.map(function (h) { return h.at + " 양자 AUC " + h.qAUC.toFixed(3) + " / 일반 " + h.lAUC.toFixed(3); }).join(", ") + "</p>" : ""); // 상세 내용임 / detail content
-      $("#gT", el).onclick = function () { $("#gMsg", el).textContent = "학습 중…"; setTimeout(function () { DS.retrain(d.id); $("#gMsg", el).textContent = d.id + "로 다섯 방식 + DNN을 다시 학습함(" + Math.round(QP.State.trainMs) + "ms). 모든 화면이 이 결과를 씀."; QP.Voice.speak(d.name + " 데이터로 인공지능을 다시 학습했습니다. 관제실과 성적표가 이 결과를 씁니다.", true); }, 30); }; // AI 재학습 버튼임 / AI retrain button
-      $("#gX", el).onclick = function () { QP.App.download(d.id + ".csv", "\ufeff" + DS.toCSV(d.id)); $("#gMsg", el).textContent = d.id + ".csv 내보내기 완료(" + d.stats.n + "행)"; }; // CSV 내보내기임 / CSV export
+      $("#gT", el).onclick = function () { $("#gMsg", el).textContent = "학습 중…"; setTimeout(function () { DS.retrain(d.id); $("#gMsg", el).textContent = d.id + "로 다섯 방식 + DNN을 다시 학습함(" + Math.round(QP.State.trainMs) + "ms). 모든 화면이 이 결과를 씀."; note("🧠", d.id + "로 AI를 다시 학습했습니다", "일반 AI, 양자 특징 AI, 대조군 등 다섯 방식과 DNN을 " + Math.round(QP.State.trainMs) + "ms 만에 학습했습니다. 위쪽 띠의 ‘에뮬레이팅 데이터’가 " + d.id + "로 바뀌었고, 관제실과 성적표가 모두 이 결과를 씁니다."); QP.Voice.speak(d.name + " 데이터로 인공지능을 다시 학습했습니다. 관제실과 성적표가 이 결과를 씁니다.", true); }, 30); }; // AI 재학습 버튼임 / AI retrain button
+      $("#gX", el).onclick = function () { QP.App.download(d.id + ".csv", "\ufeff" + DS.toCSV(d.id)); $("#gMsg", el).textContent = d.id + ".csv 내보내기 완료(" + d.stats.n + "행)"; note("⬇", d.id + ".csv를 내려받았습니다", d.stats.n.toLocaleString("ko-KR") + "행이 브라우저의 다운로드 폴더에 저장되었습니다. 엑셀로 열어 볼 수 있습니다."); }; // CSV 내보내기임 / CSV export
       $("#gXj", el).onclick = function () { QP.App.download(d.id + "_근거포함.json", DS.toJSON(d.id)); $("#gMsg", el).textContent = d.id + " 근거 포함 JSON 내보내기 완료"; }; // 검증 항목, 등급, 출처를 함께 담은 JSON임 / JSON with checks, grade and sources
       $("#gXa", el).onclick = function () { QP.App.download("datasets_목록.json", DS.all()); $("#gMsg", el).textContent = "데이터 " + DS.list.length + "개 목록 내보내기 완료"; }; // 전체 목록임 / full list
       $("#gSv", el).onclick = function () { QP.App.saveServer(d); }; // 서버 저장임 / save to server
       const curve = d.curve && d.curve.length ? d.curve : null; // 학습 곡선임 / learning curve
       if (curve) C.line($("#gC", el), [{ values: curve.map(function (c) { return c.q; }), color: "#6e4c82" }, { values: curve.map(function (c) { return c.l; }), color: "#4d6b8c" }], { height: Math.max(130, Math.round(el.clientHeight * .26)), xLabel: "데이터가 늘어남 → (자두=양자, 청=일반 AUC)" }); // 데이터 크기별 성능 곡선임 / performance curve by data size
       else { const P = A.canvas($("#gC", el), Math.max(130, Math.round(el.clientHeight * .26))), g = P.g, n = Math.min(400, d.rows.length); for (let k = 0; k < n; k++) { const r = d.rows[k]; g.fillStyle = r.label ? "rgba(199,107,103,.8)" : "rgba(0,48,135,.25)"; g.beginPath(); g.arc(14 + r.x[3] * (P.w - 28), P.h - 12 - r.x[9] * (P.h - 24), 2.5, 0, 7); g.fill(); } g.fillStyle = "#1d2a4d"; g.fillText("앞 400행의 비(가로)×경사(세로), 빨강=위험", 14, 12); } // 분포 미리 보기임 / distribution preview
+      if (curve) { const f = curve[0], l = curve[curve.length - 1], p = curve[Math.max(0, curve.length - 2)], dq = l.q - f.q, tail = l.q - p.q; // 처음, 끝, 직전 값 / first, last, previous
+        const verdict = curve.length < 3 ? ["flat", "… 아직 점이 " + curve.length + "개뿐입니다. 연속 생성으로 데이터가 쌓이면 곡선이 이어집니다"] : l.q >= .9 && Math.abs(tail) < .01 ? ["ok", "✔ 잘 학습됨, 곡선이 평평해짐 = 데이터가 충분함"] : dq > .005 ? ["up", "↗ 학습이 잘 되어 가는 중(데이터를 늘리면 더 좋아질 수 있음)"] : dq < -.01 ? ["down", "⚠ 데이터가 늘었는데 성적이 떨어짐: 데이터 품질 점검 필요"] : ["flat", "→ 처음부터 거의 같은 성적(작은 데이터로도 충분)"];
+        $("#gCx", el).innerHTML = '<p class="gv ' + verdict[0] + '">' + verdict[1] + '</p><p class="small"><b>읽는 법</b>: 세로 AUC는 위험과 정상을 얼마나 잘 가려내는지(1.0 = 완벽, 0.5 = 동전 던지기 수준)입니다. 선이 <b>위로 갈수록 잘 학습된 것</b>이고, 끝이 <b>평평해지면</b> 데이터를 더 모아도 크게 좋아지지 않는다는 뜻입니다.</p><p class="small">이 데이터: ' + f.n.toLocaleString("ko-KR") + '행일 때 양자 ' + f.q.toFixed(3) + ', 일반 ' + f.l.toFixed(3) + ' → ' + l.n.toLocaleString("ko-KR") + '행일 때 양자 <b>' + l.q.toFixed(3) + '</b>, 일반 ' + l.l.toFixed(3) + ', 양자 − 일반 = ' + (l.q - l.l >= 0 ? "+" : "") + (l.q - l.l).toFixed(3) + (l.q < l.l ? ' (이 데이터에서는 일반 AI가 더 높음)' : '') + '</p>'; }
+      else $("#gCx", el).innerHTML = "";
     }
+    function note(icon, title, body) { const n = $("#gNote", el); if (!n) return; n.hidden = false; n.innerHTML = '<span class="gni">' + icon + '</span><div><b>' + title + "</b><p>" + body + "</p></div>"; n.classList.remove("pop"); void n.offsetWidth; n.classList.add("pop"); } // 결과를 오른쪽에 크게 알림 / announce the result prominently on the right
+    QP.DataNote = note;                             // 왼쪽 빠른 관리에서도 쓸 수 있게 공개 / exposed for the left quick panel
     $("#gGo", el).onclick = function () {           // 지금 생성 버튼임 / generate-now button
       const k = $("#gK", el).value, n = Number($("#gN", el).value), sd = Number($("#gS", el).value); // 입력값임 / input values
       $("#gMsg", el).textContent = "생성 중…";      // 진행 표시임 / progress display
-      setTimeout(function () { const d = k === "rule" ? DS.makeRule(sd, Math.max(200, n)) : DS.makeGrounded(sd, Math.max(1, Math.min(200, n)), { mountain: $("#gM", el).value === "" ? null : Number($("#gM", el).value), weather: $("#gW", el).value === "" ? null : Number($("#gW", el).value) }); selId = d.id; $("#gS", el).value = sd + 1; $("#gMsg", el).textContent = d.id + " 생성 완료: " + d.stats.n + "행, 등급 " + d.grade; list(); detail(); QP.App.logRequest({ kind: k, n: n, seed: sd, id: d.id }); }, 30); // 만들고 목록을 갱신함 / create and refresh the list
+      setTimeout(function () { const d = k === "rule" ? DS.makeRule(sd, Math.max(200, n)) : DS.makeGrounded(sd, Math.max(1, Math.min(200, n)), { mountain: $("#gM", el).value === "" ? null : Number($("#gM", el).value), weather: $("#gW", el).value === "" ? null : Number($("#gW", el).value) }); selId = d.id; $("#gS", el).value = sd + 1; $("#gMsg", el).textContent = d.id + " 생성 완료: " + d.stats.n + "행, 등급 " + d.grade; list(); detail(); note("✅", "새 데이터 " + d.id + "를 만들었습니다", (k === "rule" ? "규칙 균일 합성" : "근거 기반 산행 " + n + "회") + " → <b>" + d.stats.n.toLocaleString("ko-KR") + "행</b>, 위험 비율 " + (d.stats.pos / Math.max(1, d.stats.n) * 100).toFixed(1) + "%, 근거 등급 <b>" + d.grade + "</b>. 가운데 목록에 노란 테두리로 추가되었고, 아래에 검사 결과가 열렸습니다. AI에 쓰려면 <b>🧠 이 데이터로 AI 학습</b>을 누르시면 됩니다."); setTimeout(function () { const it = el.querySelector('#gL [data-id="' + d.id + '"]') || el.querySelector("#gL .sel, #gL button"); if (it) { it.classList.add("labtype"); setTimeout(function () { it.classList.remove("labtype"); }, 3000); } }, 50); QP.App.logRequest({ kind: k, n: n, seed: sd, id: d.id }); }, 30); // 만들고 목록을 갱신함 / create and refresh the list
     };
-    $("#gStream", el).onclick = function () { if (DS.streaming()) { DS.stopStream(); this.textContent = "▶ 연속 생성"; } else { DS.startStream(4500, $("#gAuto", el).checked); this.textContent = "■ 연속 생성 멈춤"; selId = (DS.list.find(function (d) { return d.kind === "stream"; }) || {}).id; } }; // 연속 생성 켜기/끄기임 / continuous generation on/off
+    $("#gStream", el).onclick = function () { if (DS.streaming()) { DS.stopStream(); this.textContent = "▶ 연속 생성"; } else { DS.startStream(4500, $("#gAuto", el).checked); this.textContent = "■ 연속 생성 멈춤"; note("▶", "연속 생성을 시작했습니다", "4.5초마다 산행 기록이 한 묶음씩 쌓입니다. 가운데 목록의 ‘연속 생성 누적’ 행 수가 늘어나고, 아래 학습 곡선에 점이 하나씩 이어집니다."); selId = (DS.list.find(function (d) { return d.kind === "stream"; }) || {}).id; } }; // 연속 생성 켜기/끄기임 / continuous generation on/off
     $("#gStream", el).textContent = DS.streaming() ? "■ 연속 생성 멈춤" : "▶ 연속 생성"; // 현재 상태 표시임 / current status display
     $("#gF", el).onchange = function (e) { const f = e.target.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = function () { const d = DS.addCSV(f.name, rd.result); selId = d.id; list(); detail(); }; rd.readAsText(f, "utf-8"); }; // CSV 가져오기임 / CSV import
     const off = function () { if (el.querySelector("#gL") && el.querySelector("#gD")) { list(); detail(); } }; DS.onChange(off); // 데이터가 바뀌면(이 화면이 열려 있을 때만) 다시 그림 / redraw when data changes (only while this screen is open)
@@ -3987,11 +4149,14 @@ window.QP_I18N_EN = {
     let vt = null, vs = 0; const drawV = function () {             // 그래프를 그림(새 산행 묶음으로 다시 그릴 수 있음) / draw the graphs (can redraw with a new batch of hikes)
       const pts = [], tp = [], hr = [], ag = [];    // 그래프용 점 목록임 / points for the graphs
       for (let k = 0; k < 6; k++) { const c = G.makeCourse((k * 2 + vs) % 16, 50 + k + vs * 7), p = { age: 30 + ((k * 9 + vs * 5) % 50), sex: (k + vs) % 2 ? "F" : "M", rest: 60 + k * 3, fit: .85 + ((k + vs) % 4) * .1 }, run = G.simulate(c, p, G.weathers[k % 4]); run.steps.forEach(function (s, i) { if (i % 9 === 0) { pts.push([s.grade, s.v]); tp.push([s.elev - c.start, s.T - (G.weathers[k % 4].t0)]); hr.push(s.pHRR); } }); ag.push([p.age, G.hrMax(p)]); } // 여러 산행에서 점을 모음 / collect points from several hikes
-      const GH = Math.max(130, Math.round((el.clientHeight - 175) / 2)); const sc = function (cv, P, xr, yr, fn, lab) { const Q = A.canvas(cv, GH), g = Q.g, X = function (x) { return 30 + (x - xr[0]) / (xr[1] - xr[0]) * (Q.w - 40); }, Y = function (y) { return Q.h - 15 - (y - yr[0]) / (yr[1] - yr[0]) * (Q.h - 25); }; g.strokeStyle = "#ccd3e4"; g.strokeRect(30, 10, Q.w - 40, Q.h - 25); P.forEach(function (p) { g.fillStyle = "rgba(0,48,135,.35)"; g.fillRect(X(p[0]) - 1.5, Y(p[1]) - 1.5, 3, 3); }); g.strokeStyle = "#ffb500"; g.lineWidth = 2.5; g.beginPath(); for (let k = 0; k <= 40; k++) { const x = xr[0] + (xr[1] - xr[0]) * k / 40; if (k) g.lineTo(X(x), Y(fn(x))); else g.moveTo(X(x), Y(fn(x))); } g.stroke(); g.fillStyle = "#1d2a4d"; g.font = "10px sans-serif"; g.fillText(lab, 32, Q.h - 2); }; // 산점도와 기준선 그리기 함수임 / scatter plot and reference line drawing function
-      sc($("#v1", el), pts, [-.5, .5], [0, 6], function (s) { return 6 * Math.exp(-3.5 * Math.abs(s + .05)); }, "경사(−50%~+50%) / 속도 km/h"); // Tobler 비교(체력, 젖음 감속 때문에 점이 선 아래로 퍼짐) / Tobler comparison (dots spread below the line due to fitness and wet slowdown)
-      sc($("#v2", el), tp, [0, 1300], [-12, 2], function (h) { return -6.5 * h / 1000; }, "출발 대비 고도 m / 기온 변화 °C"); // 기온감률 비교임 / lapse-rate comparison
-      const Q = A.canvas($("#v3", el), GH), g = Q.g, bins = new Array(20).fill(0); hr.forEach(function (v) { bins[Math.max(0, Math.min(19, Math.floor(v * 20)))]++; }); const mx = Math.max.apply(null, bins); g.fillStyle = "rgba(255,181,0,.2)"; g.fillRect(30 + (Q.w - 40) * .4, 10, (Q.w - 40) * .2, Q.h - 25); g.fillStyle = "rgba(199,107,103,.15)"; g.fillRect(30 + (Q.w - 40) * .6, 10, (Q.w - 40) * .3, Q.h - 25); bins.forEach(function (b, k) { g.fillStyle = "#6e4c82"; g.fillRect(30 + k * (Q.w - 40) / 20, Q.h - 15 - b / mx * (Q.h - 30), (Q.w - 40) / 20 - 2, b / mx * (Q.h - 30)); }); g.fillStyle = "#1d2a4d"; g.font = "10px sans-serif"; g.fillText("%HRR 0~100%", 32, Q.h - 2); // %HRR 히스토그램임 / %HRR histogram
-      sc($("#v4", el), ag, [20, 85], [140, 200], function (a) { return 208 - .7 * a; }, "나이 / 최대심박 bpm"); // Tanaka 비교임 / Tanaka comparison
+      const GH = Math.max(130, Math.round((el.clientHeight - 175) / 2)); const sc = function (cv, P, xr, yr, fn, lab, nm, ptName) { const Q = A.canvas(cv, GH), g = Q.g, X = function (x) { return 30 + (x - xr[0]) / (xr[1] - xr[0]) * (Q.w - 40); }, Y = function (y) { return Q.h - 15 - (y - yr[0]) / (yr[1] - yr[0]) * (Q.h - 25); }; g.strokeStyle = "#ccd3e4"; g.strokeRect(30, 10, Q.w - 40, Q.h - 25); P.forEach(function (p) { g.fillStyle = "rgba(0,48,135,.35)"; g.fillRect(X(p[0]) - 1.5, Y(p[1]) - 1.5, 3, 3); }); g.strokeStyle = "#ffb500"; g.lineWidth = 2.5; g.beginPath(); for (let k = 0; k <= 40; k++) { const x = xr[0] + (xr[1] - xr[0]) * k / 40; if (k) g.lineTo(X(x), Y(fn(x))); else g.moveTo(X(x), Y(fn(x))); } g.stroke(); g.fillStyle = "#1d2a4d"; g.font = "10px sans-serif"; g.fillText(lab, 32, Q.h - 2);
+        const lx = xr[0] + (xr[1] - xr[0]) * .72, tx = X(lx), ty = Y(fn(lx)); g.font = "bold 11px Malgun Gothic,sans-serif"; const tl = "← " + (nm || "공식"), tw = g.measureText(tl).width + 8; g.fillStyle = "#ffb500"; g.fillRect(Math.min(Q.w - 12 - tw, tx + 6), ty - 9, tw, 16); g.fillStyle = "#3e2a00"; g.fillText(tl, Math.min(Q.w - 12 - tw, tx + 6) + 4, ty + 3); // 선 위에 직접 ‘무슨 선인지’ 이름표 / name tag written right on the line
+        g.fillStyle = "rgba(255,255,255,.9)"; g.fillRect(34, 13, 170, 34); g.font = "11px Malgun Gothic,sans-serif"; g.fillStyle = "rgba(0,48,135,.7)"; g.fillRect(40, 20, 6, 6); g.fillStyle = "#1d2a4d"; g.fillText("점 = " + (ptName || "생성된 산행 데이터"), 52, 26); g.strokeStyle = "#ffb500"; g.lineWidth = 3; g.beginPath(); g.moveTo(38, 38); g.lineTo(48, 38); g.stroke(); g.fillText("선 = " + (nm || "공식") + "(문헌)", 52, 42); }; // 그림 안 범례 / in-chart legend / scatter plot and reference line drawing function
+      sc($("#v1", el), pts, [-.5, .5], [0, 6], function (s) { return 6 * Math.exp(-3.5 * Math.abs(s + .05)); }, "경사(−50%~+50%) / 속도 km/h", "Tobler 공식"); // Tobler 비교(체력, 젖음 감속 때문에 점이 선 아래로 퍼짐) / Tobler comparison (dots spread below the line due to fitness and wet slowdown)
+      sc($("#v2", el), tp, [0, 1300], [-12, 2], function (h) { return -6.5 * h / 1000; }, "출발 대비 고도 m / 기온 변화 °C", "−6.5 °C/km 표준대기"); // 기온감률 비교임 / lapse-rate comparison
+      const Q = A.canvas($("#v3", el), GH), g = Q.g, bins = new Array(20).fill(0); hr.forEach(function (v) { bins[Math.max(0, Math.min(19, Math.floor(v * 20)))]++; }); const mx = Math.max.apply(null, bins); g.fillStyle = "rgba(255,181,0,.2)"; g.fillRect(30 + (Q.w - 40) * .4, 10, (Q.w - 40) * .2, Q.h - 25); g.fillStyle = "rgba(199,107,103,.15)"; g.fillRect(30 + (Q.w - 40) * .6, 10, (Q.w - 40) * .3, Q.h - 25); bins.forEach(function (b, k) { g.fillStyle = "#6e4c82"; g.fillRect(30 + k * (Q.w - 40) / 20, Q.h - 15 - b / mx * (Q.h - 30), (Q.w - 40) / 20 - 2, b / mx * (Q.h - 30)); }); g.fillStyle = "#1d2a4d"; g.font = "10px sans-serif"; g.fillText("%HRR 0~100%", 32, Q.h - 2); g.font = "bold 11px Malgun Gothic,sans-serif"; g.textAlign = "center"; g.fillStyle = "#8a6d00"; g.fillText("중강도", 30 + (Q.w - 40) * .5, 24); g.fillText("40~59%", 30 + (Q.w - 40) * .5, 37); g.fillStyle = "#a33"; g.fillText("격렬", 30 + (Q.w - 40) * .75, 24); g.fillText("60~89%", 30 + (Q.w - 40) * .75, 37); g.textAlign = "left"; g.fillStyle = "#6e4c82"; g.fillText("막대 = 생성 데이터에서", 34, 24); g.fillText("그 %HRR이 나온 횟수", 34, 37); // 띠와 막대의 뜻을 그림 안에 직접 씀 / meaning of bands and bars written inside the chart
+        // %HRR 히스토그램임 / %HRR histogram
+      sc($("#v4", el), ag, [20, 85], [140, 200], function (a) { return 208 - .7 * a; }, "나이 / 최대심박 bpm", "Tanaka 공식", "생성된 산행자 한 사람"); // Tanaka 비교임 / Tanaka comparison
     }; requestAnimationFrame(drawV);
     $("#vRe", el).onclick = function () { if (vt) { clearInterval(vt); vt = null; this.textContent = "▶ 새 산행으로 계속 확인"; return; } this.textContent = "■ 멈춤"; vt = setInterval(function () { vs++; drawV(); }, 6000); }; // 3초마다 다른 산, 사람으로 다시 생성해 근거 일치를 계속 확인함 / regenerate with another mountain and person every 3 s to keep checking evidence agreement
     el._cleanup = function () { clearInterval(vt); }; // 화면을 떠나면 멈춤 / stop when leaving the screen
@@ -4020,8 +4185,34 @@ window.QP_I18N_EN = {
   /* ===== 큐비트와 메모리 / Qubits and memory  ===== */
   function scale(el) {
     const fmt = function (b) { const u = ["B", "KB", "MB", "GB", "TB", "PB"]; let i = 0; while (b >= 1024 && i < 5) { b /= 1024; i++; } return b.toFixed(b < 10 ? 1 : 0) + " " + u[i]; }; // 단위 변환임 / unit conversion
-    el.innerHTML = '<div class="grid two"><div class="card stack"><h3>큐비트 +1 = 메모리 ×2</h3><input id="sN" type="range" min="1" max="50" value="20"><p class="kpi c-plum" id="sK"></p><table>' + [4, 10, 20, 30, 40, 50].map(function (n) { return "<tr><td>" + n + "큐비트</td><td>진폭 " + Math.pow(2, n).toLocaleString("ko-KR") + "개</td><td><b>" + fmt(S.memoryBytes(n)) + "</b></td></tr>"; }).join("") + '</table></div><div class="card stack"><div class="row" style="justify-content:space-between"><h3>이 PC에서 직접 재기</h3><button id="sR" class="primary">↻ 재측정</button></div><canvas id="sC"></canvas><p id="sO" class="small"></p>' + B.box({ formula: "메모리 = 2ⁿ × 16바이트(복소수 1개)", code: "emulator.js memoryBytes()", ref: "Nielsen & Chuang(2010) 4.5절" }, "메모리") + '</div></div>';
-    const up = function () { const n = Number($("#sN", el).value); $("#sK", el).textContent = n + "큐비트 → " + fmt(S.memoryBytes(n)); }; $("#sN", el).oninput = up; up(); // 슬라이더 연결임 / wire the slider
+    el.innerHTML = '<div class="grid two"><div class="card stack"><h3>큐비트가 하나 늘 때마다 저장할 칸이 두 배</h3><div class="btns"><button id="sPlay" class="primary">■ 멈춤</button><button id="sMinus">− 1큐비트</button><button id="sPlus">+ 1큐비트</button><span class="kpi c-plum" id="sK" style="margin-left:8px"></span></div><canvas id="sAni"></canvas><p id="sTxt" class="rctxt"></p></div>' +
+      '<div class="card stack"><div class="row" style="justify-content:space-between"><h3>이 PC에서 직접 재기 <span class="small">(세로: 게이트를 거는 데 걸린 시간 ms, 가로: 4~22큐비트)</span></h3><button id="sR" class="primary">↻ 재측정</button></div><canvas id="sC"></canvas><p id="sO" class="small"></p><p class="small"><b>읽는 법</b>: 왼쪽의 칸 수가 두 배가 되듯, 실제 계산 시간도 큐비트 2개마다 약 4배씩 늘어납니다. 20큐비트를 넘으면서 곡선이 급히 솟는 것이 바로 그 두 배 증가입니다.</p>' + B.box({ formula: "메모리 = 2ⁿ × 16바이트(복소수 1개)", code: "emulator.js memoryBytes()", ref: "Nielsen & Chuang(2010) 4.5절" }, "메모리") + '</div></div>';
+    const LAD = [[2, "우리 실험(2큐비트)", "64 B: 문자 메시지 한 줄보다 작음"], [10, "", "16 KB: 짧은 문서 한 장"], [20, "", "16 MB: 고화질 사진 몇 장"], [30, "에뮬레이터 한계 근처", "16 GB: 일반 노트북 메모리 전체"], [40, "", "16 TB: 대형 서버 여러 대의 메모리"], [50, "", "16 PB: 최대급 슈퍼컴퓨터 메모리(수 PB)보다 큼"]]; // 비교 사다리 / comparison ladder
+    let n = 1, play = true, acc = 0;                // 큐비트 수, 자동 진행, 시간 누적 / qubits, auto play, time accumulator
+    const setN = function (v) { n = Math.max(1, Math.min(50, v)); acc = 0; };
+    $("#sPlay", el).onclick = function () { play = !play; this.textContent = play ? "■ 멈춤" : "▶ 자동 진행"; };
+    $("#sMinus", el).onclick = function () { play = false; $("#sPlay", el).textContent = "▶ 자동 진행"; setN(n - 1); };
+    $("#sPlus", el).onclick = function () { play = false; $("#sPlay", el).textContent = "▶ 자동 진행"; setN(n + 1); };
+    const stopAni = A.loop(function (dt) {
+      const cv = $("#sAni", el); if (!cv) return;
+      acc += dt * 2; if (play && acc > (n < 10 ? 1.6 : .7)) { acc = 0; n = n >= 50 ? 1 : n + 1; } // 10큐비트까지 천천히, 그 뒤는 빠르게 / slowly up to 10 qubits, then faster
+      const P = A.canvas(cv, 380), g = P.g, W = P.w, GW = Math.min(300, W * .5), cells = Math.pow(2, Math.min(n, 10)), cols = Math.pow(2, Math.ceil(Math.min(n, 10) / 2)), rows = cells / cols, cs = Math.min(GW / cols, 300 / rows);
+      g.fillStyle = "#1d2a4d"; g.font = "bold 14px Malgun Gothic,sans-serif"; g.textAlign = "left"; g.fillText(n + "큐비트 → 진폭 칸 2^" + n + " = " + Math.pow(2, n).toLocaleString("ko-KR") + "개", 8, 20);
+      const grow = Math.min(1, acc * 1.8);         // 새로 생긴 절반이 자라나는 정도 / growth of the newly added half
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const idx = r * cols + c, isNew = n <= 10 && idx >= cells / 2; g.fillStyle = isNew ? "rgba(255,181,0," + (.35 + .65 * grow) + ")" : "#6e4c82"; const sz = cs - (cs > 6 ? 2 : 0.5); const sc = isNew ? grow : 1; g.fillRect(8 + c * cs + (sz * (1 - sc)) / 2, 34 + r * cs + (sz * (1 - sc)) / 2, sz * sc, sz * sc); }
+      g.font = "12px Malgun Gothic,sans-serif"; g.fillStyle = "#4a5470";
+      g.fillText(n <= 10 ? "보라 = 이전 칸, 노랑 = 새로 생긴 칸" : "10큐비트(1,024칸) 그림이 " + Math.pow(2, n - 10).toLocaleString("ko-KR") + "장 더 필요한 크기", 8, 34 + rows * cs + 18);
+      g.fillText("칸 하나 = 진폭(복소수) 16바이트", 8, 34 + rows * cs + 36);
+      // 오른쪽 사다리: 필요한 메모리가 어느 정도인지 실생활 크기와 비교 / right ladder: compare the memory to everyday sizes
+      const LX = GW + 40, top = 40, bot = 360, yOf = function (q) { return bot - (q - 1) / 49 * (bot - top); };
+      g.strokeStyle = "#c9cfe0"; g.lineWidth = 6; g.beginPath(); g.moveTo(LX, top); g.lineTo(LX, bot); g.stroke();
+      LAD.forEach(function (L) { const y = yOf(L[0]), on = n >= L[0]; g.fillStyle = on ? "#6e4c82" : "#c9cfe0"; g.beginPath(); g.arc(LX, y, 6, 0, 7); g.fill(); g.fillStyle = on ? "#1d2a4d" : "#9aa3ba"; g.font = (on ? "bold " : "") + "12px Malgun Gothic,sans-serif"; g.textAlign = "left"; g.fillText(L[0] + "큐비트  " + L[2], LX + 14, y + 4); if (L[1]) { g.font = "11px Malgun Gothic,sans-serif"; g.fillStyle = "#c62828"; g.fillText(L[1], LX + 14, y + 18); } });
+      const my = yOf(n); g.fillStyle = "#ffb500"; g.strokeStyle = "#c62828"; g.lineWidth = 2; g.beginPath(); g.moveTo(LX - 22, my - 9); g.lineTo(LX - 8, my); g.lineTo(LX - 22, my + 9); g.closePath(); g.fill(); g.stroke(); g.fillStyle = "#1d2a4d"; g.font = "bold 11px sans-serif"; g.textAlign = "right"; g.fillText(n + "q", LX - 26, my + 4);
+      const kv = n + "큐비트 → " + fmt(S.memoryBytes(n)); const kEl = $("#sK", el); if (kEl.textContent !== kv) kEl.textContent = kv;
+      const msg = n <= 2 ? "우리 실험은 2큐비트라 칸 4개, 64바이트면 충분합니다. 그래서 일반 PC에서 정확히 흉내 낼 수 있습니다." : n <= 10 ? "큐비트를 하나 더할 때마다 노란 칸이 이전과 같은 수만큼 새로 생겨 전체가 두 배가 됩니다." : n <= 30 ? "30큐비트 근처면 일반 노트북 메모리(16 GB)를 다 씁니다. 에뮬레이터로 흉내 낼 수 있는 한계가 여기쯤입니다." : "40큐비트를 넘으면 서버 여러 대, 50큐비트면 최대급 슈퍼컴퓨터로도 담기 어렵습니다. 진짜 양자 장비가 필요한 이유가 이 두 배 증가입니다.";
+      const tEl = $("#sTxt", el); if (tEl.textContent !== msg) tEl.textContent = msg;
+    });
+    el._cleanup = function () { stopAni(); };
     $("#sR", el).onclick = function () { const ns = [4, 8, 12, 16, 18, 20, 22], t = []; let k = 0; (function run() { if (k >= ns.length) { C.line($("#sC", el), [{ values: t, color: "#a9482a" }], { height: Math.max(180, Math.round(el.clientHeight * .6)), xLabel: "4~22큐비트" }); $("#sO", el).textContent = ns.map(function (q, i) { return q + "q " + t[i].toFixed(1) + "ms"; }).join(", "); return; } const q = ns[k], st = S.createState(q), t0 = performance.now(); for (let i = 0; i < q; i++) S.ry(st, i, .3); for (let i = 0; i < q - 1; i++) S.cx(st, i, i + 1); t.push(performance.now() - t0); k++; setTimeout(run, 10); })(); }; // 측정임 / measure
     $("#sR", el).onclick();                         // 화면에 들어오자마자 먼저 측정해 빈 칸이 보이지 않게 함 / measure as soon as the screen opens so no blank area shows
   }
@@ -4076,7 +4267,7 @@ window.QP_I18N_EN = {
 
   /* ===== 개발 환경 / Development environment  ===== */
   function dev(el) {                                // 개발 환경: 어느 PC, 어느 폴더에서나 같은 방법으로 설치, 실행, 배포함 / development environment: install, run and deploy the same way on any PC, any folder
-    el.innerHTML = '<div class="grid devv"><div class="card stack"><h3>1. 설치 (Windows, macOS, Linux 공통 절차)</h3><table class="labtbl"><tr><th>필요한 것</th><td>Python 3.10 이상, 브라우저(Edge 권장), GitHub 사용 시 Git</td></tr><tr><th>받기</th><td><code>git clone https://github.com/&lt;계정&gt;/&lt;저장소&gt;.git</code> 또는 배포 zip을 원하는 폴더에 풀기</td></tr><tr><th>처음 1번</th><td>Windows <code>setup.bat</code>, macOS, Linux <code>./setup.sh</code> (가상환경 .venv, 패키지, CI 이미지, 음성 MP3, 자동 시험)</td></tr><tr><th>실행</th><td>Windows <code>run.bat</code>, macOS, Linux <code>./run.sh</code> (빈 포트 자동, 브라우저 자동, <code>--lan</code>이면 휴대폰에서도)</td></tr><tr><th>서버 없이</th><td><code>versions/v03/web/index.html</code> 직접 열기 또는 한 파일 배포본 <code>python tools/bundle.py v03</code></td></tr></table>' +
+    el.innerHTML = '<div class="grid devv"><div class="card stack"><h3>1. 설치 (Windows, macOS, Linux 공통 절차)</h3><table class="labtbl"><tr><th>필요한 것</th><td>Python 3.10 이상, 브라우저(Edge 권장), GitHub 사용 시 Git</td></tr><tr><th>받기</th><td><code>git clone https://github.com/kaistcs/safe-quantum-lab.git</code> 또는 배포 zip을 원하는 폴더에 풀기</td></tr><tr><th>처음 1번</th><td>Windows <code>setup.bat</code>, macOS, Linux <code>./setup.sh</code> (가상환경 .venv, 패키지, CI 이미지, 음성 MP3, 자동 시험)</td></tr><tr><th>실행</th><td>Windows <code>run.bat</code>, macOS, Linux <code>./run.sh</code> (빈 포트 자동, 브라우저 자동, <code>--lan</code>이면 휴대폰에서도)</td></tr><tr><th>서버 없이</th><td><code>versions/v03/web/index.html</code> 직접 열기 또는 한 파일 배포본 <code>python tools/bundle.py v03</code></td></tr></table>' +
       '<h3>2. 배포와 GitHub</h3><table class="labtbl"><tr><th>저작권 머리말</th><td><code>python tools/add_copyright.py</code>: 모든 프로그램 파일(.js .css .html .py .bat .sh .yml) 맨 위에 숙명여자대학교 AGI연구실 박영호 교수 저작권을 넣음, <code>--check</code>로 배포 전 점검</td></tr><tr><th>올리기</th><td><code>github_workflows/*.yml</code>을 <code>.github/workflows/</code>로 복사 → <code>git init -b main</code> → <code>git add -A</code> → <code>git commit</code> → <code>git push</code> (Windows는 <code>git_connect.bat</code> 한 번)</td></tr><tr><th>웹 게시</th><td>저장소 Settings › Pages › Source = GitHub Actions → <code>https://&lt;계정&gt;.github.io/&lt;저장소&gt;/</code></td></tr><tr><th>주간 데이터</th><td><code>synthetic-data.yml</code>이 매주 합성 데이터와 성적표를 자동 생성</td></tr><tr><th>이용 조건</th><td>루트의 <code>LICENSE</code> (All rights reserved, 평가, 연구, 교육 목적 열람 허용)</td></tr></table></div>' +
       '<div class="card stack"><h3>3. 폴더 구조 (설치 폴더 이름은 자유)</h3><pre class="mono">&lt;설치 폴더&gt;/\n├─ setup.bat, setup.sh    처음 1번 설치\n├─ run.bat, run.sh        실행\n├─ LICENSE, README.md     저작권, 설치 안내\n├─ tools/   serve.py, bundle.py, add_copyright.py,\n│           fetch_brand.py, make_voice.py, new_version.py\n├─ github_workflows/      GitHub 자동화 설정 원본\n└─ versions/ v01 v02 v03(현재)\n   └─ v03/web/js/  emulator → data → models → meta →\n                   mountain → dataset → dnn → voice →\n                   views_* (ecolab, lab, …) → app</pre><h3>4. 부품(레고 블럭) 원칙</h3><p class="small">파일 하나 = 부품 하나. 새 화면은 views_*.js의 ViewDefs에 {id, group, title, render} 한 줄 + narration.js 대본 한 줄이면 메뉴, 전체 안내, 음성에 자동으로 들어갑니다.</p><h3>5. 버전 기록</h3><table class="labtbl"><tr><td>v01</td><td>원본</td></tr><tr><td>v02</td><td>좌측 메뉴, TTS, 샷, VQC, 파이썬 패키지</td></tr><tr><td><b>v03</b></td><td>양자AI 실험실(전체 사이클 실험, 안내형 실험), 메타학습, 3층 DNN, 요인 결합 합성 데이터, 숙명 브랜드, 산행 관제 애니메이션, 근거 펼치기, 음성 개선, 저작권 머리말</td></tr></table></div></div>';
   }
@@ -4144,7 +4335,7 @@ window.QP_I18N_EN = {
     const lvl = function (x) { return x > .7 ? "매우 높음" : x > .4 ? "높음" : x > .15 ? "조금" : "낮음"; }; // 수준 말로 바꾸기임 / turn a level into words
     const qa = s.qf >= run.thrQ, la = s.lin >= run.thrL; // 두 AI 경보 여부임 / whether each AI alarms
     const sit = names[0] + " " + lvl(a) + ", " + names[1] + " " + lvl(b) + (s.rain > .5 ? " (비 " + s.rain.toFixed(1) + " mm/h)" : "") + (s.T < 3 ? " (기온 " + s.T.toFixed(1) + "°C)" : ""); // 상황 문장임 / situation sentence
-    const qx = names[0] + " 큐비트 " + Math.round(Math.pow(Math.sin(Math.PI * a / 2), 2) * 100) + "%, " + names[1] + " 큐비트 " + Math.round(Math.pow(Math.sin(Math.PI * b / 2), 2) * 100) + "% 기울어짐 → CNOT 뒤 겹침 점수 " + z.toFixed(2); // 양자 표현 문장임 / quantum-view sentence
+    const qxRest = names[0] + " 큐비트 " + Math.round(Math.pow(Math.sin(Math.PI * a / 2), 2) * 100) + "%, " + names[1] + " 큐비트 " + Math.round(Math.pow(Math.sin(Math.PI * b / 2), 2) * 100) + "% 기울어짐 → CNOT 뒤 겹침 점수 " + z.toFixed(2); const qxEN = QP.I18N && QP.I18N.lang() === "en"; const qx = (qxEN ? "pair " : "쌍 ") + "①②③④⑤⑥"[k] + ": " + (qxEN ? QP.I18N.tr(qxRest) : qxRest); // 쌍 번호 + 양자 표현 문장 / pair number + quantum-view sentence
     const both = a > .45 && b > .45, one = (a > .45) !== (b > .45); // 둘 다 높은지, 한쪽만 높은지임 / whether both are high or only one
     const mean = both ? "두 위험이 동시에 커져 ‘" + MEAN[k][0] + "’ 가능성이 따로일 때보다 크게 늘어나는 순간" : one ? "한 가지 위험만 커진 상태로, 아직 겹침은 아님" : "겹친 위험이 거의 없는 평온한 구간"; // 의미 문장임 / meaning sentence
     const eff = qa && !la ? "양자 특징 AI만 먼저 경보 → 일반 AI보다 앞서 알림(조기 확보)" : qa && la ? "두 AI 모두 경보" : !qa && la ? "일반 AI만 경보(양자 특징 AI는 겹침이 아니라고 판단)" : "두 AI 모두 조용(정상 범위)"; // AI 판단 문장임 / AI decision sentence
@@ -4171,7 +4362,7 @@ window.QP_I18N_EN = {
       '<label class="tog"><input type="checkbox" id="mV" checked> 사건 음성</label><span id="mClock" class="clock"></span></div>' +
       '<div class="card mtn"><canvas id="mCv"></canvas></div>' +
       '<div class="card stat" id="mStat"></div>' +
-      '<div class="card qub"><canvas id="mQ"></canvas></div>' +
+      '<div class="card qub"><canvas id="mQ"></canvas><div id="mQx" class="qx6"></div></div>' +
       '<div class="card nn"><canvas id="mN"></canvas></div>' +
       '<div class="card ch1"><canvas id="mSig"></canvas></div>' +
       '<div class="card ch2"><canvas id="mSc"></canvas></div></div>';
@@ -4256,13 +4447,19 @@ window.QP_I18N_EN = {
       g.fillStyle = "#1d2a4d"; g.font = "10px sans-serif"; g.textAlign = "left"; g.fillText(c.start + "m", 2, bot); g.fillText(c.summit + "m", 2, top + 4); g.fillText((c.L / 1000).toFixed(1) + " km(편도)", W - 70, bot + 14); // 축 글씨임 / axis labels
     }
     function drawQubits(i) {                        // 6개 신호 쌍 회로를 그림 / draws the six signal-pair circuits
-      const P = A.canvas(qv, qv.parentNode.clientHeight - 16), g = P.g, s = run.steps[i]; // 캔버스와 현재 상태임 / canvas and current state
+      const qx = $("#mQx", el), P = A.canvas(qv, Math.max(90, qv.parentNode.clientHeight - 16 - (qx ? qx.offsetHeight + 4 : 0))), g = P.g, s = run.steps[i]; // 캔버스와 현재 상태임(아래 설명 줄 높이만큼 뺌) / canvas and current state (minus the explanation row)
+      const EN = QP.I18N && QP.I18N.lang() === "en", tr = function (x) { return EN ? QP.I18N.tr(x) : x; }, NUM = "①②③④⑤⑥"; // 쌍 번호 / pair numbers
       let best = 0, bv = -1; D.pairs.forEach(function (p, k) { const v = s.sig[p[0]] * s.sig[p[1]]; if (v > bv) { bv = v; best = k; } }); // 가장 함께 높은 쌍임 / pair highest together
       const w = (P.w - 10) / 6;                     // 위젯 하나 폭임 / width of one widget
       D.pairs.forEach(function (p, k) {             // 쌍마다 / for each pair
         shownA[k] = A.lerp(shownA[k], s.sig[p[0]], .12); shownB[k] = A.lerp(shownB[k], s.sig[p[1]], .12); // 다이얼이 부드럽게 회전하도록 값을 천천히 따라감 / values follow slowly so the dials turn smoothly
-        A.pair(g, 4 + k * w, 2, w - 6, P.h - 4, shownA[k], shownB[k], PAIRN[k], k === best && bv > .1); // 회로 위젯을 그림 / draw the circuit widget
+        A.pair(g, 4 + k * w, 2, w - 6, P.h - 4, shownA[k], shownB[k], [NUM[k] + " " + tr(PAIRN[k][0]), tr(PAIRN[k][1])], k === best && bv > .1); // 회로 위젯을 그림(번호를 붙여 아래 설명과 연결) / draw the circuit widget (numbered to link with the explanation below)
       });
+      if (qx && (frame % 15 === 0 || !qx.childElementCount)) {   // 아래 설명 줄: 같은 번호로 각 쌍의 뜻과 지금 값을 구체적으로 보임 / explanation row: each pair's meaning and current values, same numbers
+        qx.innerHTML = D.pairs.map(function (p, k) { const a = s.sig[p[0]], b = s.sig[p[1]], z = M.pairAnalytic(a, b), hi = a > .45 && b > .45, one = (a > .45) !== (b > .45);
+          const st = hi ? (EN ? "both high: overlapping risk" : "둘 다 높음: 겹친 위험") : one ? (EN ? "one high: not overlapping yet" : "한쪽만 높음: 아직 겹침 아님") : (EN ? "both low: calm" : "둘 다 낮음: 평온");
+          return '<div class="qx' + (hi ? " hot" : one ? " warm" : "") + (k === best && bv > .1 ? " best" : "") + '"><b>' + NUM[k] + " " + tr(PAIRN[k][0]) + " × " + tr(PAIRN[k][1]) + '</b><span class="qr">' + (EN ? QP.I18N.tr(MEAN[k][0]) : MEAN[k][0]) + '</span><span>' + tr(PAIRN[k][0]) + " " + Math.round(a * 100) + "%, " + tr(PAIRN[k][1]) + " " + Math.round(b * 100) + "% → ⟨Z⟩ " + z.toFixed(2) + "</span><em>" + st + "</em></div>"; }).join("");
+      }
     }
     function drawNet(i) {                           // DNN 안의 신호 흐름을 그림 / draws the signal flow inside the DNN
       const P = A.canvas(nv, nv.parentNode.clientHeight - 16), g = P.g; // 캔버스임 / canvas
@@ -4346,7 +4543,9 @@ window.QP_I18N_EN = {
       (function () { let b0 = -1, bi = 0; for (let k = 0; k <= c.n; k++) { const on = k < c.n && c.grades[k] > .34; if (on && b0 < 0) b0 = k; if (!on && b0 >= 0) { let mx = 0; g.fillStyle = "rgba(198,40,40,.22)"; g.beginPath(); g.moveTo(X(b0 / c.n * c.L), P.h - 20); for (let j = b0; j <= k; j++) { g.lineTo(X(j / c.n * c.L), Y(c.elev[j])); if (j < k) mx = Math.max(mx, c.grades[j]); } g.lineTo(X(k / c.n * c.L), P.h - 20); g.fill(); g.strokeStyle = "#c62828"; g.lineWidth = 5; g.beginPath(); for (let j = b0; j <= k; j++) g.lineTo(X(j / c.n * c.L), Y(c.elev[j])); g.stroke(); const mk = (b0 + k) / 2 / c.n * c.L, t = "⚠ 급경사 " + Math.round(mx * 100) + "%"; g.font = "bold 11.5px Malgun Gothic,sans-serif"; const tw = g.measureText(t).width + 8, lx = Math.max(2, Math.min(P.w - tw - 2, X(mk) + 8)), ly = Y(G.elevAt(c, mk)) + 18 + (bi++ % 2) * 16; g.fillStyle = "#c62828"; g.fillRect(lx, ly - 12, tw, 16); g.fillStyle = "#fff"; g.textAlign = "left"; g.fillText(t, lx + 4, ly); b0 = -1; } } })(); // 급경사 구간을 붉은 면, 굵은 선, 표지로 강조함 / highlight steep sections with red fill, thick lines and labels
       const st = run.steps, half = st.findIndex(function (s) { return !s.up; }); // 오르는 구간 끝임 / end of the climbing part
       for (let k = 0; k < half; k += 3) { const s = st[k]; g.fillStyle = s.qf >= run.thrQ ? "#6e4c82" : s.lin >= run.thrL ? "#4d6b8c" : "rgba(0,0,0,.08)"; g.fillRect(X(s.x), Y(s.elev) - 4, 3, 4); } // 오르막에서 경보 위치를 색으로 표시함 / mark alarm positions on the climb by color
-      c.pois.forEach(function (q) { g.fillStyle = q.type === "stamp" ? "#ffb500" : "#c76b67"; g.beginPath(); g.arc(X(q.x), Y(G.elevAt(c, q.x)) - 12, 6, 0, 7); g.fill(); g.fillStyle = "#1d2a4d"; g.font = "10px Malgun Gothic,sans-serif"; g.textAlign = "center"; g.fillText(q.name, X(q.x), Y(G.elevAt(c, q.x)) - 22); }); // 위험 지점임 / risk points
+      c.pois.forEach(function (q) { g.fillStyle = q.type === "stamp" ? "#ffb500" : "#c76b67"; g.beginPath(); g.arc(X(q.x), Y(G.elevAt(c, q.x)) - 12, 6, 0, 7); g.fill(); g.fillStyle = "#1d2a4d"; g.font = "10px Malgun Gothic,sans-serif"; g.textAlign = "center"; const py = Y(G.elevAt(c, q.x)), nw = g.measureText(q.name).width, px = Math.min(P.w - nw / 2 - 4, Math.max(nw / 2 + 4, X(q.x))); g.fillText(q.name, px, py - 22); // 오른쪽 끝에서 잘리지 않게 안쪽으로 당김 / pulled inward so it is not clipped at the edge // 지점 이름 / point name
+        const tag = q.type === "stamp" ? "POI 스탬프" : "POI"; g.font = "bold 9px Malgun Gothic,sans-serif"; const tw = g.measureText(tag).width + 8; g.fillStyle = q.type === "stamp" ? "#b07a00" : "#003087"; g.fillRect(px - tw / 2, py - 44, tw, 13); g.fillStyle = "#fff"; g.fillText(tag, px, py - 34.5); }); // 등록된 POI임을 알리는 표지 / tag showing it is a registered POI
+      g.textAlign = "left"; g.font = "11px Malgun Gothic,sans-serif"; g.fillStyle = "#1d2a4d"; g.fillText("POI = iNavi에 등록된 관심 지점(노란 점: 스탬프 인증 POI, 붉은 점: 위험 POI)", 34, 16); // 범례 / legend
       const ev = run.events, ql = ev.filter(function (e) { return e.q >= 0 && e.q <= e.s; }), ll = ev.filter(function (e) { return e.lin >= 0 && e.lin <= e.s; }); // 사건 전에 알린 사건들임 / events warned before they happened
       const avg = function (a, k) { return a.length ? (a.reduce(function (t, e) { return t + (e.s - e[k]) / 6; }, 0) / a.length).toFixed(1) : "-"; }; // 평균 선행 시간(분)임 / mean lead time (min)
       const fa = function (k, thr) { return run.steps.filter(function (s) { return !s.truth && s[k] >= thr; }).length / 6; }; // 위험 아닌데 울린 시간(분)임 / time rung without risk (min)
@@ -4722,23 +4921,30 @@ window.QP_I18N_EN = {
         : T("두 화살표가 모두 위(0=안전) 쪽입니다. 같은 쪽이라 겹침 점수는 +이지만 비 점수와 경사 점수 자체가 낮아 위험 점수가 낮고, 지도의 옅은(조용) 쪽에 놓입니다.", "Both arrows point up (0 = safe). They agree, so the overlap is positive, but the rain and slope scores themselves are low, so the risk stays low and the hiker sits in the light (quiet) area.");
       void alarm;
     }
+    const LV = ["정상", "주의", "경보", "⚠ 위험!"]; let dangerNow = false, lastLvQ = -1, lastMark = null; // 단계 이름 / level names
+    const dz = function (thr) { return thr + (1 - thr) * .5; }; // 위험! 기준 = 경보 기준과 최고점의 중간 / danger line = midway between alarm threshold and max
+    function level(sc, thr) { return sc >= dz(thr) ? 3 : sc >= thr ? 2 : sc >= thr * .75 ? 1 : 0; } // 점수 → 단계 / score → level
     function draw(mark) {                           // 지도와 4단계 설명을 그림 / draws the maps and the four-step explanation
+      lastMark = mark || null;                      // 깜빡임용으로 기억 / remember for blinking
       const card = $("#cML", el).parentNode; if (!mapH) mapH = Math.max(170, Math.min(card.clientWidth - 20, card.clientHeight - 96)); const c = mark || cases[cur], h = mapH; // 카드 안에 꼭 맞는 지도 높이(처음 한 번 계산)임 / map height fitting the card (computed once)
       const xm = base.slice(); xm[3] = c[0]; xm[9] = c[1]; const lab = "지금 산행자: 비 " + Math.round(c[0] * 100) + ", 경사 " + Math.round(c[1] * 100); // 말풍선 글자임 / speech-bubble text
-      C.heatmap($("#cML", el), gl, L.threshold, { height: h, truth: truth, mark: c, markLabel: lab + " → " + (L.predict(xm) >= L.threshold ? "경보" : "조용"), corners: true, color: "#4d6b8c", xLabel: "비의 세기 (약함 → 강함)", yLabel: "경사 (완만 → 급함)" }); // 일반 지도임 / classical map
-      C.heatmap($("#cMQ", el), gq, Q.threshold, { height: h, truth: truth, mark: c, markLabel: lab + " → " + (Q.predict(xm) >= Q.threshold ? "경보" : "조용"), corners: true, color: "#6e4c82", xLabel: "비의 세기 (약함 → 강함)", yLabel: "경사 (완만 → 급함)" }); // 양자 지도임 / quantum map
+      const lvL = level(L.predict(xm), L.threshold), lvQ = level(Q.predict(xm), Q.threshold); // 4단계(정상, 주의, 경보, 위험!) / 4 levels (normal, caution, alarm, danger!)
+      C.heatmap($("#cML", el), gl, L.threshold, { height: h, truth: truth, mark: c, markLabel: lab + " → " + LV[lvL], markLevel: lvL, markDanger: lvL === 3, danger: dz(L.threshold), corners: true, color: "#4d6b8c", xLabel: "비의 세기 (약함 → 강함)", yLabel: "경사 (완만 → 급함)" }); // 일반 지도임 / classical map
+      C.heatmap($("#cMQ", el), gq, Q.threshold, { height: h, truth: truth, mark: c, markLabel: lab + " → " + LV[lvQ], markLevel: lvQ, markDanger: lvQ === 3, danger: dz(Q.threshold), corners: true, color: "#6e4c82", xLabel: "비의 세기 (약함 → 강함)", yLabel: "경사 (완만 → 급함)" }); // 양자 지도임 / quantum map
+      $("#cML", el).parentNode.classList.toggle("dangerflash", lvL === 3); $("#cMQ", el).parentNode.classList.toggle("dangerflash", lvQ === 3); dangerNow = lvL === 3 || lvQ === 3; // 위험!이면 카드 테두리가 번쩍임 / card border flashes on danger
+      if (lvQ === 3 && lastLvQ !== 3 && !QP.State.touring) { const wf = document.querySelector(".warnflash"); if (wf) { wf.className = "warnflash r"; void wf.offsetWidth; wf.className = "warnflash r on"; } } lastLvQ = lvQ; // 위험!에 처음 들어가면 화면 가장자리도 번쩍임 / the screen edge flashes when first entering danger
       const anyL = gl.some(function (r) { return r.some(function (v) { return v >= L.threshold; }); }); $("#cNL", el).textContent = anyL ? "경계가 곧은 선(따로 더하기)" : "경보 영역 없음"; $("#cNQ", el).textContent = "경보 영역이 모서리를 따라 휨"; // 지도 해설임 / map captions
       const x = base.slice(); x[3] = c[0]; x[9] = c[1]; const sl = L.predict(x), sq = Q.predict(x), al = sl >= L.threshold, aq = sq >= Q.threshold, t = D.syntheticLabel(x); // 점수와 판정임 / scores and verdicts
       $("#cSit", el).innerHTML = "<b>" + (c[2] || "산행 중") + "</b>: 비 " + Math.round(c[0] * 100) + ", 경사 " + Math.round(c[1] * 100) + " → 실제로는 " + (t ? "<b class='c-maple'>미끄러짐 위험</b>" : "정상"); // 상황임 / situation
-      $("#cLin", el).innerHTML = "비 점수와 경사 점수를 <b>따로 더함</b> → " + pct(sl) + ", " + (al ? "경보" : "조용"); // 일반 AI 처리임 / classical AI processing
+      $("#cLin", el).innerHTML = "비 점수와 경사 점수를 <b>따로 더함</b> → " + pct(sl) + ", " + LV[level(sl, L.threshold)]; // 일반 AI 처리임 / classical AI processing
       qubits(c[0], c[1], sq >= Q.threshold);        // 지금 산행자의 두 큐비트 그림과 해설 / the current hiker's two qubits and explanation
-      $("#cQ", el).innerHTML = "두 신호를 큐비트로 돌리고 CNOT으로 엮어 <b>겹침 점수 " + M.pairExact(c[0], c[1]).toFixed(2) + "</b> 추가 → " + pct(sq) + ", " + (aq ? "<b>경보</b>" : "조용"); // 양자 처리임 / quantum processing
+      $("#cQ", el).innerHTML = "두 신호를 큐비트로 돌리고 CNOT으로 엮어 <b>겹침 점수 " + M.pairExact(c[0], c[1]).toFixed(2) + "</b> 추가 → " + pct(sq) + ", " + (aq ? "<b>" + LV[level(sq, Q.threshold)] + "</b>" : LV[level(sq, Q.threshold)]); // 양자 처리임 / quantum processing
       $("#cRes", el).innerHTML = t && aq && !al ? "<b>겹친 위험을 양자 특징 AI만 잡음</b> → 미끄러지기 전에 보폭 줄이기 안내 가능" : !t && !aq && al ? "<b>한쪽만 높은 상황에서 불필요한 경보를 피함</b>" : !t && aq && !al ? "<b>양자 특징 AI의 오경보</b>(완벽하지 않음, 전체 오경보율로 판단)" : t === aq ? "양자 특징 AI 판정이 실제와 일치" : "두 AI 모두 실제와 다름"; // 의미 해석임 / interpretation
     }
     el.querySelectorAll("[data-c]").forEach(function (b) { b.onclick = function () { cur = b.dataset.c; anim = 0; el.querySelectorAll("[data-c]").forEach(function (x) { x.classList.toggle("on", x === b); }); draw(); }; }); // 상황 버튼임 / situation buttons
     $("#cWalk", el).onclick = function () { anim = anim ? 0 : 1; this.textContent = anim ? "■ 멈춤" : "▶ 산행 따라 움직이기"; }; // 흰 원이 산행처럼 움직이는 애니메이션임 / animation moving the white circle like a hike
     $("#cLong", el).onclick = function () { QP.App.readLong(); }; // 긴 설명임 / long explanation
-    let fr = 0; const stop = A.loop(function (dt) { if (!anim) return; path += dt * .06; if (++fr % 3) return; const t = path % 1; draw([Math.min(1, .1 + .9 * Math.min(1, t * 1.6)), Math.min(1, .1 + .9 * Math.max(0, (t - .2) * 1.4)), "비가 오기 시작하고 점점 가팔라지는 하산길"]); }); // 비가 먼저 오르고 경사가 뒤따르는 경로를 따라 움직임 / moves along a path where rain rises first and slope follows
+    let fr = 0; const stop = A.loop(function (dt) { if (!anim) { if (dangerNow && ++fr % 4 === 0) draw(lastMark); return; } /* 위험!이면 고리, 말풍선이 계속 깜빡이도록 다시 그림 / keep redrawing so the ring and bubble blink in danger */ path += dt * .06; if (++fr % 3) return; const t = path % 1; draw([Math.min(1, .1 + .9 * Math.min(1, t * 1.6)), Math.min(1, .1 + .9 * Math.max(0, (t - .2) * 1.4)), "비가 오기 시작하고 점점 가팔라지는 하산길"]); }); // 비가 먼저 오르고 경사가 뒤따르는 경로를 따라 움직임 / moves along a path where rain rises first and slope follows
     requestAnimationFrame(function () { draw(); });  // 처음 그림임 / first drawing
     return stop;                                    // 떠날 때 멈춤 / stop when leaving
   }
@@ -4746,10 +4952,40 @@ window.QP_I18N_EN = {
   /* ===== 왜 대조군과 같은가 / Why it equals the control  ===== */
   function same(el) {
     const EN0 = QP.I18N && QP.I18N.lang() === "en"; // 영문 모드 / English mode
-    el.innerHTML = '<div class="grid two-1"><div class="stack"><div class="card"><h3>질문: 양자 특징 AI와 일반 수식 대조군은 항상 같습니까?</h3><p class="qa"><b>답: 지금 쓰는 2큐비트 회로(RY+CNOT, 정확 판독)에서는 네, 항상 같습니다.</b> 수학적으로 똑같은 숫자를 만드는 두 가지 계산 방법이기 때문입니다. 같은 입력, 같은 학습, 같은 기준이니 결과도 소수점까지 같습니다.</p><p><b>대조군이란?</b> “양자 회로 덕분인지, 아니면 그냥 ‘두 신호를 함께 보는 특징’ 덕분인지” 가려내려고 같은 값을 일반 수식으로 만든 비교 대상이에요(과학 실험의 대조군과 같은 역할).</p></div>' +
-      '<div class="card"><h3>왜 같은지 한 줄씩</h3><ol class="proof"><li>RY(π, a)|0⟩ = cos(πa/2)|0⟩ + sin(πa/2)|1⟩ (비 큐비트)</li><li>RY(π, b)|0⟩ = cos(πb/2)|0⟩ + sin(πb/2)|1⟩ (경사 큐비트)</li><li>CNOT 뒤 경사 큐비트 = 비 XOR 경사 → 읽은 값 = P(같음) − P(다름)</li><li>P(같음) − P(다름) = (cos²−sin²)(a쪽) × (cos²−sin²)(b쪽)</li><li>cos² − sin² = cos(2배 각) 이므로 = <b>cos(πa) × cos(πb)</b> ✔</li></ol></div>' +
-      '<div class="card tint-plum"><h3>그럼 언제 달라집니까?</h3><ol><li><b>샷 측정</b>: 진짜 장비처럼 유한 번 측정하면 추정 오차가 생겨 달라짐</li><li><b>잡음</b>: 실제 장비 잡음이 값을 흐림</li><li><b>다른 회로</b>: ZZ 특징 맵(Havlíček 2019)처럼 회로를 바꾸면 다른 특징 → 다른 결과(더 좋을 수도, 나쁠 수도)</li><li><b>다른 고전 특징</b>: a×b 같은 다른 수식도 다른 결과</li></ol><p class="small">중요: 에뮬레이터로 계산되는 회로는 정의상 일반 컴퓨터로 계산 가능함. 양자 장비만의 이점은 큐비트가 많아 일반 컴퓨터가 흉내 내기 어려운 회로에서만 기대할 수 있음(Huang et al. 2021, Bowles et al. 2024).</p></div></div>' +
+    el.innerHTML = '<div class="grid two-1"><div class="stack"><div class="card"><h3>질문: 양자 특징 AI와 일반 수식 대조군은 항상 같습니까?</h3><p class="qa"><b>답: 지금 쓰는 2큐비트 회로(RY+CNOT, 정확 판독)에서는 네, 항상 같습니다.</b> 수학적으로 똑같은 숫자를 만드는 두 가지 계산 방법이기 때문입니다. 같은 입력, 같은 학습, 같은 기준이니 결과도 소수점까지 같습니다.</p></div>' +
+      '<div class="card stack"><h3>' + (EN0 ? "See it: the same input computed three ways, side by side" : "눈으로 확인: 같은 입력을 세 가지 방법으로 계산하는 경주") + '</h3><canvas id="yAni"></canvas><p id="yAniT" class="rctxt"></p></div>' +
+      '<details class="card yfold"><summary>' + (EN0 ? "What is a control? (click to open)" : "대조군이란? (펼쳐 보기)") + '</summary><p><b>대조군이란?</b> “양자 회로 덕분인지, 아니면 그냥 ‘두 신호를 함께 보는 특징’ 덕분인지” 가려내려고 같은 값을 일반 수식으로 만든 비교 대상이에요(과학 실험의 대조군과 같은 역할).</p></details>' +
+      '<details class="card yfold"><summary>' + (EN0 ? "Why they match, line by line (click to open)" : "왜 같은지 수식으로 한 줄씩 (펼쳐 보기)") + '</summary><ol class="proof"><li>RY(π, a)|0⟩ = cos(πa/2)|0⟩ + sin(πa/2)|1⟩ (비 큐비트)</li><li>RY(π, b)|0⟩ = cos(πb/2)|0⟩ + sin(πb/2)|1⟩ (경사 큐비트)</li><li>CNOT 뒤 경사 큐비트 = 비 XOR 경사 → 읽은 값 = P(같음) − P(다름)</li><li>P(같음) − P(다름) = (cos²−sin²)(a쪽) × (cos²−sin²)(b쪽)</li><li>cos² − sin² = cos(2배 각) 이므로 = <b>cos(πa) × cos(πb)</b> ✔</li></ol></details>' +
+      '<details class="card yfold tint-plum"><summary>' + (EN0 ? "Then when do they differ? (click to open)" : "그럼 언제 달라집니까? (펼쳐 보기)") + '</summary><ol><li><b>샷 측정</b>: 진짜 장비처럼 유한 번 측정하면 추정 오차가 생겨 달라짐</li><li><b>잡음</b>: 실제 장비 잡음이 값을 흐림</li><li><b>다른 회로</b>: ZZ 특징 맵(Havlíček 2019)처럼 회로를 바꾸면 다른 특징 → 다른 결과(더 좋을 수도, 나쁠 수도)</li><li><b>다른 고전 특징</b>: a×b 같은 다른 수식도 다른 결과</li></ol><p class="small">중요: 에뮬레이터로 계산되는 회로는 정의상 일반 컴퓨터로 계산 가능함. 양자 장비만의 이점은 큐비트가 많아 일반 컴퓨터가 흉내 내기 어려운 회로에서만 기대할 수 있음(Huang et al. 2021, Bowles et al. 2024).</p></details></div>' +
       '<div class="stack"><div class="card"><div class="row" style="justify-content:space-between"><h3>직접 확인: 무작위 10개 입력</h3><button id="yR" class="primary">새로 뽑기</button><button id="yA" data-autoplay="1">▶ 계속 뽑기</button></div><table id="yT" class="ct"></table></div><div class="card"><h3>' + (EN0 ? "Scores: AIs trained with each table column as a feature" : "성적 비교: 위 표의 각 열을 특징으로 넣어 학습한 AI") + ' <span class="small">(' + (EN0 ? "same data: " : "같은 데이터: ") + QP.State.dataName + ')</span></h3><p class="small">' + (EN0 ? "Same number and color = the same column in the table above. Each column\'s value was added to rain and slope, trained with the same logistic regression and the same false-alarm budget, then scored. Bars zoom into the 0.5-1.0 range." : "같은 번호, 같은 색 = 위 표의 같은 열. 각 열의 값을 비, 경사와 함께 넣고 같은 로지스틱 회귀, 같은 오경보 예산으로 학습한 뒤 잰 성적임. 막대는 0.5~1.0 구간을 확대해 보임.") + '</p><table id="yC" class="ct ybar"></table><p id="yS" class="small"></p></div></div></div>';
+    // 경주 애니메이션: 같은 입력(비, 경사)이 ① 양자 회로, ② 일반 수식, ③ 실제 장비처럼 100번 측정 세 길로 동시에 들어가 결과를 비교함 / race animation: the same input goes through (1) quantum circuit, (2) plain formula, (3) 100 measured shots, and results are compared
+    let rIn = [.62, .81], rShot = 0, rT = 0, rRng = S.rng(4242);
+    function newRace() { rIn = [Math.round(rRng() * 100) / 100, Math.round(rRng() * 100) / 100]; const q = M.pairExact(rIn[0], rIn[1]); rShot = 1 - 2 * S.sampleProb((1 - q) / 2, 100, rRng); rT = 0; }
+    newRace();
+    const stopRace = A.loop(function (dt) {
+      const cv = $("#yAni", el); if (!cv) return; rT += dt * 2; if (rT > 9.5) newRace();   // 애니메이션 속도 배율(0.5)을 보정해 실제 약 9.5초 주기 / compensates the 0.5 animation speed: about a 9.5 s real cycle
+      const EN = QP.I18N && QP.I18N.lang() === "en", T = function (k, e) { return EN ? e : k; };
+      const P = A.canvas(cv, 270), g = P.g, W = P.w, a = rIn[0], b = rIn[1], q = M.pairExact(a, b), c = M.pairAnalytic(a, b);
+      const Y = [62, 142, 222], xIn = 70, xOut = W - 120, prog = Math.min(1, Math.max(0, (rT - .6) / 3.2)); // 진행도 0~1 / progress
+      g.fillStyle = "#003087"; g.fillRect(8, Y[1] - 46, 112, 92); g.fillStyle = "#fff"; g.font = "bold 13px Malgun Gothic,sans-serif"; g.textAlign = "center"; g.fillText(T("같은 입력", "same input"), 64, Y[1] - 22); g.font = "bold 16px sans-serif"; g.fillText(T("비 ", "rain ") + a.toFixed(2), 64, Y[1] + 2); g.fillText(T("경사 ", "slope ") + b.toFixed(2), 64, Y[1] + 24);
+      const lanes = [[COL.quantum, "②", T("양자 회로: RY, RY → CNOT → 정확히 읽기", "quantum circuit: RY, RY → CNOT → exact read"), q], [COL.analytic, "③", T("일반 수식: cos(π×비) × cos(π×경사)", "plain formula: cos(π×rain) × cos(π×slope)"), c], [COL.shots, "◎", T("같은 회로를 실제 장비처럼 100번만 측정", "same circuit, measured only 100 times"), rShot]];
+      lanes.forEach(function (L, k) {
+        const y = Y[k]; g.strokeStyle = "#c9cfe0"; g.lineWidth = 3; g.beginPath(); g.moveTo(122, Y[1]); g.bezierCurveTo(150, Y[1], 150, y, 180, y); g.lineTo(xOut - 10, y); g.stroke();
+        g.fillStyle = L[0]; g.fillRect(200, y - 17, xOut - 230, 34); g.fillStyle = "#fff"; g.font = "bold 12.5px Malgun Gothic,sans-serif"; g.textAlign = "left"; g.fillText(L[1] + " " + L[2], 210, y + 4);
+        const px = 180 + (xOut - 190) * prog; g.fillStyle = "#ffb500"; g.strokeStyle = "#c62828"; g.lineWidth = 2; g.beginPath(); g.arc(px, y, 8, 0, 7); g.fill(); g.stroke(); // 계산이 지나가는 점 / dot moving through the calculation
+        g.fillStyle = "#fff"; g.strokeStyle = L[0]; g.lineWidth = 2.5; g.fillRect(xOut, y - 20, 110, 40); g.strokeRect(xOut, y - 20, 110, 40);
+        if (prog >= 1) { g.fillStyle = "#1d2a4d"; g.font = "bold 15px sans-serif"; g.textAlign = "center"; g.fillText(k === 2 ? L[3].toFixed(2) : L[3].toFixed(6), xOut + 55, y + 6); }
+        else { g.fillStyle = "#9aa3ba"; g.font = "bold 15px sans-serif"; g.textAlign = "center"; g.fillText("?", xOut + 55, y + 6); }
+      });
+      if (rT > 4.3) { // 비교 표시 / comparison marks
+        g.lineWidth = 3; g.strokeStyle = "#2e7d32"; g.beginPath(); g.moveTo(xOut + 114, Y[0]); g.lineTo(xOut + 119, Y[0]); g.lineTo(xOut + 119, Y[1]); g.lineTo(xOut + 114, Y[1]); g.stroke(); g.fillStyle = "#2e7d32"; g.font = "bold 18px sans-serif"; g.textAlign = "left"; g.fillText("=", W - 4 - 10, (Y[0] + Y[1]) / 2 + 6);
+        g.strokeStyle = "#e65100"; g.setLineDash([4, 3]); g.beginPath(); g.moveTo(xOut + 114, Y[1] + 4); g.lineTo(xOut + 119, Y[1] + 4); g.lineTo(xOut + 119, Y[2]); g.lineTo(xOut + 114, Y[2]); g.stroke(); g.setLineDash([]); g.fillStyle = "#e65100"; g.fillText("≠", W - 14, (Y[1] + Y[2]) / 2 + 8);
+      }
+      const msg = rT < .6 ? T("같은 입력(비, 경사)을 세 길로 동시에 보냅니다.", "The same input (rain, slope) is sent down three paths at once.")
+        : rT < 4.3 ? T("노란 점이 각 계산을 지나가는 중입니다. ② 양자 회로, ③ 일반 수식, ◎ 100번 측정은 서로 다른 방법입니다.", "The yellow dots are passing through each calculation: ② quantum circuit, ③ plain formula, ◎ 100 measurements.")
+        : T("결과: ②와 ③은 소수점 여섯째 자리까지 똑같습니다(차이 " + Math.abs(q - c).toExponential(0) + "). 그래서 학습 성적도 같습니다. ◎처럼 측정 횟수가 유한하면 " + Math.abs(rShot - q).toFixed(2) + "만큼 흔들려 달라집니다. 몇 초 뒤 새 입력으로 다시 비교합니다.", "Result: ② and ③ agree to six decimals (difference " + Math.abs(q - c).toExponential(0) + "), so their training scores match too. With finite measurements, ◎ wobbles by " + Math.abs(rShot - q).toFixed(2) + ". A new input follows in a few seconds.");
+      const tEl = $("#yAniT", el); if (tEl && tEl.textContent !== msg) tEl.textContent = msg;
+    });
     function table() {                              // 무작위 입력 10개로 다섯 방식의 특징값을 비교함 / compares the five methods' feature values on 10 random inputs
       const r = S.rng(Date.now() % 99991); const bd = function (k, n, t) { return '<th><span class="ybadge" style="--c:' + COL[k] + '">' + n + "</span> " + t + "</th>"; }; let h = "<tr><th>비</th><th>경사</th>" + bd("quantum", "②", "양자 회로") + bd("analytic", "③", "cos×cos") + "<th>" + (EN0 ? "②−③ diff" : "②−③ 차이") + "</th><th>샷 100</th>" + bd("product", "④", "a×b") + bd("zz", "⑤", "ZZ 회로") + "</tr>"; // 표 머리임 / table header
       for (let k = 0; k < 10; k++) { const a = r(), b = r(), q = M.pairExact(a, b), c = M.pairAnalytic(a, b), sh = 1 - 2 * S.sampleProb((1 - q) / 2, 100, r); h += "<tr><td>" + a.toFixed(2) + "</td><td>" + b.toFixed(2) + "</td><td>" + q.toFixed(6) + "</td><td>" + c.toFixed(6) + "</td><td>" + Math.abs(q - c).toExponential(1) + "</td><td>" + sh.toFixed(3) + "</td><td>" + (a * b).toFixed(3) + "</td><td>" + M.pairZZ(a, b).toFixed(3) + "</td></tr>"; } // 한 줄씩 채움 / fill line by line
@@ -4757,7 +4993,7 @@ window.QP_I18N_EN = {
     }
     $("#yR", el).onclick = table; table();          // 새로 뽑기 버튼과 첫 표임 / draw-again button and first table
     let yt = null; $("#yA", el).onclick = function () { if (yt) { clearInterval(yt); yt = null; this.textContent = "▶ 계속 뽑기"; return; } this.textContent = "■ 멈춤"; yt = setInterval(table, 5000); }; // 2.5초마다 새 입력으로 확인해 계속 변하게 함 / check with new inputs every 2.5 s so it keeps changing
-    el._cleanup = function () { clearInterval(yt); }; // 화면을 떠나면 멈춤 / stop when leaving the screen
+    el._cleanup = function () { clearInterval(yt); stopRace(); }; // 화면을 떠나면 멈춤 / stop when leaving the screen
     const res = QP.State.results, keys = res.map(function (m) { return m.key; }); // 결과 목록임 / result list
     const ORD = EN0 ? [["linear", "①", "none (rain, slope only)"], ["quantum", "②", "quantum circuit column"], ["analytic", "③", "cos×cos column"], ["product", "④", "a×b column"], ["zz", "⑤", "ZZ circuit column"]] : [["linear", "①", "없음(비, 경사만)"], ["quantum", "②", "양자 회로 열"], ["analytic", "③", "cos×cos 열"], ["product", "④", "a×b 열"], ["zz", "⑤", "ZZ 회로 열"]]; // 성적표 순서와 위 표의 열 연결 / score rows linked to the table columns
     const bar = function (v, c) { const w = Math.max(0, Math.min(1, (v - .5) / .5)) * 100; return '<div class="ybarw"><i style="width:' + w.toFixed(1) + '%;background:' + c + '"></i><span>' + v.toFixed(3) + "</span></div>"; }; // 0.5~1.0 확대 막대 / bar zoomed to 0.5-1.0
@@ -4834,13 +5070,14 @@ window.QP_I18N_EN = {
     const ds = QP.Datasets.get(QP.State.dataId) || QP.Datasets.list[0]; // 현재 데이터셋임 / current dataset
     let timer = null;                               // 학습 타이머임 / training timer
     el.innerHTML = '<div class="grid dnnv"><div class="card stack"><div class="row" style="justify-content:space-between"><h3>심층 신경망 내부: 입력 → 은닉 12 → 8 → 6 → 위험 점수 (청=+, 장밋빛=−, 굵기=크기, 노랑=이번 반복에 크게 바뀐 연결)</h3><div class="btns"><select id="dM"><option value="quantum">입력: 신호 16 + 양자 특징 6</option><option value="linear">입력: 신호 16만</option></select><button id="dGo" data-autoplay="1" class="primary">▶ 학습 시작</button><button id="dSt">멈춤</button><button id="dRe">초기화</button></div></div><canvas id="dNet"></canvas></div>' +
-      '<div class="stack"><div class="card"><p>반복 <b id="dE">0</b>, 손실 <b id="dL">-</b>, 학습 정확도 <b id="dA">-</b>, 시험 탐지율 <b id="dR" class="c-plum">-</b></p><canvas id="dCur"></canvas></div><div class="card"><div class="row" style="justify-content:space-between"><h3>학습 = 산행 상황 문제 풀기 <span class="small" id="dQs"></span></h3><button id="dMapT">판단 지도로 보기</button></div><div id="dQuiz" class="dquiz"></div><div id="dMapBox" hidden><canvas id="dMap"></canvas><p class="small maplegend"><b>산 그림이 아닙니다.</b> 가로 = 비의 세기, 세로 = 경사. 칸마다 신경망이 매긴 위험 점수(진할수록 위험, 경보 기준 50%). 점선 = 실제 위험 경계. 학습할수록 진한 영역이 점선 위쪽 모서리에 맞춰집니다.</p></div></div><div class="card"><h3>무엇이 학습되나</h3><p id="dW" class="small"></p><div id="dB"></div></div></div></div>';
+      '<div class="stack"><div class="card"><div class="dmet"><span>반복 <b id="dE">0</b></span><span><i class="mn" style="background:#a9482a">①</i> 손실 <b id="dL">-</b> <small>(틀린 정도, 낮을수록 좋음)</small></span><span><i class="mn" style="background:#003087">②</i> 학습 정확도 <b id="dA">-</b> <small>(공부한 문제를 맞힌 비율)</small></span><span><i class="mn" style="background:#6e4c82">③</i> 시험 탐지율 <b id="dR" class="c-plum">-</b> <small>(처음 보는 문제에서 실제 위험을 잡은 비율)</small></span></div><canvas id="dCur"></canvas></div><div class="card"><div class="row" style="justify-content:space-between"><h3>학습 = 산행 상황 문제 풀기 <span class="small" id="dQs"></span></h3><button id="dMapT">판단 지도로 보기</button></div><div id="dQuiz" class="dquiz"></div><div id="dMapBox" hidden><canvas id="dMap"></canvas><p class="small maplegend"><b>산 그림이 아닙니다.</b> 가로 = 비의 세기, 세로 = 경사. 칸마다 신경망이 매긴 위험 점수(진할수록 위험, 경보 기준 50%). 점선 = 실제 위험 경계. 학습할수록 진한 영역이 점선 위쪽 모서리에 맞춰집니다.</p></div></div><div class="card"><h3>무엇이 학습되나</h3><p id="dW" class="small"></p><div id="dB"></div></div></div></div>';
     function setup() { QP.DNN.reset($("#dM", el).value); QP.DNN.setData(ds.split.train.slice(0, 3000), ds.split.test.slice(0, 1500)); draw(); } // 새 신경망과 자료를 준비함 / prepare a new network and data
     function draw() {                               // 신경망, 곡선, 지도를 그림 / draw the network, curves and map
       const m = QP.DNN.model, nIn = m.nIn, P = A.canvas($("#dNet", el), Math.max(320, Math.min(620, el.clientHeight - 150))), g = P.g; // 캔버스임 / canvas
       const lab = D.signals.filter(function (_, i) { return !D.exclusions.has(i); }).map(function (s) { return s[1]; }).concat(["비×경사", "심박×피로", "일몰×지연", "통신×배터리", "결빙×경사", "이탈×절벽"]).slice(0, nIn); // 입력 이름임 / input names
       A.deepNet(g, m, { x0: 118, x1: P.w - 36, y0: 18, y1: P.h - 26, labels: lab, deltas: m.deltas }); g.fillStyle = "#a9482a"; g.font = "bold 12px Malgun Gothic,sans-serif"; g.textAlign = "right"; g.fillText("위험 점수", P.w - 6, P.h / 2 - 26); g.textAlign = "left"; // 심층 신경망(은닉층 3개)을 그림 / draw the deep network (3 hidden layers)
-      C.line($("#dCur", el), [{ values: m.loss.length ? m.loss : [.7], color: "#a9482a" }, { values: m.acc.length ? m.acc : [.5], color: "#003087" }], { height: 110, min: 0, max: 1, xLabel: "반복 → (주황 손실, 청 정확도)" }); // 학습 곡선임 / learning curve
+      C.line($("#dCur", el), [{ values: m.loss.length ? m.loss : [.7], color: "#a9482a" }, { values: m.acc.length ? m.acc : [.5], color: "#003087" }], { height: 110, min: 0, max: 1, xLabel: "반복 →   ① 주황 선 = 손실(내려갈수록 좋음)   ② 청 선 = 학습 정확도(올라갈수록 좋음)" }); // 학습 곡선임 / learning curve
+      (function () { const cv = $("#dCur", el), g = cv.getContext("2d"), r = window.devicePixelRatio || 1; g.save(); g.setTransform(r, 0, 0, r, 0, 0); const w = cv.clientWidth; g.font = "bold 11px sans-serif"; const tag = function (t, c, y) { g.fillStyle = c; g.beginPath(); g.arc(w - 18, y, 8, 0, 7); g.fill(); g.fillStyle = "#fff"; g.textAlign = "center"; g.fillText(t, w - 18, y + 4); }; const la = m.loss.length ? m.loss[m.loss.length - 1] : .7, ac = m.acc.length ? m.acc[m.acc.length - 1] : .5; tag("①", "#a9482a", Math.max(14, Math.min(96, 6 + (1 - la) * 84))); tag("②", "#003087", Math.max(14, Math.min(96, 6 + (1 - ac) * 84))); g.restore(); })(); // 선 끝에 번호표를 달아 위 지표와 연결 / number tags at the line ends, linked to the metrics above
       const QZ = [["맑은 날 완만한 흙길", {}], ["소나기 속 젖은 돌계단 하산", { 3: .85, 9: .8 }], ["비는 강하지만 평탄한 임도", { 3: .9, 9: .2 }], ["68세, 깔딱고개에서 심박 높고 지침", { 0: .85, 1: .8 }], ["해 지기 전 하산이 늦어짐", { 8: .8, 11: .75 }], ["심박만 높은 짧은 오르막(피로 낮음)", { 0: .9, 1: .2 }], ["결빙된 겨울 급경사", { 7: .8, 9: .75 }], ["비, 경사 모두 중간", { 3: .6, 9: .6 }]]; // 실제 산행에서 흔한 상황 8개(정답은 두 위험의 겹침 규칙으로 정함) / 8 common real hiking situations (labels from the overlap rule)
       let okN = 0; $("#dQuiz", el).innerHTML = QZ.map(function (q) { const x = new Array(20).fill(.1); Object.keys(q[1]).forEach(function (k) { x[k] = q[1][k]; }); const t = D.syntheticLabel(x), sc = QP.DNN.predict(x), ok = (sc >= .5) === t; if (ok) okN++; return '<div class="dq ' + (ok ? "ok" : "ng") + '"><span class="dqn">' + q[0] + '</span><span class="dqa">정답 <b>' + (t ? "위험" : "정상") + '</b></span><span class="dqb"><i style="width:' + Math.round(sc * 100) + '%;background:' + (sc >= .5 ? "#c62828" : "#4d6b8c") + '"></i><em></em></span><span class="dqs">' + Math.round(sc * 100) + '%</span><span class="dqm">' + (ok ? "✔" : "✘") + "</span></div>"; }).join(""); // 문제마다 AI 점수 막대와 정답 여부를 그림 / draw the AI score bar and correctness per question
       $("#dQs", el).innerHTML = "반복 " + m.epoch + "회, 맞힌 문제 <b class='" + (okN >= 7 ? "c-plum" : "c-maple") + "'>" + okN + " / " + QZ.length + "</b>"; // 맞힌 개수임 / number correct
@@ -4942,19 +5179,23 @@ window.QP_I18N_EN = {
       ["⑦ 사용자 피드백", "경보 확인/무시, 사고, 아차사고 신고, 스탬프 인증 시각", "정답 라벨(위험/정상)과 오경보 기록", "신고 양식"],
       ["⑧ 재학습, 메타학습", "주간 재학습 + FOMAML로 코스, 개인 집단별 좋은 시작점 학습", "메타 초기값 → 새 사용자 적은 데이터로 빠른 적응", "평가 기준(같은 시험 세트)"]
     ];
-    el.innerHTML = '<div class="grid two-1"><div class="card"><canvas id="eC"></canvas></div><div class="stack"><div class="card" id="eD"></div><div class="card tint-ochre"><b>한 줄 요약</b><p>데이터가 쌓일수록(①⑦) AI가 다시 배우고(④⑧), 개인마다 기준이 맞춰지며(②⑧), 안전 규칙(⑥)은 학습과 무관하게 항상 먼저 작동함.</p></div><div id="eB"></div></div></div>';
-    let sel = 0, t = 0;                             // 선택 노드와 애니메이션 시각임 / selected node and animation time
+    el.innerHTML = '<div class="grid two-1"><div class="card"><canvas id="eC"></canvas></div><div class="stack"><div class="card" id="eD"></div><div class="card tint-ochre"><b>한 줄 요약</b><p>데이터가 쌓일수록(①⑦) AI가 다시 배우고(④⑧), 개인마다 기준이 맞춰지며(②⑧), 안전 규칙(⑥)은 학습과 무관하게 항상 먼저 작동함.</p></div><div class="card ehist"><h3>지나온 단계: 지금까지 본 화면이 에코 사이클의 어디에 해당하는가</h3><div id="eH"></div></div><div id="eB"></div></div></div>';
+    let sel = 0, t = 0, hold = 0, seen = [];                             // 선택 노드와 애니메이션 시각임 / selected node and animation time
+    const REL = [[["datamgr", "데이터 관리 센터"], ["realdata", "실측을 위한 필요 데이터 명세"]], [["sim", "산행 관제(입력 신호)"], ["persona", "초개인화(%HRR)"]], [["entangle", "얽힘 짝꿍(CNOT)"], ["compare", "일반 vs 양자"], ["vqc", "VQC"]], [["dnn", "DNN 학습 관제"], ["same", "왜 대조군과 같은가"]], [["sim", "산행 관제 시뮬레이션"], ["stamp", "스탬프 투어"]], [["sim", "관제실 경보 띠"], ["zone4q", "4큐비트 위험구역"]], [["ecolab", "전체 사이클 ⑦"]], [["meta", "메타학습"], ["ecolab", "전체 사이클 ⑧"]]]; // 노드별 관련 화면 / related screens per node
+    function hist() { $("#eH", el).innerHTML = seen.map(function (k) { const n = nodes[k]; return '<div class="eh' + (k === sel ? " on" : "") + '"><b>' + n[0] + '</b><span>' + n[1] + '</span><span class="ehl">본 화면: ' + REL[k].map(function (r) { return '<a data-go="' + r[0] + '">' + r[1] + "</a>"; }).join(", ") + "</span></div>"; }).join("") || '<p class="small">노란 흐름이 각 단계를 지날 때마다 여기에 하나씩 쌓입니다.</p>'; $("#eH", el).querySelectorAll("[data-go]").forEach(function (a) { a.onclick = function () { QP.App.go(a.dataset.go); }; }); } // 지나온 단계 목록 / visited-stage list
     function detail() { const n = nodes[sel]; $("#eD", el).innerHTML = "<h3>" + n[0] + "</h3><p>" + n[1] + "</p><table><tr><th>학습되어 저장</th><td>" + n[2] + "</td></tr><tr><th>고정(학습 안 함)</th><td>" + n[3] + "</td></tr></table>"; } // 노드 설명임 / node explanation
     const cv = $("#eC", el);                        // 캔버스임 / canvas
-    cv.onclick = function (e) { const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, cx = r.width / 2, cy = r.height / 2, R = Math.min(cx, cy) - 62; nodes.forEach(function (_, k) { const a = -Math.PI / 2 + k * 2 * Math.PI / nodes.length; if (Math.hypot(x - (cx + R * Math.cos(a)), y - (cy + R * Math.sin(a))) < 46) { sel = k; detail(); QP.Voice.speak(nodes[k][0] + ". " + nodes[k][1] + ". 학습되어 저장되는 것은 " + nodes[k][2] + ". 고정되는 것은 " + nodes[k][3] + ".", true); } }); }; // 노드를 누르면 설명함 / click a node to explain it
+    cv.onclick = function (e) { const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, cx = r.width / 2, cy = r.height / 2, R = Math.min(cx, cy) - 62; nodes.forEach(function (_, k) { const a = -Math.PI / 2 + k * 2 * Math.PI / nodes.length; if (Math.hypot(x - (cx + R * Math.cos(a)), y - (cy + R * Math.sin(a))) < 46) { sel = k; hold = 8; if (seen.indexOf(k) < 0) seen.push(k); hist(); detail(); QP.Voice.speak(nodes[k][0] + ". " + nodes[k][1] + ". 학습되어 저장되는 것은 " + nodes[k][2] + ". 고정되는 것은 " + nodes[k][3] + ".", true); } }); }; // 노드를 누르면 설명함 / click a node to explain it
     const stop = A.loop(function (dt) {             // 순환 애니메이션임 / cycle animation
       t += dt * .12; const P = A.canvas(cv, Math.max(380, el.clientHeight - 40)), g = P.g, cx = P.w / 2, cy = P.h / 2, R = Math.min(cx, cy) - 62; // 준비임 / prepare
       g.strokeStyle = "#c9d3ea"; g.lineWidth = 10; g.beginPath(); g.arc(cx, cy, R, 0, 7); g.stroke(); // 순환 고리임 / the cycle ring
-      const head = (t % 1) * 2 * Math.PI - Math.PI / 2; g.strokeStyle = "#ffb500"; g.lineWidth = 10; g.beginPath(); g.arc(cx, cy, R, head - .5, head); g.stroke(); // 움직이는 데이터 흐름임 / moving data flow
+      const head = (t % 1) * 2 * Math.PI - Math.PI / 2;
+      hold = Math.max(0, hold - dt); const hk = Math.floor(((t % 1) * nodes.length + .5)) % nodes.length; // 노란 흐름이 지나는 노드 / node the yellow flow is passing
+      if (!hold && hk !== sel) { sel = hk; if (seen.indexOf(hk) < 0) seen.push(hk); else if (hk === 0) seen = [0]; detail(); hist(); } // 흐름을 따라 자동으로 설명이 바뀌고 지나온 단계가 쌓임(한 바퀴 돌면 새로 시작) / explanation follows the flow and visited stages accumulate (restart each lap) g.strokeStyle = "#ffb500"; g.lineWidth = 10; g.beginPath(); g.arc(cx, cy, R, head - .5, head); g.stroke(); // 움직이는 데이터 흐름임 / moving data flow
       nodes.forEach(function (n, k) { const a = -Math.PI / 2 + k * 2 * Math.PI / nodes.length, x = cx + R * Math.cos(a), y = cy + R * Math.sin(a); const on = k === sel; g.fillStyle = on ? "#003087" : k === 5 ? "#c76b67" : [3, 7, 1, 2].indexOf(k) >= 0 ? "#6e4c82" : "#4d6b8c"; g.beginPath(); g.arc(x, y, on ? 60 : 54, 0, 7); g.fill(); g.fillStyle = "#fff"; g.font = "bold 15px Malgun Gothic,sans-serif"; g.textAlign = "center"; n[0].split(" ").reduce(function (acc, w) { const l = acc[acc.length - 1]; if ((l + " " + w).length > 7) acc.push(w); else acc[acc.length - 1] = (l + " " + w).trim(); return acc; }, [""]).forEach(function (line, i, arr) { g.fillText(line, x, y + 5 + (i - (arr.length - 1) / 2) * 18); }); }); // 노드 원과 이름임 / node circles and names
       g.fillStyle = "#1d2a4d"; g.font = "bold 20px Malgun Gothic,sans-serif"; g.fillText("학습 에코 사이클", cx, cy - 14); g.font = "15px Malgun Gothic,sans-serif"; g.fillText("자두색 = 학습이 일어나는 곳", cx, cy + 12); g.fillText("장밋빛 = 학습 금지(안전 규칙)", cx, cy + 34); // 가운데 설명임 / center explanation
     });
-    detail();                                       // 첫 설명임 / first explanation
+    seen = [0]; detail(); hist();                   // 첫 설명임 / first explanation
     $("#eB", el).innerHTML = B.box({ data: "S.A.F.E. 과제 DTO-1~5 설계(유즈케이스 및 요구사항 명세서 v1.1, AI 모델 설계서 v1.2)", method: "MAML 안쪽 루프 = 개인 세션 실시간 적응(DTO-1), 바깥 루프 = 산행 이력 오프라인(DTO-4)", ref: "Finn et al., ICML 2017(MAML) / Nichol et al., arXiv:1803.02999(1차 근사)" }, "에코 사이클"); // 근거임 / evidence
     return stop;                                    // 떠날 때 멈춤 / stop when leaving
   }
@@ -4972,14 +5213,21 @@ window.QP_I18N_EN = {
       const Lm = QP.State.results.find(function (m) { return m.key === "linear"; }), Qm = QP.State.results.find(function (m) { return m.key === "quantum"; }); // 두 모델임 / the two models
       $("#pCards", el).innerHTML = people().map(function (p, k) { const mx = G.hrMax(p), hrr = (hr - p.rest) / (mx - p.rest), load = Math.max(0, Math.min(1, (hrr - .35) / .55)); const x = new Array(20).fill(0); x[0] = load; x[1] = fa; x[9] = Math.min(1, sl / .4); const ql = Qm.predict(x), ll = Lm.predict(x); return '<div class="card" style="border-top:4px solid ' + cols[k] + '"><b>' + p.name + '</b><p class="small">최대심박 ' + Math.round(mx) + (p.maxMeasured ? "(측정)" : p.sex === "F" ? "(여성 206−0.88×" + p.age + ")" : "(208−0.7×" + p.age + ")") + '</p><p>%HRR <b>' + Math.round(hrr * 100) + '%</b> → 심박 부담 신호 ' + load.toFixed(2) + '</p><p class="c-plum">양자 특징 AI ' + pct(ql) + (ql >= Qm.threshold ? " 경보" : "") + '</p><p class="c-dusk">일반 AI ' + pct(ll) + (ll >= Lm.threshold ? " 경보" : "") + '</p><p class="small">' + (hrr > .85 ? "고강도: 휴식 권고" : hrr > .6 ? "격렬(ACSM 60~89%)" : hrr > .4 ? "중강도(ACSM 40~59%)" : "가벼움") + '</p></div>'; }).join(""); // 사람별 카드임 / card per person
       const course = G.makeCourse(0), lines = people().map(function (p, k) { const run = G.simulate(course, p, G.weathers[1]); return { values: run.steps.filter(function (_, i) { return i % 6 === 0; }).map(function (s) { return s.pHRR; }), color: cols[k] }; }); // 같은 코스를 사람마다 시뮬레이션함 / simulate the same course per person
-      C.line($("#pC", el), lines, { height: Math.max(200, el.clientHeight - $("#pCards", el).offsetHeight - 105), min: 0, max: 1, xLabel: "시간(분) →", fmt: function (v) { return Math.round(v * 100) + "%"; } }); // %HRR 시간 곡선임 / %HRR over time
-      $("#pL", el).innerHTML = people().map(function (p, k) { return '<span style="--c:' + cols[k] + '">' + p.name + "</span>"; }).join(""); // 범례임 / legend
+      pLines = lines; pNames = people().map(function (p) { return p.name; }); // 아래 애니메이션이 매 프레임 조금씩 그려 나감 / the animation below reveals it frame by frame
     }
+    let pLines = null, pNames = [], pCur = 0, pFr = 0;   // 곡선, 이름, 진행 위치, 프레임 / curves, names, progress, frame
+    const stopP = A.loop(function (dt) {              // 같은 코스를 네 사람이 동시에 걷는 것처럼 곡선이 실시간으로 그려짐 / curves are drawn live as if the four people walk the same course together
+      if (!pLines || !$("#pC", el)) return; const n = pLines[0].values.length; pCur += dt * 2 * 6; if (pCur > n + 12) pCur = 2; if (++pFr % 3) return; // 약 1분에 한 칸, 끝나면 처음부터 / about one point per tick, restart at the end
+      const k = Math.min(n, Math.floor(pCur)), shown = pLines.map(function (l) { return { values: l.values.slice(0, Math.max(2, k)), color: l.color }; });
+      shown.push({ values: new Array(n).fill(0.6), color: "rgba(198,40,40,.45)" }); // 60% 선 = 격렬 운동 시작(ACSM) / 60% line = vigorous intensity (ACSM)
+      C.line($("#pC", el), shown, { height: Math.max(200, el.clientHeight - $("#pCards", el).offsetHeight - 105), min: 0, max: 1, xLabel: "시간(분) →  빨간 선 = 60% HRR(격렬 운동 시작, ACSM)", fmt: function (v) { return Math.round(v * 100) + "%"; } });
+      const idx = Math.max(0, Math.min(n - 1, k - 1)); $("#pL", el).innerHTML = pNames.map(function (nm, j) { const v = pLines[j].values[idx]; return '<span style="--c:' + cols[j] + '">' + nm + " <b>" + Math.round(v * 100) + "%</b>" + (v >= .6 ? ' <b style="color:#c62828">격렬</b>' : v >= .4 ? " 중강도" : " 가벼움") + "</span>"; }).join("") + '<span class="small">지금 ' + (idx * 6 / 6).toFixed(0) + "분째</span>"; // 지금 시각의 사람별 부담 / per-person load right now
+    });
     el.querySelectorAll("input").forEach(function (i) { i.oninput = upd; }); $("#cX", el).onchange = upd; // 입력 연결임 / wire up inputs
     $("#pB", el).innerHTML = B.box({ data: "심박, 나이, 안정시 심박(아이나비 DTO-1 생체, 사용자 프로필)", method: "개인 최대심박 → 심박예비율 %HRR → 심박 부담 신호 = (%HRR − 0.35)/0.55 → 같은 AI에 입력", formula: "HRmax = 208 − 0.7×나이(Tanaka 2001), 여성 206 − 0.88×나이(Gulati 2010), %HRR = (HR − 안정시)/(HRmax − 안정시)(Karvonen 1957)", code: "mountain.js hrMax(), simulate() / views_ai.js persona()", ref: "ACSM's Guidelines for Exercise Testing and Prescription(11판) 강도 구분: 중강도 40~59% HRR, 격렬 60~89% HRR", note: "초개인화 2단계(개인 데이터로 가중치 자체를 적응)는 메타러너(FOMAML) 엔진과 연결 예정" }, "초개인화"); // 근거임 / evidence
     let pt = null, ph = 0; $("#pAuto", el).onclick = function () { if (pt) { clearInterval(pt); pt = null; this.textContent = "▶ 심박 실시간 변화"; return; } this.textContent = "■ 멈춤"; pt = setInterval(function () { ph += .15; $("#pH", el).value = Math.round(130 + 35 * Math.sin(ph) + 6 * Math.sin(ph * 3.1)); $("#pS", el).value = Math.round(22 + 18 * Math.sin(ph * .7)); upd(); }, 1300); }; // 오르막을 오르는 것처럼 심박과 경사가 계속 변함 / heart rate and slope keep changing as if climbing
     upd();                                          // 처음 계산함 / first computation
-    return function () { clearInterval(pt); };      // 떠날 때 멈춤 / stop when leaving
+    return function () { clearInterval(pt); stopP(); }; // 떠날 때 멈춤 / stop when leaving
   }
 
 
@@ -4999,8 +5247,13 @@ window.QP_I18N_EN = {
       const load = Math.min(1, Math.max(0, .35 + .3 * Math.sin(tt))), fat = Math.min(1, Math.max(0, .55 + .35 * Math.sin(tt * .7 + 1))), z = QP.Models.pairExact(load, fat); // 움직이는 예시 입력과 양자 겹침 점수임 / moving example inputs and the quantum overlap score
       const bx = [[6, "센서(워치)", "심박 " + Math.round(90 + load * 90) + "bpm\n피로 " + Math.round(fat * 100) + "%", "#003087"], [.205, "양자 특징 AI", "RY(πa)⊗RY(πb)\nCNOT → ⟨Z⟩", "#6e4c82"], [.41, "겹침 점수", "⟨Z⟩ = " + z.toFixed(2) + "\n(부담×피로)", "#6e4c82"], [.615, "메타러너 θ", "여러 사람에게서\n배운 시작점", "#a9482a"], [.82, "개인 θ′", (per.sex === "F" ? "여 " : "남 ") + per.age + "세\n10개로 5걸음 적응", "#c38a2b"]]; // 다섯 상자임 / five boxes
       const bw = W * .172, bh = 88, y0 = 40; g.font = "bold 13px Malgun Gothic,sans-serif"; // 상자 크기임 / box size
-      bx.forEach(function (b, i) { const x = i === 0 ? 6 : b[0] * W; g.fillStyle = "#fff"; g.strokeStyle = b[3]; g.lineWidth = 2.5; g.beginPath(); g.roundRect ? g.roundRect(x, y0, bw, bh, 10) : g.rect(x, y0, bw, bh); g.fill(); g.stroke(); g.fillStyle = b[3]; g.textAlign = "center"; g.font = "bold 13px Malgun Gothic,sans-serif"; g.fillText(b[1], x + bw / 2, y0 + 20); g.fillStyle = "#1d2a4d"; g.font = "11.5px Malgun Gothic,sans-serif"; b[2].split("\n").forEach(function (l, k) { g.fillText(l, x + bw / 2, y0 + 44 + k * 18); });
-        if (i < 4) { const x2 = bx[i + 1][0] * W, ax = x + bw + 3, aw = x2 - ax - 4, ph = (tt * .9 + i * .25) % 1; g.strokeStyle = "#8892ad"; g.lineWidth = 2; g.beginPath(); g.moveTo(ax, y0 + bh / 2); g.lineTo(ax + aw, y0 + bh / 2); g.stroke(); g.fillStyle = "#8892ad"; g.beginPath(); g.moveTo(ax + aw, y0 + bh / 2); g.lineTo(ax + aw - 8, y0 + bh / 2 - 5); g.lineTo(ax + aw - 8, y0 + bh / 2 + 5); g.fill(); g.fillStyle = "#ffb500"; g.beginPath(); g.arc(ax + aw * ph, y0 + bh / 2, 4.5, 0, 7); g.fill(); } }); // 상자와 흐르는 신호 점임 / boxes and flowing signal dots
+      const SEG = 1.8, CYC = 1 + 4 * SEG + 3, tp = (performance.now() / 1000) % CYC, prog = function (i) { return Math.max(0, Math.min(1, (tp - 1 - i * SEG) / SEG)); }; // 왼쪽부터 차례로: 화살표 i가 자라는 정도 / left to right in order: how far arrow i has grown
+      const lit = function (i) { return i === 0 ? tp > .2 : prog(i - 1) >= 1; }; // 상자 i가 켜졌는지 / whether box i is lit
+      bx.forEach(function (b, i) { const x = i === 0 ? 6 : b[0] * W, on = lit(i); g.globalAlpha = on ? 1 : .28; g.fillStyle = on && i === Math.min(4, Math.floor(Math.max(0, tp - 1) / SEG)) && tp < 1 + 4 * SEG ? "#fff8e1" : "#fff"; g.strokeStyle = b[3]; g.lineWidth = on ? 3 : 1.5; g.beginPath(); g.roundRect ? g.roundRect(x, y0, bw, bh, 10) : g.rect(x, y0, bw, bh); g.fill(); g.stroke(); g.fillStyle = b[3]; g.textAlign = "center"; g.font = "bold 13px Malgun Gothic,sans-serif"; g.fillText(b[1], x + bw / 2, y0 + 20); g.fillStyle = "#1d2a4d"; g.font = "11.5px Malgun Gothic,sans-serif"; b[2].split("\n").forEach(function (l, k) { g.fillText(l, x + bw / 2, y0 + 44 + k * 18); });
+        g.globalAlpha = 1;
+        if (i < 4) { const x2 = bx[i + 1][0] * W, ax = x + bw + 3, aw = x2 - ax - 4, pr = prog(i), yy = y0 + bh / 2; g.strokeStyle = "#d5dae6"; g.setLineDash([4, 4]); g.lineWidth = 2; g.beginPath(); g.moveTo(ax, yy); g.lineTo(ax + aw, yy); g.stroke(); g.setLineDash([]); // 아직 가지 않은 길(점선) / path not yet taken (dashed)
+          if (pr > 0) { g.strokeStyle = b[3]; g.lineWidth = 3.5; g.beginPath(); g.moveTo(ax, yy); g.lineTo(ax + aw * pr, yy); g.stroke(); if (pr < 1) { g.fillStyle = "#ffb500"; g.strokeStyle = "#c62828"; g.lineWidth = 1.5; g.beginPath(); g.arc(ax + aw * pr, yy, 6, 0, 7); g.fill(); g.stroke(); } else { g.fillStyle = b[3]; g.beginPath(); g.moveTo(ax + aw, yy); g.lineTo(ax + aw - 10, yy - 6); g.lineTo(ax + aw - 10, yy + 6); g.fill(); } } } }); // 화살표가 왼쪽부터 차례로 그려지고, 다 그려지면 화살촉과 다음 상자가 켜짐 / arrows are drawn one at a time from the left; when complete, the arrowhead and next box light up
+      { const k = tp < 1 ? 0 : Math.min(4, Math.floor((tp - 1) / SEG) + (tp >= 1 + 4 * SEG ? 0 : 0)); const msg = tp >= 1 + 4 * SEG ? "완료: 센서 값이 개인 θ′까지 전달되어 이 사람에게 맞춘 경보가 됩니다" : ["① 워치가 심박, 피로를 잽니다", "② 두 신호를 양자 회로에 넣습니다", "③ 회로가 겹침 점수를 냅니다", "④ 메타러너의 공통 시작점에 넣습니다", "⑤ 이 사람 기록 10개로 몇 걸음 만에 맞춥니다"][Math.min(4, tp < 1 ? 0 : Math.floor((tp - 1) / SEG) + 1)]; void k; g.fillStyle = "#1d2a4d"; g.font = "bold 12px Malgun Gothic,sans-serif"; g.textAlign = "left"; g.fillText("지금: " + msg, 6, y0 + bh + 18); } // 지금 진행 중인 단계 문장 / sentence for the current step
       g.fillStyle = "#6e4c82"; g.font = "12px Malgun Gothic,sans-serif"; g.textAlign = "left"; g.font = "12px Malgun Gothic,sans-serif"; g.fillText("① 양자 특징 AI: 겹침 신호를 만듦(고정 회로, 학습 안 함)", 6, 14); g.fillStyle = "#a9482a"; g.fillText("② 메타러너: 그 신호를 사람마다 얼마나 믿을지 빠르게 맞춤(학습함)", 6, 31); // 역할 분담 설명임 / explanation of roles
       g.fillStyle = "#a9482a"; g.textAlign = "right"; g.fillText("↺ 바깥 루프: 여러 사람의 적응 결과로 θ를 고침(" + m.it + "회)", W - 6, y0 + bh + 18); g.textAlign = "left"; // 메타 루프 설명임 / explanation of the meta loop
     }
@@ -5047,10 +5300,10 @@ window.QP_I18N_EN = {
 
   QP.ViewDefs = (QP.ViewDefs || []).concat([        // 화면 정의를 등록함 / register the screen definitions
     { id: "persona", group: "AI 학습과 순환", title: "초개인화 실험실(개인 심박)", render: persona },
-    { id: "dnn", group: "AI 학습과 순환", title: "DNN 학습 관제", render: dnn },
-    { id: "meta", group: "AI 학습과 순환", title: "메타학습(사람마다 빠른 적응)", render: meta },
+    { id: "dnn", group: "AI 학습과 순환", title: "AI DNN 학습 관제", render: dnn },
+    { id: "meta", group: "AI 학습과 순환", title: "AI 메타학습(사람마다 빠른 적응)", render: meta },
     { id: "vqc", group: "AI 학습과 순환", title: "VQC(회로 자체 학습)", render: vqc },
-    { id: "eco", group: "AI 학습과 순환", title: "학습 에코 사이클", render: eco }
+    { id: "eco", group: "AI 학습과 순환", title: "양자와 AI 학습 선순환(에코 사이클)", render: eco }
   ]);
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace
 
@@ -5102,6 +5355,17 @@ window.QP_I18N_EN = {
     function mini() { $("#lLogMini", el).innerHTML = LOG.length ? "<b>지금까지 실험 " + LOG.length + "건</b><br>" + LOG.slice(-4).map(function (l) { return l.id + " " + l.verdict + " (" + l.key + ")"; }).join("<br>") : ""; } // 최근 기록 요약임 / summary of recent records
     function dsOpts() { return QP.Datasets.list.map(function (d) { return '<option value="' + d.id + '"' + (d.id === st.data ? " selected" : "") + ">" + d.id + " " + d.name + " (" + d.stats.n + "행, 등급 " + d.grade + ")</option>"; }).join(""); } // 데이터 선택 목록임 / dataset choices
 
+    function exampleBox() {                          // 따라하기 예시: 무엇을 어디에 어떤 값으로 넣는지 보여 주고, 버튼을 누르면 직접 입력되는 모습을 재연함 / follow-along example: shows what to enter where, and replays the input when clicked
+      const e = E(), g = QP.Datasets.list.find(function (d) { return d.kind === "grounded" && d.grade === "A"; }) || QP.Datasets.list[0];
+      const items = st.step === 0 ? [{ sel: '.labcard[data-i="0"]', label: "실험 카드", show: "E1. 양자 겹침 특징이 위험을 더 잘 잡는가", why: "처음이면 가장 기본 질문인 E1부터 해 보시기 바랍니다", click: true }]
+        : st.step === 1 ? (e.id === "E3" ? [{ sel: "#lSeed", label: "난수 씨앗", value: "7", show: "7", why: "같은 값을 넣으면 언제나 같은 결과가 재현됩니다" }] : [{ sel: "#lData", label: "실험 데이터", value: g ? g.id : "", show: g ? g.id + " " + g.name : "-", why: "근거 등급 A는 심박 공식, 기온 감률, 보행 속도 점검을 모두 통과한 데이터입니다" }])
+        : st.step === 2 ? (e.id === "E2" ? [{ sel: "#lNoise", label: "장비 잡음", value: "0.05", show: "5%", why: "현재 양자 장비의 대략적인 오류 수준을 가정한 값입니다" }] : e.id === "E3" ? [{ sel: "#lMetaN", label: "메타 학습 반복", value: "300", show: "300회", why: "300회 정도면 공통 시작점이 안정됩니다" }] : []) : [];
+      const b = $("#lBody", el); if (!b || !items.length) { if (b && st.step === 2) b.insertAdjacentHTML("beforeend", '<div class="labex"><b>✍ 따라하기 예시</b><p class="small">E1은 비교 조건이 고정되어 있어 입력할 칸이 없습니다. 위 설명을 읽고 다음 단계로 넘어가시면 됩니다.</p></div>'); return; }
+      b.insertAdjacentHTML("beforeend", '<div class="labex"><div class="row" style="justify-content:space-between"><b>✍ 따라하기 예시: 이렇게 입력하시면 됩니다</b><button id="lExGo" class="primary">▶ 예시대로 입력해 보기</button></div><table class="labtbl"><tr><th>순서</th><th>입력 칸</th><th>예시 값</th><th>왜 이 값인가</th><th></th></tr>' + items.map(function (it, k) { return "<tr id='lEx" + k + "'><td>" + (k + 1) + "</td><td>" + it.label + "</td><td><b>" + it.show + "</b></td><td class='small'>" + it.why + "</td><td class='lexok'></td></tr>"; }).join("") + "</table></div>");
+      $("#lExGo", el).onclick = function () { let k = 0; (function nextItem() { if (!alive || k >= items.length) { say("예시대로 입력했습니다. 다음 단계 버튼을 누르시면 됩니다."); aim("#lNext"); return; } const it = items[k], t = $(it.sel, el); if (!t) { k++; return nextItem(); } aim(it.sel); say(it.label + "에 " + it.show + "을 입력합니다."); t.classList.add("labtype");
+        setTimeout(function () { if (!alive) return; if (it.click) t.click(); else if (t.tagName === "SELECT") { t.value = it.value; t.dispatchEvent(new Event("change", { bubbles: true })); } else { t.value = ""; let c = 0; const ty = setInterval(function () { t.value = it.value.slice(0, ++c); t.dispatchEvent(new Event("input", { bubbles: true })); if (c >= it.value.length) { clearInterval(ty); t.dispatchEvent(new Event("change", { bubbles: true })); } }, 180); }
+          setTimeout(function () { const row = $("#lEx" + k, el); if (row) row.querySelector(".lexok").textContent = "✔"; t.classList.remove("labtype"); k++; nextItem(); }, 1400); }, 1100); })(); }; // 칸을 가리키고, 값이 한 글자씩 들어가는 모습을 보임 / point at the field and show the value being entered
+    }
     function render() {                              // 현재 단계 화면을 그림 / draws the current step screen
       steps(); mini(); const e = E(), b = $("#lBody", el); $("#lTitle", el).textContent = (st.step + 1) + "단계. " + STEPS[st.step]; $("#lExp", el).textContent = e.id + " " + e.title; // 제목과 실험 이름임 / title and experiment name
       $("#lPrev", el).disabled = st.step === 0; $("#lNext", el).textContent = st.step === 4 ? "실행 ▶" : st.step === 6 ? "새 실험 ↺" : "다음 단계 ▶"; $("#lNext", el).disabled = st.step === 5 && !st.out; // 버튼 상태임 / button states
@@ -5124,7 +5388,9 @@ window.QP_I18N_EN = {
         if ($("#lNoise", el)) { $("#lNoise", el).value = String(st.noise); $("#lNoise", el).onchange = function () { st.noise = Number(this.value); }; } // 잡음 입력임 / noise input
         if ($("#lMetaN", el)) { $("#lMetaN", el).value = String(st.metaN); $("#lMetaN", el).onchange = function () { st.metaN = Number(this.value); }; } // 반복 수 입력임 / iteration input
         guide("실험 조건을 입력합니다. <b>바꾸는 것(독립변수)</b>과 <b>같게 두는 것(통제변수)</b>을 구분하는 것이 핵심입니다."); say("세 번째 단계입니다. 실험 조건을 입력합니다. 바꾸는 조건과 같게 두는 조건을 구분하시면 됩니다. 기본값 그대로 두셔도 좋습니다."); aim(e.id === "E1" ? "#lBody p" : e.id === "E2" ? "#lNoise" : "#lMetaN");
-      } else if (st.step === 3) {                    // ④ 가설과 관찰 포인트(사전 등록) / ④ hypothesis and observation points (pre-registration)
+      }
+      exampleBox();                                  // 입력이 있는 단계에는 ‘따라하기 예시’ 상자를 붙임 / attach a follow-along example box to steps with inputs
+      if (st.step === 3) {                    // ④ 가설과 관찰 포인트(사전 등록) / ④ hypothesis and observation points (pre-registration)
         b.innerHTML = '<div class="labhyp"><div class="card tint-plum"><b>가설(H1)</b><p>' + e.hyp + '</p></div><div class="card"><b>반대 가설(H0)</b><p>' + e.h0 + '</p></div><div class="card tint-ochre" style="grid-column:1/-1"><b>우리가 보아야 할 결과</b><ol>' + e.watch.map(function (w) { return "<li>" + w + "</li>"; }).join("") + '</ol><p class="small">판정 기준은 실행 전에 고정합니다(사전 등록). 결과를 본 뒤 기준을 바꾸지 않습니다.</p></div></div>';
         guide("실행하기 전에 <b>무엇이 나오면 가설이 맞는지</b>를 먼저 정해 둡니다. 이것이 믿을 수 있는 실험의 조건입니다."); say("네 번째 단계입니다. 실행 전에 가설과 판정 기준을 먼저 고정합니다. 가설은 " + e.hyp + "입니다. 결과에서는 " + e.watch[0] + "을 가장 먼저 보시면 됩니다."); aim(".labhyp .tint-plum");
       } else if (st.step === 4) {                    // ⑤ 실행 준비 / ⑤ prepare to run
@@ -5132,7 +5398,7 @@ window.QP_I18N_EN = {
         guide("준비가 끝났습니다. <b>실행 ▶</b>을 누르시면 에뮬레이터가 계산을 시작합니다."); say("다섯 번째 단계입니다. 준비가 끝났습니다. 실행 버튼을 누르시기 바랍니다."); aim("#lNext");
       } else if (st.step === 5) {                    // ⑥ 결과 확인과 판정 / ⑥ results and verdict
         if (st.out) showResult(b); else { b.innerHTML = '<div class="labrun"><ol id="lPlan">' + plan().map(function (p) { return "<li>" + p + "</li>"; }).join("") + '</ol><div class="labbar"><i id="lBar"></i></div><p id="lRunMsg" class="small">계산 중입니다.</p></div>'; }
-      } else {                                       // ⑦ 실험 기록 / ⑦ experiment log
+      } else if (st.step === 6) {                    // ⑦ 실험 기록 / ⑦ experiment log
         b.innerHTML = '<div class="stack"><table class="labtbl"><tr><th>번호</th><th>시각</th><th>실험</th><th>데이터, 조건</th><th>핵심 수치</th><th>판정</th></tr>' + LOG.map(function (l, i) { return "<tr><td>" + (i + 1) + "</td><td>" + l.at + "</td><td>" + l.id + "</td><td>" + l.cond + "</td><td>" + l.key + "</td><td><b class='" + (l.ok ? "c-plum" : "") + "'>" + l.verdict + "</b></td></tr>"; }).join("") + '</table><div class="row"><button id="lCsv" class="primary">⬇ 실험 기록 CSV 내려받기</button></div></div>';
         $("#lCsv", el).onclick = function () { QP.App.download("experiment_log.csv", "﻿번호,시각,실험,데이터와 조건,핵심 수치,판정\n" + LOG.map(function (l, i) { return [i + 1, l.at, l.id, l.cond, l.key, l.verdict].map(function (v) { return '"' + String(v).replace(/"/g, "'") + '"'; }).join(","); }).join("\n")); }; // CSV 저장임 / save CSV
         guide("실험 기록은 연구 노트입니다. 같은 실험을 다른 데이터나 조건으로 반복하면 결론이 얼마나 단단한지 알 수 있습니다."); say("마지막 단계입니다. 실험 결과가 기록표에 저장되었습니다. 시에스브이로 내려받아 보고서에 붙이실 수 있습니다. 다른 조건으로 다시 실험해 보시면 결론의 신뢰도가 높아집니다."); aim("#lCsv");
@@ -5234,13 +5500,32 @@ window.QP_I18N_EN = {
       '<details><summary>⑦ 사용자 피드백</summary><label>피드백 반영 <select id="xFB">' + opt([["on", "배포 산행 기록을 정답 라벨로 추가"], ["off", "반영 안 함"]], "on") + '</select></label></details>' +
       '<details><summary>⑧ 재학습, 메타학습</summary><label>방식 <select id="xMeta">' + opt([["both", "재학습 + 메타 개인 적응"], ["re", "재학습만"]], "both") + '</select></label></details>' +
       '<div class="btns"><button id="xRun" class="primary" data-autoplay="1">▶ 전체 사이클 실험 실행</button><button id="xCsv">⬇ 결과 내보내기</button></div><p id="xMsg" class="small"></p></div>' +
-      '<div class="stack ecoout"><div class="card xguide" id="xG"><div class="xg-h"><span class="xg-snow">❄</span><b id="xGt">따라하기: 눈송이가 실험 순서를 하나씩 짚어 드립니다</b><span class="xg-n" id="xGn"></span></div><p id="xGx" class="xg-x">처음이시면 <b>▶ 따라하기 시작</b>을 누르시기 바랍니다. 데이터 고르기부터 결과 해석까지 무엇을 고르고 무엇을 보아야 하는지 차례로 안내합니다.</p><div class="xg-dots" id="xGd"></div><div class="btns"><button id="xGs" class="primary">▶ 따라하기 시작</button><button id="xGp">◀ 이전</button><button id="xGnx">다음 ▶</button><label class="tog"><input type="checkbox" id="xGa"> 자동으로 넘기기</label></div></div><div class="card"><div id="xPipe" class="xpipe">' + STG.map(function (s, i) { return '<div class="xst" id="xs' + i + '"><b>' + s + '</b><span>대기</span></div>'; }).join("") + '</div></div>' +
+      '<div class="stack ecoout"><div class="card xguide" id="xG"><div class="xg-h"><span class="xg-snow">❄</span><b id="xGt">따라하기: 눈송이가 실험 순서를 하나씩 짚어 드립니다</b><span class="xg-n" id="xGn"></span></div><p id="xGx" class="xg-x">처음이시면 <b>▶ 따라하기 시작</b>을 누르시기 바랍니다. 데이터 고르기부터 결과 해석까지 무엇을 고르고 무엇을 보아야 하는지 차례로 안내합니다.</p><div class="xg-dots" id="xGd"></div><div class="btns"><button id="xGs" class="primary">▶ 따라하기 시작</button><button id="xGp">◀ 이전</button><button id="xGnx">다음 ▶</button><label class="tog"><input type="checkbox" id="xGa"> 자동으로 넘기기</label></div></div><div class="card"><div id="xPipe" class="xpipe">' + STG.map(function (s, i) { return '<div class="xst" id="xs' + i + '"><b>' + s + '</b><span>대기</span></div>'; }).join("") + '</div><div id="xData" class="xdata"><p class="small">단계 상자를 누르거나 실험을 실행하면, 그 단계에서 실제로 오가는 데이터가 여기에 표로 나타납니다.</p></div></div>' +
       '<div class="xres"><div class="card"><h3>④ 학습 결과: 같은 오경보 예산에서 시험 성적</h3><table id="xT" class="labtbl"></table><canvas id="xBar"></canvas></div>' +
       '<div class="card"><h3>⑤⑥ 배포 산행의 실시간 점수와 경보 <span class="small">(분홍 띠 = 실제 위험 사건)</span></h3><canvas id="xRun2"></canvas><p id="xDep" class="small"></p></div></div>' +
       '<div class="card"><h3>⑦⑧ 피드백 반영 재학습과 메타 개인 적응</h3><div id="xRe" class="small">실행하면 결과가 표시됩니다.</div><div id="xB"></div></div></div></div>';
     const v = function (id) { return $("#" + id, el).value; }; // 선택값 읽기임 / read a selected value
     const showNew = function () { $("#xNew", el).style.display = v("xD") === "new" ? "grid" : "none"; }; $("#xD", el).onchange = showNew; showNew(); // 새로 생성일 때만 요인 선택을 보임 / show factor choices only for new generation
-    function stage(i, state, txt) { const b = $("#xs" + i, el); if (!b) return; b.className = "xst " + state; b.querySelector("span").innerHTML = txt; } // 단계 상자 상태 표시임 / stage box status display
+    function stage(i, state, txt) { const b = $("#xs" + i, el); if (!b) return; b.className = "xst " + state + (i === dSel ? " pick" : ""); b.querySelector("span").innerHTML = txt; if (state === "done") showData(i); } // 단계 상자 상태 표시, 끝난 단계의 데이터를 아래에 보임 / stage box state; show the finished stage's data below
+    let dSel = -1;
+    setTimeout(function () { el.querySelectorAll(".xst").forEach(function (b, k) { b.style.cursor = "pointer"; b.onclick = function () { showData(k); }; }); }, 0); // 단계 상자를 누르면 그 단계 데이터 / click a stage box to see its data                                  // 아래에 데이터를 보여 주는 단계 / stage whose data is shown below
+    function tbl(head, rows) { return '<table class="labtbl xdt"><tr>' + head.map(function (h) { return "<th>" + h + "</th>"; }).join("") + "</tr>" + rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>"; }
+    function showData(i) {                          // 단계별로 실제 데이터를 표로 보임 / show the actual data of each stage as a table
+      dSel = i; el.querySelectorAll(".xst").forEach(function (b, k) { b.classList.toggle("pick", k === i); });
+      const box = $("#xData", el), SG = QP.Data.signals, f2 = function (v) { return (+v).toFixed(2); }, mm = function (t) { return Math.floor(t / 60) + "분"; };
+      const title = function (t) { return '<p class="xdh"><b>' + STG[i] + "</b> " + t + "</p>"; };
+      let h = "";
+      if (i === 0 && out.ds) { const r = out.ds.rows; const pickR = r.filter(function (x) { return !x.label; }).slice(0, 3).concat(r.filter(function (x) { return x.label; }).slice(0, 3)); h = title("데이터 " + out.ds.id + "의 예시 6행(정상 3, 위험 3, 전체 " + r.length.toLocaleString("ko-KR") + "행). 한 행 = 1분 동안의 신호 20개 + 정답") + tbl(["예", SG[0][1], SG[3][1], SG[9][1], SG[8][1], SG[16][1], "…", "정답"], pickR.map(function (x, k) { return [k + 1, f2(x.x[0]), f2(x.x[3]), f2(x.x[9]), f2(x.x[8]), f2(x.x[16]), "…", x.label ? "<b class='c-maple'>위험</b>" : "정상"]; })); }
+      else if (i === 1 && out.sp) { const x = (out.sp.train.find(function (r) { return r.label; }) || out.sp.train[0]).x; h = title("학습 " + out.sp.train.length + "행, 기준 " + out.sp.valid.length + "행, 시험 " + out.sp.test.length + "행으로 나눔. 위험 정답이 붙은 학습 행 하나의 0~1 신호 20개:") + tbl(SG.slice(0, 10).map(function (g) { return g[1]; }), [x.slice(0, 10).map(f2)]) + tbl(SG.slice(10, 20).map(function (g) { return g[1]; }), [x.slice(10, 20).map(f2)]); }
+      else if (i === 2 && out.sp) { const x = (out.sp.train.find(function (r) { return r.label; }) || out.sp.train[0]).x; h = title("같은 행의 신호 쌍 6개를 2큐비트 회로에 넣어 얻은 겹침 점수 ⟨Z⟩(두 신호가 같은 쪽이면 +, 서로 다르면 −):") + tbl(["쌍", "신호 a", "신호 b", "a 값", "b 값", "겹침 ⟨Z⟩"], QP.Data.pairs.map(function (p, k) { return ["①②③④⑤⑥"[k], SG[p[0]][1], SG[p[1]][1], f2(x[p[0]]), f2(x[p[1]]), "<b>" + f2(M.pairAnalytic(x[p[0]], x[p[1]])) + "</b>"]; })); }
+      else if (i === 3 && out.Q) { const te = out.sp.test.filter(function (r) { return !r.label; }).slice(0, 4).concat(out.sp.test.filter(function (r) { return r.label; }).slice(0, 4)); h = title("학습한 두 AI가 시험 데이터 8행(정상 4, 위험 4)에 매긴 위험 점수와 정답(경보 기준: 일반 " + f2(out.L.threshold) + ", 양자 " + f2(out.Q.threshold) + ")") + tbl(["행", "정답", "일반 AI 점수", "양자 특징 AI 점수"], te.map(function (r, k) { const a = out.L.predict(r.x), b = out.Q.predict(r.x); return [k + 1, r.label ? "<b class='c-maple'>위험</b>" : "정상", (a >= out.L.threshold ? "<b>" : "") + pct(a) + (a >= out.L.threshold ? " 경보</b>" : ""), (b >= out.Q.threshold ? "<b class='c-plum'>" : "") + pct(b) + (b >= out.Q.threshold ? " 경보</b>" : "")]; })); }
+      else if (i === 4 && out.run) { const st = out.run.steps, pick = st.filter(function (_, k) { return k % Math.max(1, Math.floor(st.length / 8)) === 0; }).slice(0, 8); h = title("배포 산행을 따라가며 실시간으로 계산한 값(" + st.length + "걸음 중 8개)") + tbl(["시각", "고도 m", "경사", "심박", "비 mm/h", "일반 AI", "양자 AI", "실제"], pick.map(function (s2) { return [mm(s2.t), Math.round(s2.elev), Math.round(s2.grade * 100) + "%", Math.round(s2.hr), s2.rain.toFixed(1), pct(s2.lin), pct(s2.qf), s2.truth ? "<b class='c-maple'>위험</b>" : "정상"]; })); }
+      else if (i === 5 && out.run) { const ev = out.run.events.slice(0, 8), t = function (k) { return k >= 0 ? mm(out.run.steps[k].t) : "-"; }; h = title("실제 위험 사건 " + out.run.events.length + "건 중 앞 8건: 사건 시작과 각 AI의 첫 경보 시각") + tbl(["사건", "위치", "시작", "양자 AI 첫 경보", "일반 AI 첫 경보"], ev.map(function (e, k) { return [k + 1, e.where, t(e.s), (e.q >= 0 && e.q <= e.s ? "<b class='c-plum'>" + t(e.q) + " (사전)</b>" : t(e.q)), (e.lin >= 0 && e.lin <= e.s ? "<b>" + t(e.lin) + " (사전)</b>" : t(e.lin))]; })); }
+      else if (i === 6 && out.fb) { h = title(out.fb.length ? "산행 기록에서 만든 정답 라벨 " + out.fb.length + "건(1분 간격) 중 앞 8건: 사용자 확인, 신고가 정답이 됨" : "피드백을 끔으로 골라 추가된 정답이 없습니다.") + (out.fb.length ? tbl(["번호", SG[0][1], SG[3][1], SG[9][1], "정답 라벨"], out.fb.slice(0, 8).map(function (r, k) { return [k + 1, f2(r.x[0]), f2(r.x[3]), f2(r.x[9]), r.label ? "<b class='c-maple'>위험</b>" : "정상"]; })) : ""); }
+      else if (i === 7 && out.mQ2) { h = title("피드백을 더해 다시 학습한 전후 비교") + tbl(["항목", "전", "후"], [["시험 탐지율", pct(out.mQ.recall), "<b>" + pct(out.mQ2.recall) + "</b>"], ["시험 AUC", f2(out.mQ.auc), "<b>" + f2(out.mQ2.auc) + "</b>"], ["경보 기준", f2(out.Q.threshold), f2(out.Q2.threshold)]].concat(out.meta ? [["메타 개인 적응(새 사람)", "무작위 시작 1걸음 " + pct(out.meta.rand[1]), "메타 시작 1걸음 " + pct(out.meta.meta[1])]] : [])); }
+      else h = '<p class="small"><b>' + STG[i] + "</b>: 아직 실행 전이라 보여 줄 데이터가 없습니다. ▶ 전체 사이클 실험 실행을 누르시기 바랍니다.</p>";
+      box.innerHTML = h;
+    } // 단계 상자 상태 표시임 / stage box status display
     function say(t) { if (!QP.State.touring && alive) QP.Voice.speak(t, true); } // 음성 안내임 / voice guide
     function makeModel(train, valid, method, ctx, kind, eps, fa) { // ④ 모델 하나를 학습하고 오경보 예산에 맞춘 경보 기준을 정함 / ④ trains one model and sets the threshold to the false-alarm budget
       let predict;                                  // 예측 함수임 / predict function
@@ -5405,25 +5690,29 @@ window.QP_I18N_EN = {
   State.open = State.open || { "② 실험실 투어": true, "③ 합성 데이터 생성과 실험 관제": true }; // 펼친 그룹 기록임 / record of expanded groups
   function menu() {                                 // 메뉴를 그림 / draw the menu
     $("menu").innerHTML = groups.map(function (g) {  // 그룹마다 / for each group
-      const sec = SECTIONS.find(function (x) { return x[1][0] === g; }), head = sec ? '<div class="msec">' + sec[0] + "</div>" : ""; // 큰 목적 제목(묶음 앞에 한 번)임 / main-purpose title (once before its groups)
+      const sec = SECTIONS.find(function (x) { return x[1][0] === g; }), head = sec ? '<div class="msec">' + sec[0] + "</div>" + (sec[0].indexOf("B.") === 0 ? '<button class="tour-btn tour-b" id="tourB">▶ 에뮬레이팅 실험 자동 안내<small>데이터 생성 → 학습 → 배포, 경보 → 재학습을 차례로 보여 드림</small></button>' : "") : ""; // 큰 목적 제목(묶음 앞에 한 번)임 / main-purpose title (once before its groups)
       const items = QP.ViewDefs.filter(function (v) { return v.group === g; }); // 그룹의 화면들임 / screens of the group
       const open = State.open[g] || (current && current.group === g); // 펼침 여부임 / expanded or not
       return head + '<div class="grp' + (open ? " open" : "") + '"><button class="grp-h" data-g="' + g + '"><span>' + icons[g] + " " + g + '</span><i>' + (open ? "▾" : "▸") + '</i></button><div class="grp-b">' + items.map(function (v) { // 그룹 머리와 몸통임 / group header and body
         return '<a href="#' + v.id + '" class="' + (current && current.id === v.id && !sub ? "cur" : "") + '">' + v.title + "</a>" + (v.subs ? '<div class="subs">' + v.subs.map(function (s, i) { return '<a href="#' + v.id + "-" + (i + 1) + '" class="sub' + (current && current.id === v.id && Number(sub) === i + 1 ? " cur" : "") + '">' + s + "</a>"; }).join("") + "</div>" : ""); // 항목과 하위 항목임 / items and sub-items
       }).join("") + "</div></div>";
     }).join("");
-    document.querySelectorAll(".grp-h").forEach(function (b) { b.onclick = function () { State.open[b.dataset.g] = !b.parentNode.classList.contains("open"); menu(); }; }); // 그룹을 누르면 펼치거나 접음 / click a group to expand or collapse
+    const tb = $("tourB"); if (tb) tb.onclick = tourB; // B 묶음 자동 안내 버튼 / auto-guide button for part B
+    document.querySelectorAll("#menu a[href]").forEach(function (a) { a.addEventListener("click", function () { // 왼쪽 메뉴가 우선: 누르면 진행 중인 안내와 음성을 즉시 끊고, 누른 화면의 설명만 나오게 함 / the left menu wins: a click stops any running guide and voice, so only the chosen screen is narrated
+      State.basicsAuto = false; if (tourOn) tourEnd(true, true); else TB.token = (TB.token || 0) + 1; QP.Voice.stop(); QP.Voice.hush(false); interacted = true;
+      if (location.hash === a.getAttribute("href")) setTimeout(readShort, 200); // 같은 화면을 다시 누르면 그 화면 설명만 다시 읽음 / clicking the same screen again re-reads only its guide
+    }); });
+    document.querySelectorAll("#menu .grp-h").forEach(function (b) { b.onclick = function () { State.open[b.dataset.g] = !b.parentNode.classList.contains("open"); menu(); }; }); // 그룹을 누르면 펼치거나 접음 / click a group to expand or collapse
   }
 
   /* ---------- 4. 데이터 빠른 관리 패널 / 4. Quick data panel  ---------- */
   function quick() {                                // 왼쪽 데이터 패널을 그림 / draw the left data panel
     const d = DS.get(State.dataId);                 // 사용 중 데이터임 / data in use
-    $("quick").innerHTML = '<div class="q-h">🗂 데이터 빠른 관리</div><p>AI 학습 데이터: <b>' + (d ? d.id + " " + d.name : "-") + '</b><br>' + (d ? d.stats.n.toLocaleString("ko-KR") + "행, 등급 " + d.grade : "") + ", 등록 " + DS.list.length + '개</p><div class="q-b"><button id="qGen">⚡ 근거 데이터 생성</button><button id="qStr">' + (DS.streaming() ? "■ 연속 멈춤" : "▶ 연속 생성") + '</button><button id="qTr">🧠 최신으로 AI 학습</button><button id="qExp">⬇ 현재 데이터 내보내기</button><button id="qGo">관리 센터 ›</button></div><p id="qMsg" class="small"></p>'; // 패널 내용임 / panel content
-    $("qGen").onclick = function () { $("qMsg").textContent = "생성 중…"; setTimeout(function () { const x = DS.makeGrounded(4000 + DS.list.length, 20); $("qMsg").textContent = x.id + " 생성(" + x.stats.n + "행, 등급 " + x.grade + ")"; logRequest({ kind: "grounded", n: 20, id: x.id }); }, 20); }; // 근거 데이터 생성임 / generate evidence data
-    $("qStr").onclick = function () { if (DS.streaming()) DS.stopStream(); else DS.startStream(4500, true); }; // 연속 생성 켜기/끄기임 / continuous generation on/off
-    $("qExp").onclick = function () { const x = DS.get(State.dataId) || DS.list[0]; if (!x) return; QP.App.download(x.id + ".csv", "\ufeff" + DS.toCSV(x.id)); $("qMsg").textContent = x.id + ".csv 내보내기 완료(" + x.stats.n + "행)"; }; // 지금 AI가 쓰는 데이터를 CSV로 내보냄 / export the data the AI is using as CSV
-    $("qTr").onclick = function () { $("qMsg").textContent = "학습 중…"; setTimeout(function () { DS.retrain(DS.list[0].id); $("qMsg").textContent = "학습 완료: " + DS.list[0].id; show(current.id + (sub ? "-" + sub : "")); }, 20); }; // 최신 데이터로 학습하고 화면을 새로 그림 / train with the latest data and redraw the screen
-    $("qGo").onclick = function () { go("datamgr"); }; // 관리 센터로 이동함 / go to the data center
+    const open = !!State.quickOpen, Q = [["center", "📂 데이터 관리 센터 열기", ""], ["gen", "⚡ 근거 데이터 생성", "#gGo"], ["stream", "▶ 연속 생성", "#gStream"], ["train", "🧠 이 데이터로 AI 학습", "#gT"], ["export", "⬇ 데이터 내보내기", "#gX"], ["list", "📋 데이터 목록 보기", "#gL"]]; // 항목: 누르면 오른쪽 관리 센터에서 해당 버튼을 가리킴 / items: clicking points at the matching control on the right
+    $("quick").innerHTML = '<div class="grp quickgrp' + (open ? " open" : "") + '"><button class="grp-h" id="qHead"><span>🗂 데이터 빠른 관리</span><i>' + (open ? "▾" : "▸") + '</i></button><div class="grp-b"><p class="qcur">사용 중: <b>' + (d ? d.id : "-") + "</b> " + (d ? d.stats.n.toLocaleString("ko-KR") + "행, 등급 " + d.grade : "") + ", 등록 " + DS.list.length + "개</p>" + Q.map(function (q, k) { return k === 0 ? '<a class="qmain" data-q="">' + q[1] + ' ›</a><p class="qhint">아래 항목도 모두 오른쪽 <b>데이터 관리 센터</b>를 열고, 그 버튼을 눌러 결과를 크게 보여 드립니다.</p>' : '<a data-q="' + q[2] + '">' + q[1] + "</a>"; }).join("") + '<p class="qsub">데이터로 학습하는 흐름(선순환)</p><a data-v="dnn">🧠 AI DNN 학습</a><a data-v="meta">🧬 AI 메타 학습</a><a data-v="eco" class="qcyc">🔄 양자와 AI 학습 선순환 ›</a><p class="qhint">데이터 생성 → 양자 특징 → AI DNN 학습 → 배포, 경보 → 피드백 → AI 메타 학습 → 다시 데이터로 돌아가는 고리입니다.</p></div></div>'; // 왼쪽 메뉴와 같은 풀다운 / pull-down like the left menu
+    $("qHead").onclick = function () { State.quickOpen = !State.quickOpen; quick(); }; // 펼치기, 접기 / expand, collapse
+    $("quick").querySelectorAll("[data-v]").forEach(function (a) { a.onclick = function () { if (tourOn) tourEnd(true, true); QP.Voice.stop(); QP.Voice.hush(false); go(a.dataset.v); }; }); // 학습 화면 바로가기 / shortcuts to the learning screens
+    $("quick").querySelectorAll("[data-q]").forEach(function (a) { a.onclick = function () { const sel = a.dataset.q; if (tourOn) tourEnd(true, true); QP.Voice.stop(); go("datamgr"); if (!sel) return; setTimeout(function () { const t = document.querySelector(sel); if (!t) return; t.scrollIntoView({ block: "center" }); t.classList.add("labtype"); setTimeout(function () { t.classList.remove("labtype"); }, 3000); const r = t.getBoundingClientRect(); pointAt(r.left + Math.min(30, r.width / 2), r.top + r.height / 2); if (QP.DataNote) QP.DataNote("👉", "왼쪽에서 고른 ‘" + a.textContent.replace(/^\S+\s/, "") + "’을 이 화면에서 실행합니다", sel === "#gL" ? "가운데 목록에서 데이터를 누르면 오른쪽에 검사 결과가 열립니다." : "노란 테두리의 버튼이 실제로 눌립니다. 결과는 바로 이 자리에 크게 표시됩니다."); if (sel !== "#gL") setTimeout(function () { if (document.body.contains(t)) t.click(); }, 1300); }, 700); }; }); // 가리킨 뒤 1.3초 후 오른쪽 버튼을 실제로 누르고, 결과를 오른쪽에 알림 / after pointing, actually press the right-side button 1.3 s later and announce the result on the right // 오른쪽 관리 센터를 열고 그 버튼을 가리킴(실행은 오른쪽에서 직접) / open the data center on the right and point at that control (run it there)
   }
   let shownChange = 0;                              // 마지막으로 알린 변화 시각임 / time of the last change notice
   function badge() {                                // 위쪽에 "지금 에뮬레이팅 중인 데이터"와 변화를 표시함 / shows "data being emulated now" and its changes at the top
@@ -5599,8 +5888,14 @@ window.QP_I18N_EN = {
       TB.timer = setTimeout(wait, 1500);            // 기다리기 시작함 / start waiting
     }, 700);
   }
+  function tourB() {                                // B. 에뮬레이팅 실험만 처음부터 안내함(소개를 먼저 말한 뒤 ③ 첫 화면부터) / guides part B only (introduction first, then from the first screen of ③)
+    QP.Voice.wake(); interacted = true; TB.steps = tourSteps(); const k = TB.steps.findIndex(function (st) { const v = QP.ViewDefs.find(function (x) { return x.id === st.id; }); return v && v.group === groups[2]; }); if (k < 0) return;
+    tourEnd(true, true); QP.Voice.hush(false); const W = "에뮬레이팅 실험 자동 안내를 시작합니다. 이 부분은 실제 실험을 하는 곳입니다. 먼저 요인을 결합한 합성 데이터를 만들고, 일반 인공지능과 양자 특징 인공지능을 같은 조건으로 학습시킨 뒤, 가상 산행에 배포해 위험 경보가 얼마나 일찍 울리는지 확인합니다. 이어서 사용자 피드백으로 다시 학습하고, 메타학습으로 사람마다 빠르게 맞추는 과정까지 차례로 보여 드립니다. 마지막에는 실측 데이터를 받기 위한 준비 화면을 안내합니다.";
+    QP.Voice.speak(W, true, true); alert0("에뮬레이팅 실험 자동 안내: 소개 뒤 ③ 첫 화면부터 시작합니다."); const dl = Date.now() + estimate(W), t0 = Date.now(), wt = TB.token = (TB.token || 0) + 1;
+    (function waitB() { if (TB.token !== wt) return; if ((QP.Voice.isActive() || Date.now() - t0 < 1500) && Date.now() < dl) { setTimeout(waitB, 400); return; } setTimeout(function () { if (TB.token === wt) tourGo(k); }, 600); })(); // 소개가 끝나면 B의 첫 단계로 / after the intro, go to the first step of B
+  }
   function tour() { QP.Voice.wake(); interacted = true; TB.steps = tourSteps(); tourGo(tourOn ? TB.i : 0); } // 처음부터(또는 진행 중인 단계부터) 시작함 / start from the beginning (or the step in progress)
-  function tourEnd(done) { clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); if (!done) { QP.Voice.hush(true); hidePointer(); alert0("전체 안내를 종료했습니다. 다른 화면을 고르시거나 설명 듣기를 누르면 다시 말합니다."); } tourDraw(); if (done) QP.Voice.speak("전체 자동 안내를 마쳤습니다. 들어 주셔서 감사합니다. 숙명여자대학교 에이지아이 연구실이었습니다.", true, true); } // 끝냄(막대는 계속 보임) / end (the bar stays visible)
+  function tourEnd(done, silent) { if (silent) { clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); tourDraw(); return; } clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); if (!done) { QP.Voice.hush(true); hidePointer(); alert0("전체 안내를 종료했습니다. 다른 화면을 고르시거나 설명 듣기를 누르면 다시 말합니다."); } tourDraw(); if (done) QP.Voice.speak("전체 자동 안내를 마쳤습니다. 들어 주셔서 감사합니다. 숙명여자대학교 에이지아이 연구실이었습니다.", true, true); } // 끝냄(막대는 계속 보임) / end (the bar stays visible)
   $("tourBtn").onclick = tour;                      // 왼쪽 위 원클릭 버튼임 / one-click button at the top left
   $("tPrev").onclick = function () { QP.Voice.wake(); tourGo(TB.i - 1); }; $("tNext").onclick = function () { QP.Voice.wake(); tourGo(TB.i + 1); }; // 이전, 다음임 / previous and next
   $("tPause").onclick = function () { if (!tourOn) { tour(); return; } if (TB.paused) { TB.paused = false; QP.Voice.resume(); if (!QP.Voice.isActive()) tourGo(TB.i); tourDraw(); } else { TB.paused = true; QP.Voice.pause(); tourDraw(); } }; // 멈춤과 이어 듣기(안내 중이 아니면 시작)임 / pause and resume (start if not guiding)

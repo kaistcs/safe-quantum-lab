@@ -38,23 +38,30 @@
         : T("두 화살표가 모두 위(0=안전) 쪽입니다. 같은 쪽이라 겹침 점수는 +이지만 비 점수와 경사 점수 자체가 낮아 위험 점수가 낮고, 지도의 옅은(조용) 쪽에 놓입니다.", "Both arrows point up (0 = safe). They agree, so the overlap is positive, but the rain and slope scores themselves are low, so the risk stays low and the hiker sits in the light (quiet) area.");
       void alarm;
     }
+    const LV = ["정상", "주의", "경보", "⚠ 위험!"]; let dangerNow = false, lastLvQ = -1, lastMark = null; // 단계 이름 / level names
+    const dz = function (thr) { return thr + (1 - thr) * .5; }; // 위험! 기준 = 경보 기준과 최고점의 중간 / danger line = midway between alarm threshold and max
+    function level(sc, thr) { return sc >= dz(thr) ? 3 : sc >= thr ? 2 : sc >= thr * .75 ? 1 : 0; } // 점수 → 단계 / score → level
     function draw(mark) {                           // 지도와 4단계 설명을 그림 / draws the maps and the four-step explanation
+      lastMark = mark || null;                      // 깜빡임용으로 기억 / remember for blinking
       const card = $("#cML", el).parentNode; if (!mapH) mapH = Math.max(170, Math.min(card.clientWidth - 20, card.clientHeight - 96)); const c = mark || cases[cur], h = mapH; // 카드 안에 꼭 맞는 지도 높이(처음 한 번 계산)임 / map height fitting the card (computed once)
       const xm = base.slice(); xm[3] = c[0]; xm[9] = c[1]; const lab = "지금 산행자: 비 " + Math.round(c[0] * 100) + ", 경사 " + Math.round(c[1] * 100); // 말풍선 글자임 / speech-bubble text
-      C.heatmap($("#cML", el), gl, L.threshold, { height: h, truth: truth, mark: c, markLabel: lab + " → " + (L.predict(xm) >= L.threshold ? "경보" : "조용"), corners: true, color: "#4d6b8c", xLabel: "비의 세기 (약함 → 강함)", yLabel: "경사 (완만 → 급함)" }); // 일반 지도임 / classical map
-      C.heatmap($("#cMQ", el), gq, Q.threshold, { height: h, truth: truth, mark: c, markLabel: lab + " → " + (Q.predict(xm) >= Q.threshold ? "경보" : "조용"), corners: true, color: "#6e4c82", xLabel: "비의 세기 (약함 → 강함)", yLabel: "경사 (완만 → 급함)" }); // 양자 지도임 / quantum map
+      const lvL = level(L.predict(xm), L.threshold), lvQ = level(Q.predict(xm), Q.threshold); // 4단계(정상, 주의, 경보, 위험!) / 4 levels (normal, caution, alarm, danger!)
+      C.heatmap($("#cML", el), gl, L.threshold, { height: h, truth: truth, mark: c, markLabel: lab + " → " + LV[lvL], markLevel: lvL, markDanger: lvL === 3, danger: dz(L.threshold), corners: true, color: "#4d6b8c", xLabel: "비의 세기 (약함 → 강함)", yLabel: "경사 (완만 → 급함)" }); // 일반 지도임 / classical map
+      C.heatmap($("#cMQ", el), gq, Q.threshold, { height: h, truth: truth, mark: c, markLabel: lab + " → " + LV[lvQ], markLevel: lvQ, markDanger: lvQ === 3, danger: dz(Q.threshold), corners: true, color: "#6e4c82", xLabel: "비의 세기 (약함 → 강함)", yLabel: "경사 (완만 → 급함)" }); // 양자 지도임 / quantum map
+      $("#cML", el).parentNode.classList.toggle("dangerflash", lvL === 3); $("#cMQ", el).parentNode.classList.toggle("dangerflash", lvQ === 3); dangerNow = lvL === 3 || lvQ === 3; // 위험!이면 카드 테두리가 번쩍임 / card border flashes on danger
+      if (lvQ === 3 && lastLvQ !== 3 && !QP.State.touring) { const wf = document.querySelector(".warnflash"); if (wf) { wf.className = "warnflash r"; void wf.offsetWidth; wf.className = "warnflash r on"; } } lastLvQ = lvQ; // 위험!에 처음 들어가면 화면 가장자리도 번쩍임 / the screen edge flashes when first entering danger
       const anyL = gl.some(function (r) { return r.some(function (v) { return v >= L.threshold; }); }); $("#cNL", el).textContent = anyL ? "경계가 곧은 선(따로 더하기)" : "경보 영역 없음"; $("#cNQ", el).textContent = "경보 영역이 모서리를 따라 휨"; // 지도 해설임 / map captions
       const x = base.slice(); x[3] = c[0]; x[9] = c[1]; const sl = L.predict(x), sq = Q.predict(x), al = sl >= L.threshold, aq = sq >= Q.threshold, t = D.syntheticLabel(x); // 점수와 판정임 / scores and verdicts
       $("#cSit", el).innerHTML = "<b>" + (c[2] || "산행 중") + "</b>: 비 " + Math.round(c[0] * 100) + ", 경사 " + Math.round(c[1] * 100) + " → 실제로는 " + (t ? "<b class='c-maple'>미끄러짐 위험</b>" : "정상"); // 상황임 / situation
-      $("#cLin", el).innerHTML = "비 점수와 경사 점수를 <b>따로 더함</b> → " + pct(sl) + ", " + (al ? "경보" : "조용"); // 일반 AI 처리임 / classical AI processing
+      $("#cLin", el).innerHTML = "비 점수와 경사 점수를 <b>따로 더함</b> → " + pct(sl) + ", " + LV[level(sl, L.threshold)]; // 일반 AI 처리임 / classical AI processing
       qubits(c[0], c[1], sq >= Q.threshold);        // 지금 산행자의 두 큐비트 그림과 해설 / the current hiker's two qubits and explanation
-      $("#cQ", el).innerHTML = "두 신호를 큐비트로 돌리고 CNOT으로 엮어 <b>겹침 점수 " + M.pairExact(c[0], c[1]).toFixed(2) + "</b> 추가 → " + pct(sq) + ", " + (aq ? "<b>경보</b>" : "조용"); // 양자 처리임 / quantum processing
+      $("#cQ", el).innerHTML = "두 신호를 큐비트로 돌리고 CNOT으로 엮어 <b>겹침 점수 " + M.pairExact(c[0], c[1]).toFixed(2) + "</b> 추가 → " + pct(sq) + ", " + (aq ? "<b>" + LV[level(sq, Q.threshold)] + "</b>" : LV[level(sq, Q.threshold)]); // 양자 처리임 / quantum processing
       $("#cRes", el).innerHTML = t && aq && !al ? "<b>겹친 위험을 양자 특징 AI만 잡음</b> → 미끄러지기 전에 보폭 줄이기 안내 가능" : !t && !aq && al ? "<b>한쪽만 높은 상황에서 불필요한 경보를 피함</b>" : !t && aq && !al ? "<b>양자 특징 AI의 오경보</b>(완벽하지 않음, 전체 오경보율로 판단)" : t === aq ? "양자 특징 AI 판정이 실제와 일치" : "두 AI 모두 실제와 다름"; // 의미 해석임 / interpretation
     }
     el.querySelectorAll("[data-c]").forEach(function (b) { b.onclick = function () { cur = b.dataset.c; anim = 0; el.querySelectorAll("[data-c]").forEach(function (x) { x.classList.toggle("on", x === b); }); draw(); }; }); // 상황 버튼임 / situation buttons
     $("#cWalk", el).onclick = function () { anim = anim ? 0 : 1; this.textContent = anim ? "■ 멈춤" : "▶ 산행 따라 움직이기"; }; // 흰 원이 산행처럼 움직이는 애니메이션임 / animation moving the white circle like a hike
     $("#cLong", el).onclick = function () { QP.App.readLong(); }; // 긴 설명임 / long explanation
-    let fr = 0; const stop = A.loop(function (dt) { if (!anim) return; path += dt * .06; if (++fr % 3) return; const t = path % 1; draw([Math.min(1, .1 + .9 * Math.min(1, t * 1.6)), Math.min(1, .1 + .9 * Math.max(0, (t - .2) * 1.4)), "비가 오기 시작하고 점점 가팔라지는 하산길"]); }); // 비가 먼저 오르고 경사가 뒤따르는 경로를 따라 움직임 / moves along a path where rain rises first and slope follows
+    let fr = 0; const stop = A.loop(function (dt) { if (!anim) { if (dangerNow && ++fr % 4 === 0) draw(lastMark); return; } /* 위험!이면 고리, 말풍선이 계속 깜빡이도록 다시 그림 / keep redrawing so the ring and bubble blink in danger */ path += dt * .06; if (++fr % 3) return; const t = path % 1; draw([Math.min(1, .1 + .9 * Math.min(1, t * 1.6)), Math.min(1, .1 + .9 * Math.max(0, (t - .2) * 1.4)), "비가 오기 시작하고 점점 가팔라지는 하산길"]); }); // 비가 먼저 오르고 경사가 뒤따르는 경로를 따라 움직임 / moves along a path where rain rises first and slope follows
     requestAnimationFrame(function () { draw(); });  // 처음 그림임 / first drawing
     return stop;                                    // 떠날 때 멈춤 / stop when leaving
   }
@@ -62,10 +69,40 @@
   /* ===== 왜 대조군과 같은가 / Why it equals the control  ===== */
   function same(el) {
     const EN0 = QP.I18N && QP.I18N.lang() === "en"; // 영문 모드 / English mode
-    el.innerHTML = '<div class="grid two-1"><div class="stack"><div class="card"><h3>질문: 양자 특징 AI와 일반 수식 대조군은 항상 같습니까?</h3><p class="qa"><b>답: 지금 쓰는 2큐비트 회로(RY+CNOT, 정확 판독)에서는 네, 항상 같습니다.</b> 수학적으로 똑같은 숫자를 만드는 두 가지 계산 방법이기 때문입니다. 같은 입력, 같은 학습, 같은 기준이니 결과도 소수점까지 같습니다.</p><p><b>대조군이란?</b> “양자 회로 덕분인지, 아니면 그냥 ‘두 신호를 함께 보는 특징’ 덕분인지” 가려내려고 같은 값을 일반 수식으로 만든 비교 대상이에요(과학 실험의 대조군과 같은 역할).</p></div>' +
-      '<div class="card"><h3>왜 같은지 한 줄씩</h3><ol class="proof"><li>RY(π, a)|0⟩ = cos(πa/2)|0⟩ + sin(πa/2)|1⟩ (비 큐비트)</li><li>RY(π, b)|0⟩ = cos(πb/2)|0⟩ + sin(πb/2)|1⟩ (경사 큐비트)</li><li>CNOT 뒤 경사 큐비트 = 비 XOR 경사 → 읽은 값 = P(같음) − P(다름)</li><li>P(같음) − P(다름) = (cos²−sin²)(a쪽) × (cos²−sin²)(b쪽)</li><li>cos² − sin² = cos(2배 각) 이므로 = <b>cos(πa) × cos(πb)</b> ✔</li></ol></div>' +
-      '<div class="card tint-plum"><h3>그럼 언제 달라집니까?</h3><ol><li><b>샷 측정</b>: 진짜 장비처럼 유한 번 측정하면 추정 오차가 생겨 달라짐</li><li><b>잡음</b>: 실제 장비 잡음이 값을 흐림</li><li><b>다른 회로</b>: ZZ 특징 맵(Havlíček 2019)처럼 회로를 바꾸면 다른 특징 → 다른 결과(더 좋을 수도, 나쁠 수도)</li><li><b>다른 고전 특징</b>: a×b 같은 다른 수식도 다른 결과</li></ol><p class="small">중요: 에뮬레이터로 계산되는 회로는 정의상 일반 컴퓨터로 계산 가능함. 양자 장비만의 이점은 큐비트가 많아 일반 컴퓨터가 흉내 내기 어려운 회로에서만 기대할 수 있음(Huang et al. 2021, Bowles et al. 2024).</p></div></div>' +
+    el.innerHTML = '<div class="grid two-1"><div class="stack"><div class="card"><h3>질문: 양자 특징 AI와 일반 수식 대조군은 항상 같습니까?</h3><p class="qa"><b>답: 지금 쓰는 2큐비트 회로(RY+CNOT, 정확 판독)에서는 네, 항상 같습니다.</b> 수학적으로 똑같은 숫자를 만드는 두 가지 계산 방법이기 때문입니다. 같은 입력, 같은 학습, 같은 기준이니 결과도 소수점까지 같습니다.</p></div>' +
+      '<div class="card stack"><h3>' + (EN0 ? "See it: the same input computed three ways, side by side" : "눈으로 확인: 같은 입력을 세 가지 방법으로 계산하는 경주") + '</h3><canvas id="yAni"></canvas><p id="yAniT" class="rctxt"></p></div>' +
+      '<details class="card yfold"><summary>' + (EN0 ? "What is a control? (click to open)" : "대조군이란? (펼쳐 보기)") + '</summary><p><b>대조군이란?</b> “양자 회로 덕분인지, 아니면 그냥 ‘두 신호를 함께 보는 특징’ 덕분인지” 가려내려고 같은 값을 일반 수식으로 만든 비교 대상이에요(과학 실험의 대조군과 같은 역할).</p></details>' +
+      '<details class="card yfold"><summary>' + (EN0 ? "Why they match, line by line (click to open)" : "왜 같은지 수식으로 한 줄씩 (펼쳐 보기)") + '</summary><ol class="proof"><li>RY(π, a)|0⟩ = cos(πa/2)|0⟩ + sin(πa/2)|1⟩ (비 큐비트)</li><li>RY(π, b)|0⟩ = cos(πb/2)|0⟩ + sin(πb/2)|1⟩ (경사 큐비트)</li><li>CNOT 뒤 경사 큐비트 = 비 XOR 경사 → 읽은 값 = P(같음) − P(다름)</li><li>P(같음) − P(다름) = (cos²−sin²)(a쪽) × (cos²−sin²)(b쪽)</li><li>cos² − sin² = cos(2배 각) 이므로 = <b>cos(πa) × cos(πb)</b> ✔</li></ol></details>' +
+      '<details class="card yfold tint-plum"><summary>' + (EN0 ? "Then when do they differ? (click to open)" : "그럼 언제 달라집니까? (펼쳐 보기)") + '</summary><ol><li><b>샷 측정</b>: 진짜 장비처럼 유한 번 측정하면 추정 오차가 생겨 달라짐</li><li><b>잡음</b>: 실제 장비 잡음이 값을 흐림</li><li><b>다른 회로</b>: ZZ 특징 맵(Havlíček 2019)처럼 회로를 바꾸면 다른 특징 → 다른 결과(더 좋을 수도, 나쁠 수도)</li><li><b>다른 고전 특징</b>: a×b 같은 다른 수식도 다른 결과</li></ol><p class="small">중요: 에뮬레이터로 계산되는 회로는 정의상 일반 컴퓨터로 계산 가능함. 양자 장비만의 이점은 큐비트가 많아 일반 컴퓨터가 흉내 내기 어려운 회로에서만 기대할 수 있음(Huang et al. 2021, Bowles et al. 2024).</p></details></div>' +
       '<div class="stack"><div class="card"><div class="row" style="justify-content:space-between"><h3>직접 확인: 무작위 10개 입력</h3><button id="yR" class="primary">새로 뽑기</button><button id="yA" data-autoplay="1">▶ 계속 뽑기</button></div><table id="yT" class="ct"></table></div><div class="card"><h3>' + (EN0 ? "Scores: AIs trained with each table column as a feature" : "성적 비교: 위 표의 각 열을 특징으로 넣어 학습한 AI") + ' <span class="small">(' + (EN0 ? "same data: " : "같은 데이터: ") + QP.State.dataName + ')</span></h3><p class="small">' + (EN0 ? "Same number and color = the same column in the table above. Each column\'s value was added to rain and slope, trained with the same logistic regression and the same false-alarm budget, then scored. Bars zoom into the 0.5-1.0 range." : "같은 번호, 같은 색 = 위 표의 같은 열. 각 열의 값을 비, 경사와 함께 넣고 같은 로지스틱 회귀, 같은 오경보 예산으로 학습한 뒤 잰 성적임. 막대는 0.5~1.0 구간을 확대해 보임.") + '</p><table id="yC" class="ct ybar"></table><p id="yS" class="small"></p></div></div></div>';
+    // 경주 애니메이션: 같은 입력(비, 경사)이 ① 양자 회로, ② 일반 수식, ③ 실제 장비처럼 100번 측정 세 길로 동시에 들어가 결과를 비교함 / race animation: the same input goes through (1) quantum circuit, (2) plain formula, (3) 100 measured shots, and results are compared
+    let rIn = [.62, .81], rShot = 0, rT = 0, rRng = S.rng(4242);
+    function newRace() { rIn = [Math.round(rRng() * 100) / 100, Math.round(rRng() * 100) / 100]; const q = M.pairExact(rIn[0], rIn[1]); rShot = 1 - 2 * S.sampleProb((1 - q) / 2, 100, rRng); rT = 0; }
+    newRace();
+    const stopRace = A.loop(function (dt) {
+      const cv = $("#yAni", el); if (!cv) return; rT += dt * 2; if (rT > 9.5) newRace();   // 애니메이션 속도 배율(0.5)을 보정해 실제 약 9.5초 주기 / compensates the 0.5 animation speed: about a 9.5 s real cycle
+      const EN = QP.I18N && QP.I18N.lang() === "en", T = function (k, e) { return EN ? e : k; };
+      const P = A.canvas(cv, 270), g = P.g, W = P.w, a = rIn[0], b = rIn[1], q = M.pairExact(a, b), c = M.pairAnalytic(a, b);
+      const Y = [62, 142, 222], xIn = 70, xOut = W - 120, prog = Math.min(1, Math.max(0, (rT - .6) / 3.2)); // 진행도 0~1 / progress
+      g.fillStyle = "#003087"; g.fillRect(8, Y[1] - 46, 112, 92); g.fillStyle = "#fff"; g.font = "bold 13px Malgun Gothic,sans-serif"; g.textAlign = "center"; g.fillText(T("같은 입력", "same input"), 64, Y[1] - 22); g.font = "bold 16px sans-serif"; g.fillText(T("비 ", "rain ") + a.toFixed(2), 64, Y[1] + 2); g.fillText(T("경사 ", "slope ") + b.toFixed(2), 64, Y[1] + 24);
+      const lanes = [[COL.quantum, "②", T("양자 회로: RY, RY → CNOT → 정확히 읽기", "quantum circuit: RY, RY → CNOT → exact read"), q], [COL.analytic, "③", T("일반 수식: cos(π×비) × cos(π×경사)", "plain formula: cos(π×rain) × cos(π×slope)"), c], [COL.shots, "◎", T("같은 회로를 실제 장비처럼 100번만 측정", "same circuit, measured only 100 times"), rShot]];
+      lanes.forEach(function (L, k) {
+        const y = Y[k]; g.strokeStyle = "#c9cfe0"; g.lineWidth = 3; g.beginPath(); g.moveTo(122, Y[1]); g.bezierCurveTo(150, Y[1], 150, y, 180, y); g.lineTo(xOut - 10, y); g.stroke();
+        g.fillStyle = L[0]; g.fillRect(200, y - 17, xOut - 230, 34); g.fillStyle = "#fff"; g.font = "bold 12.5px Malgun Gothic,sans-serif"; g.textAlign = "left"; g.fillText(L[1] + " " + L[2], 210, y + 4);
+        const px = 180 + (xOut - 190) * prog; g.fillStyle = "#ffb500"; g.strokeStyle = "#c62828"; g.lineWidth = 2; g.beginPath(); g.arc(px, y, 8, 0, 7); g.fill(); g.stroke(); // 계산이 지나가는 점 / dot moving through the calculation
+        g.fillStyle = "#fff"; g.strokeStyle = L[0]; g.lineWidth = 2.5; g.fillRect(xOut, y - 20, 110, 40); g.strokeRect(xOut, y - 20, 110, 40);
+        if (prog >= 1) { g.fillStyle = "#1d2a4d"; g.font = "bold 15px sans-serif"; g.textAlign = "center"; g.fillText(k === 2 ? L[3].toFixed(2) : L[3].toFixed(6), xOut + 55, y + 6); }
+        else { g.fillStyle = "#9aa3ba"; g.font = "bold 15px sans-serif"; g.textAlign = "center"; g.fillText("?", xOut + 55, y + 6); }
+      });
+      if (rT > 4.3) { // 비교 표시 / comparison marks
+        g.lineWidth = 3; g.strokeStyle = "#2e7d32"; g.beginPath(); g.moveTo(xOut + 114, Y[0]); g.lineTo(xOut + 119, Y[0]); g.lineTo(xOut + 119, Y[1]); g.lineTo(xOut + 114, Y[1]); g.stroke(); g.fillStyle = "#2e7d32"; g.font = "bold 18px sans-serif"; g.textAlign = "left"; g.fillText("=", W - 4 - 10, (Y[0] + Y[1]) / 2 + 6);
+        g.strokeStyle = "#e65100"; g.setLineDash([4, 3]); g.beginPath(); g.moveTo(xOut + 114, Y[1] + 4); g.lineTo(xOut + 119, Y[1] + 4); g.lineTo(xOut + 119, Y[2]); g.lineTo(xOut + 114, Y[2]); g.stroke(); g.setLineDash([]); g.fillStyle = "#e65100"; g.fillText("≠", W - 14, (Y[1] + Y[2]) / 2 + 8);
+      }
+      const msg = rT < .6 ? T("같은 입력(비, 경사)을 세 길로 동시에 보냅니다.", "The same input (rain, slope) is sent down three paths at once.")
+        : rT < 4.3 ? T("노란 점이 각 계산을 지나가는 중입니다. ② 양자 회로, ③ 일반 수식, ◎ 100번 측정은 서로 다른 방법입니다.", "The yellow dots are passing through each calculation: ② quantum circuit, ③ plain formula, ◎ 100 measurements.")
+        : T("결과: ②와 ③은 소수점 여섯째 자리까지 똑같습니다(차이 " + Math.abs(q - c).toExponential(0) + "). 그래서 학습 성적도 같습니다. ◎처럼 측정 횟수가 유한하면 " + Math.abs(rShot - q).toFixed(2) + "만큼 흔들려 달라집니다. 몇 초 뒤 새 입력으로 다시 비교합니다.", "Result: ② and ③ agree to six decimals (difference " + Math.abs(q - c).toExponential(0) + "), so their training scores match too. With finite measurements, ◎ wobbles by " + Math.abs(rShot - q).toFixed(2) + ". A new input follows in a few seconds.");
+      const tEl = $("#yAniT", el); if (tEl && tEl.textContent !== msg) tEl.textContent = msg;
+    });
     function table() {                              // 무작위 입력 10개로 다섯 방식의 특징값을 비교함 / compares the five methods' feature values on 10 random inputs
       const r = S.rng(Date.now() % 99991); const bd = function (k, n, t) { return '<th><span class="ybadge" style="--c:' + COL[k] + '">' + n + "</span> " + t + "</th>"; }; let h = "<tr><th>비</th><th>경사</th>" + bd("quantum", "②", "양자 회로") + bd("analytic", "③", "cos×cos") + "<th>" + (EN0 ? "②−③ diff" : "②−③ 차이") + "</th><th>샷 100</th>" + bd("product", "④", "a×b") + bd("zz", "⑤", "ZZ 회로") + "</tr>"; // 표 머리임 / table header
       for (let k = 0; k < 10; k++) { const a = r(), b = r(), q = M.pairExact(a, b), c = M.pairAnalytic(a, b), sh = 1 - 2 * S.sampleProb((1 - q) / 2, 100, r); h += "<tr><td>" + a.toFixed(2) + "</td><td>" + b.toFixed(2) + "</td><td>" + q.toFixed(6) + "</td><td>" + c.toFixed(6) + "</td><td>" + Math.abs(q - c).toExponential(1) + "</td><td>" + sh.toFixed(3) + "</td><td>" + (a * b).toFixed(3) + "</td><td>" + M.pairZZ(a, b).toFixed(3) + "</td></tr>"; } // 한 줄씩 채움 / fill line by line
@@ -73,7 +110,7 @@
     }
     $("#yR", el).onclick = table; table();          // 새로 뽑기 버튼과 첫 표임 / draw-again button and first table
     let yt = null; $("#yA", el).onclick = function () { if (yt) { clearInterval(yt); yt = null; this.textContent = "▶ 계속 뽑기"; return; } this.textContent = "■ 멈춤"; yt = setInterval(table, 5000); }; // 2.5초마다 새 입력으로 확인해 계속 변하게 함 / check with new inputs every 2.5 s so it keeps changing
-    el._cleanup = function () { clearInterval(yt); }; // 화면을 떠나면 멈춤 / stop when leaving the screen
+    el._cleanup = function () { clearInterval(yt); stopRace(); }; // 화면을 떠나면 멈춤 / stop when leaving the screen
     const res = QP.State.results, keys = res.map(function (m) { return m.key; }); // 결과 목록임 / result list
     const ORD = EN0 ? [["linear", "①", "none (rain, slope only)"], ["quantum", "②", "quantum circuit column"], ["analytic", "③", "cos×cos column"], ["product", "④", "a×b column"], ["zz", "⑤", "ZZ circuit column"]] : [["linear", "①", "없음(비, 경사만)"], ["quantum", "②", "양자 회로 열"], ["analytic", "③", "cos×cos 열"], ["product", "④", "a×b 열"], ["zz", "⑤", "ZZ 회로 열"]]; // 성적표 순서와 위 표의 열 연결 / score rows linked to the table columns
     const bar = function (v, c) { const w = Math.max(0, Math.min(1, (v - .5) / .5)) * 100; return '<div class="ybarw"><i style="width:' + w.toFixed(1) + '%;background:' + c + '"></i><span>' + v.toFixed(3) + "</span></div>"; }; // 0.5~1.0 확대 막대 / bar zoomed to 0.5-1.0

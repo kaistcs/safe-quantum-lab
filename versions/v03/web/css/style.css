@@ -67,7 +67,7 @@ button.info{width:16px;height:16px;padding:0;border-radius:50%;font-size:10px;fo
 .hero-emblem{position:absolute;right:16px;bottom:14px;height:74px;background:rgba(255,255,255,.85);border-radius:50%;padding:4px}
 .cards4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 /* 산행 관제실 */
-.ctrl-room{display:grid;height:100%;gap:7px;grid-template-columns:1fr 1fr 290px;grid-template-rows:auto minmax(190px,1.35fr) minmax(110px,.65fr) minmax(120px,.75fr)}
+.ctrl-room{display:grid;height:100%;gap:7px;grid-template-columns:1fr 1fr 290px;grid-template-rows:auto minmax(190px,1.3fr) minmax(185px,.85fr) minmax(120px,.7fr)}
 .ctrl-bar{grid-column:1/-1;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 10px} .ctrl-bar select{max-width:190px} .clock{margin-left:auto;font-weight:800;color:var(--blue)}
 .mtn{grid-column:1/3;padding:6px} .stat{grid-row:2/4;grid-column:3;overflow:auto;font-size:12px} .qub{grid-column:1/3;padding:5px} .nn{grid-column:3;grid-row:4;padding:5px} .ch1{grid-column:1;padding:5px} .ch2{grid-column:2;padding:5px}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:1px 8px;margin:4px 0} .kv span{color:var(--sub)} .stat h4{font-size:12px;margin:6px 0 2px;color:var(--maple)} .det{background:#f6f8fd;border-radius:6px;padding:3px 6px;margin:2px 0}
@@ -307,3 +307,30 @@ body[data-theme=winter] .databadge{background:#e8f3fd}
 .ybar tr.ysame td{background:#f6f0fa}
 .dq.sel{outline:2px solid #ffb500;outline-offset:-2px;background:#fffbea} .dq{cursor:pointer}
 .rcsl{display:inline-flex;align-items:center;gap:6px;font-size:13px;margin-left:10px} .rcsl input{width:130px} .rcsl output{min-width:26px;font-weight:700}
+/* 위험! 단계: 판단 지도 카드 테두리가 번쩍임 / danger level: the decision-map card border flashes */
+.dangerflash{animation:dflash .7s steps(2,jump-none) infinite} @keyframes dflash{0%{box-shadow:0 0 0 4px #d50000,0 0 22px rgba(213,0,0,.6)}100%{box-shadow:0 0 0 1px rgba(213,0,0,.2)}}
+.yfold summary{cursor:pointer;font-weight:800;color:var(--plum,#6e4c82);font-size:14.5px} .yfold[open] summary{margin-bottom:6px}
+.ghlink{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;margin-bottom:10px;background:#eef4ff;border-left:5px solid #003087} .ghlink b{font-size:15px;color:#003087} .ghlink a{font-weight:700;color:#0a4fd6;word-break:break-all}
+
+/* 관제실 큐비트 쌍 설명 줄(같은 번호로 연결) / control-room pair explanation row (linked by number) */
+.qx6{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:3px} .qx6 .qx{font-size:11px;line-height:1.35;background:#f6f7fb;border-radius:6px;padding:3px 5px;border:1px solid #e1e5ef;display:flex;flex-direction:column} .qx6 .qx b{font-size:11.5px;color:#1d2a4d} .qx6 .qr{color:#6e4c82;font-weight:700} .qx6 em{font-style:normal;color:#4a5470}
+.qx6 .qx.warm{background:#fff8e1;border-color:#ffd54f} .qx6 .qx.hot{background:#ffebee;border-color:#e57373} .qx6 .qx.hot em{color:#c62828;font-weight:800} .qx6 .qx.best{outline:2px solid #ffb500}
+/* 전체 사이클: 단계 데이터 미리보기 / full cycle: stage data preview */
+.xdata{margin-top:8px;border-top:1px dashed #c9cfe0;padding-top:6px;max-height:260px;overflow:auto} .xdh{margin:0 0 4px;font-size:13px} .xdt td,.xdt th{font-size:12px;padding:2px 6px} .xst.pick{outline:3px solid #ffb500;outline-offset:1px}
+.dmet{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;font-size:13px} .dmet small{color:#6d5e55;font-size:11px} .mn{display:inline-block;width:18px;height:18px;border-radius:50%;color:#fff;font-style:normal;text-align:center;line-height:18px;font-size:11px;font-weight:800}
+/* 안내형 실험: 따라하기 예시 / guided lab: follow-along example */
+.labex{margin-top:10px;border:2px dashed #ffb500;border-radius:10px;padding:8px 12px;background:#fffbea} .labex table{margin-top:6px} .lexok{color:#2e7d32;font-weight:900;font-size:16px} .labtype{outline:3px solid #ffb500!important;box-shadow:0 0 0 6px rgba(255,181,0,.3)!important}
+.ehist #eH{display:grid;grid-template-columns:1fr 1fr;gap:5px} .eh{font-size:12px;background:#f6f7fb;border-left:4px solid #6e4c82;padding:4px 8px;border-radius:5px;display:flex;flex-direction:column;animation:ehIn .5s} .eh.on{background:#fff8e1;border-left-color:#ffb500} .eh b{font-size:12.5px} .ehl a{color:#0a4fd6;cursor:pointer;text-decoration:underline} @keyframes ehIn{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.tour-b{margin:4px 0 8px;background:linear-gradient(135deg,#8ecae6,#cfe8ff);box-shadow:0 2px 0 #4d8fb8;font-size:13px} .tour-b small{display:block;font-weight:600;font-size:10.5px}
+/* 데이터 빠른 관리: 왼쪽 메뉴와 같은 풀다운 / quick data: pull-down styled like the left menu */
+.quick{background:none!important;border:0!important;padding:0!important}
+.quick .grp{border-radius:9px;margin-bottom:3px;background:rgba(255,255,255,.04)} .quick .grp.open{background:rgba(255,255,255,.07)}
+.quick .grp-h{width:100%;display:flex;justify-content:space-between;background:transparent;border:0;color:#fff;font-weight:700;padding:7px 9px;font-size:14px;cursor:pointer} .quick .grp-h:hover{background:rgba(255,255,255,.08)}
+.quick .grp-b{display:none;padding:0 4px 6px} .quick .grp.open .grp-b{display:block}
+.quick .grp-b a{display:block;color:#e3e9fb;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:13px} .quick .grp-b a:hover{background:rgba(255,255,255,.12)} .quick .qcur{color:#ffd27a;font-size:11.5px;margin:2px 12px 4px}
+/* 펼침 삼각형을 크게: 나이 드신 분도 쉽게 누르도록 / bigger expand triangles so older users can tap them easily */
+nav .grp-h,.quick .grp-h{align-items:center;min-height:40px} nav .grp-h i,.quick .grp-h i{font-style:normal;font-size:22px;line-height:1;width:34px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.14);color:#ffd27a;flex:none}
+nav .grp-h:hover i,.quick .grp-h:hover i{background:rgba(255,210,122,.35)}
+.gnote{display:flex;gap:10px;align-items:flex-start;background:#e8f5e9;border:2px solid #43a047;border-radius:10px;padding:10px 12px;margin:4px 0 8px} .gnote .gni{font-size:28px;line-height:1} .gnote b{font-size:15.5px;color:#1b5e20} .gnote p{margin:3px 0 0;font-size:13.5px;line-height:1.5} .gnote.pop{animation:gpop .9s} @keyframes gpop{0%{transform:scale(.96);box-shadow:0 0 0 0 rgba(67,160,71,.7)}60%{transform:scale(1.01);box-shadow:0 0 0 12px rgba(67,160,71,0)}100%{transform:scale(1)}}
+.quick .grp-b a.qmain{background:#ffb500;color:#00205e;font-weight:900;font-size:14px;margin:2px 0 4px} .quick .grp-b a.qmain:hover{background:#ffc94d} .quick .qhint{color:#cfd8f0;font-size:11px;margin:0 8px 4px;line-height:1.4} .quick .qhint b{color:#ffd27a}
+.quick .qsub{color:#ffd27a;font-weight:800;font-size:12px;margin:8px 8px 2px;border-top:1px dashed rgba(255,210,122,.5);padding-top:6px} .quick .grp-b a.qcyc{font-weight:800;color:#fff;background:rgba(110,76,130,.55)}

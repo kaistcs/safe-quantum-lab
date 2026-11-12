@@ -44,6 +44,17 @@
     function mini() { $("#lLogMini", el).innerHTML = LOG.length ? "<b>지금까지 실험 " + LOG.length + "건</b><br>" + LOG.slice(-4).map(function (l) { return l.id + " " + l.verdict + " (" + l.key + ")"; }).join("<br>") : ""; } // 최근 기록 요약임 / summary of recent records
     function dsOpts() { return QP.Datasets.list.map(function (d) { return '<option value="' + d.id + '"' + (d.id === st.data ? " selected" : "") + ">" + d.id + " " + d.name + " (" + d.stats.n + "행, 등급 " + d.grade + ")</option>"; }).join(""); } // 데이터 선택 목록임 / dataset choices
 
+    function exampleBox() {                          // 따라하기 예시: 무엇을 어디에 어떤 값으로 넣는지 보여 주고, 버튼을 누르면 직접 입력되는 모습을 재연함 / follow-along example: shows what to enter where, and replays the input when clicked
+      const e = E(), g = QP.Datasets.list.find(function (d) { return d.kind === "grounded" && d.grade === "A"; }) || QP.Datasets.list[0];
+      const items = st.step === 0 ? [{ sel: '.labcard[data-i="0"]', label: "실험 카드", show: "E1. 양자 겹침 특징이 위험을 더 잘 잡는가", why: "처음이면 가장 기본 질문인 E1부터 해 보시기 바랍니다", click: true }]
+        : st.step === 1 ? (e.id === "E3" ? [{ sel: "#lSeed", label: "난수 씨앗", value: "7", show: "7", why: "같은 값을 넣으면 언제나 같은 결과가 재현됩니다" }] : [{ sel: "#lData", label: "실험 데이터", value: g ? g.id : "", show: g ? g.id + " " + g.name : "-", why: "근거 등급 A는 심박 공식, 기온 감률, 보행 속도 점검을 모두 통과한 데이터입니다" }])
+        : st.step === 2 ? (e.id === "E2" ? [{ sel: "#lNoise", label: "장비 잡음", value: "0.05", show: "5%", why: "현재 양자 장비의 대략적인 오류 수준을 가정한 값입니다" }] : e.id === "E3" ? [{ sel: "#lMetaN", label: "메타 학습 반복", value: "300", show: "300회", why: "300회 정도면 공통 시작점이 안정됩니다" }] : []) : [];
+      const b = $("#lBody", el); if (!b || !items.length) { if (b && st.step === 2) b.insertAdjacentHTML("beforeend", '<div class="labex"><b>✍ 따라하기 예시</b><p class="small">E1은 비교 조건이 고정되어 있어 입력할 칸이 없습니다. 위 설명을 읽고 다음 단계로 넘어가시면 됩니다.</p></div>'); return; }
+      b.insertAdjacentHTML("beforeend", '<div class="labex"><div class="row" style="justify-content:space-between"><b>✍ 따라하기 예시: 이렇게 입력하시면 됩니다</b><button id="lExGo" class="primary">▶ 예시대로 입력해 보기</button></div><table class="labtbl"><tr><th>순서</th><th>입력 칸</th><th>예시 값</th><th>왜 이 값인가</th><th></th></tr>' + items.map(function (it, k) { return "<tr id='lEx" + k + "'><td>" + (k + 1) + "</td><td>" + it.label + "</td><td><b>" + it.show + "</b></td><td class='small'>" + it.why + "</td><td class='lexok'></td></tr>"; }).join("") + "</table></div>");
+      $("#lExGo", el).onclick = function () { let k = 0; (function nextItem() { if (!alive || k >= items.length) { say("예시대로 입력했습니다. 다음 단계 버튼을 누르시면 됩니다."); aim("#lNext"); return; } const it = items[k], t = $(it.sel, el); if (!t) { k++; return nextItem(); } aim(it.sel); say(it.label + "에 " + it.show + "을 입력합니다."); t.classList.add("labtype");
+        setTimeout(function () { if (!alive) return; if (it.click) t.click(); else if (t.tagName === "SELECT") { t.value = it.value; t.dispatchEvent(new Event("change", { bubbles: true })); } else { t.value = ""; let c = 0; const ty = setInterval(function () { t.value = it.value.slice(0, ++c); t.dispatchEvent(new Event("input", { bubbles: true })); if (c >= it.value.length) { clearInterval(ty); t.dispatchEvent(new Event("change", { bubbles: true })); } }, 180); }
+          setTimeout(function () { const row = $("#lEx" + k, el); if (row) row.querySelector(".lexok").textContent = "✔"; t.classList.remove("labtype"); k++; nextItem(); }, 1400); }, 1100); })(); }; // 칸을 가리키고, 값이 한 글자씩 들어가는 모습을 보임 / point at the field and show the value being entered
+    }
     function render() {                              // 현재 단계 화면을 그림 / draws the current step screen
       steps(); mini(); const e = E(), b = $("#lBody", el); $("#lTitle", el).textContent = (st.step + 1) + "단계. " + STEPS[st.step]; $("#lExp", el).textContent = e.id + " " + e.title; // 제목과 실험 이름임 / title and experiment name
       $("#lPrev", el).disabled = st.step === 0; $("#lNext", el).textContent = st.step === 4 ? "실행 ▶" : st.step === 6 ? "새 실험 ↺" : "다음 단계 ▶"; $("#lNext", el).disabled = st.step === 5 && !st.out; // 버튼 상태임 / button states
@@ -66,7 +77,9 @@
         if ($("#lNoise", el)) { $("#lNoise", el).value = String(st.noise); $("#lNoise", el).onchange = function () { st.noise = Number(this.value); }; } // 잡음 입력임 / noise input
         if ($("#lMetaN", el)) { $("#lMetaN", el).value = String(st.metaN); $("#lMetaN", el).onchange = function () { st.metaN = Number(this.value); }; } // 반복 수 입력임 / iteration input
         guide("실험 조건을 입력합니다. <b>바꾸는 것(독립변수)</b>과 <b>같게 두는 것(통제변수)</b>을 구분하는 것이 핵심입니다."); say("세 번째 단계입니다. 실험 조건을 입력합니다. 바꾸는 조건과 같게 두는 조건을 구분하시면 됩니다. 기본값 그대로 두셔도 좋습니다."); aim(e.id === "E1" ? "#lBody p" : e.id === "E2" ? "#lNoise" : "#lMetaN");
-      } else if (st.step === 3) {                    // ④ 가설과 관찰 포인트(사전 등록) / ④ hypothesis and observation points (pre-registration)
+      }
+      exampleBox();                                  // 입력이 있는 단계에는 ‘따라하기 예시’ 상자를 붙임 / attach a follow-along example box to steps with inputs
+      if (st.step === 3) {                    // ④ 가설과 관찰 포인트(사전 등록) / ④ hypothesis and observation points (pre-registration)
         b.innerHTML = '<div class="labhyp"><div class="card tint-plum"><b>가설(H1)</b><p>' + e.hyp + '</p></div><div class="card"><b>반대 가설(H0)</b><p>' + e.h0 + '</p></div><div class="card tint-ochre" style="grid-column:1/-1"><b>우리가 보아야 할 결과</b><ol>' + e.watch.map(function (w) { return "<li>" + w + "</li>"; }).join("") + '</ol><p class="small">판정 기준은 실행 전에 고정합니다(사전 등록). 결과를 본 뒤 기준을 바꾸지 않습니다.</p></div></div>';
         guide("실행하기 전에 <b>무엇이 나오면 가설이 맞는지</b>를 먼저 정해 둡니다. 이것이 믿을 수 있는 실험의 조건입니다."); say("네 번째 단계입니다. 실행 전에 가설과 판정 기준을 먼저 고정합니다. 가설은 " + e.hyp + "입니다. 결과에서는 " + e.watch[0] + "을 가장 먼저 보시면 됩니다."); aim(".labhyp .tint-plum");
       } else if (st.step === 4) {                    // ⑤ 실행 준비 / ⑤ prepare to run
@@ -74,7 +87,7 @@
         guide("준비가 끝났습니다. <b>실행 ▶</b>을 누르시면 에뮬레이터가 계산을 시작합니다."); say("다섯 번째 단계입니다. 준비가 끝났습니다. 실행 버튼을 누르시기 바랍니다."); aim("#lNext");
       } else if (st.step === 5) {                    // ⑥ 결과 확인과 판정 / ⑥ results and verdict
         if (st.out) showResult(b); else { b.innerHTML = '<div class="labrun"><ol id="lPlan">' + plan().map(function (p) { return "<li>" + p + "</li>"; }).join("") + '</ol><div class="labbar"><i id="lBar"></i></div><p id="lRunMsg" class="small">계산 중입니다.</p></div>'; }
-      } else {                                       // ⑦ 실험 기록 / ⑦ experiment log
+      } else if (st.step === 6) {                    // ⑦ 실험 기록 / ⑦ experiment log
         b.innerHTML = '<div class="stack"><table class="labtbl"><tr><th>번호</th><th>시각</th><th>실험</th><th>데이터, 조건</th><th>핵심 수치</th><th>판정</th></tr>' + LOG.map(function (l, i) { return "<tr><td>" + (i + 1) + "</td><td>" + l.at + "</td><td>" + l.id + "</td><td>" + l.cond + "</td><td>" + l.key + "</td><td><b class='" + (l.ok ? "c-plum" : "") + "'>" + l.verdict + "</b></td></tr>"; }).join("") + '</table><div class="row"><button id="lCsv" class="primary">⬇ 실험 기록 CSV 내려받기</button></div></div>';
         $("#lCsv", el).onclick = function () { QP.App.download("experiment_log.csv", "﻿번호,시각,실험,데이터와 조건,핵심 수치,판정\n" + LOG.map(function (l, i) { return [i + 1, l.at, l.id, l.cond, l.key, l.verdict].map(function (v) { return '"' + String(v).replace(/"/g, "'") + '"'; }).join(","); }).join("\n")); }; // CSV 저장임 / save CSV
         guide("실험 기록은 연구 노트입니다. 같은 실험을 다른 데이터나 조건으로 반복하면 결론이 얼마나 단단한지 알 수 있습니다."); say("마지막 단계입니다. 실험 결과가 기록표에 저장되었습니다. 시에스브이로 내려받아 보고서에 붙이실 수 있습니다. 다른 조건으로 다시 실험해 보시면 결론의 신뢰도가 높아집니다."); aim("#lCsv");

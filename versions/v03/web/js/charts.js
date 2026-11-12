@@ -24,7 +24,7 @@
   function mix(a, b, t) {                           // 두 색(RGB 배열)을 t 비율로 섞음 / mixes two colors (RGB arrays) by ratio t
     return "rgb(" + a.map(function (v, i) { return Math.round(v + (b[i] - v) * t); }).join(",") + ")"; // 각 채널을 선형 보간함 / linear interpolation per channel
   }
-  const LOW = [251, 246, 236], MID = [233, 196, 140], HIGH = [169, 72, 42]; // 낮음=종이색, 중간=황토, 높음=단풍색 / low = paper, middle = ochre, high = maple
+  const LOW = [251, 246, 236], MID = [233, 196, 140], HIGH = [176, 70, 38], DEEP = [96, 8, 18]; // DEEP=가장 위험(검붉은색) / DEEP = most dangerous (dark crimson) // 낮음=종이색, 중간=황토, 높음=단풍색 / low = paper, middle = ochre, high = maple
 
   // 결정 지도: grid(점수 2차원), thr(경보 기준), opts.truth(정답 경계 함수), opts.mark([x,y] 현재 위치) / decision map: grid (2-D scores), thr (alarm threshold), opts.truth (true boundary function), opts.mark ([x,y] current position)
   // 등산객 배지 / hiker badge: 지금 산행자를 산과 함께 크게 그림(경사가 급할수록 산이 가파르고, 비가 셀수록 빗방울이 많음) / draws the current hiker large with a mountain (steeper mountain for higher slope, more drops for stronger rain)
@@ -60,7 +60,7 @@
     for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) { // 모든 칸을 칠함 / paint every cell
       const v = grid[r][c];                         // 칸의 점수임 / score of the cell
       const t = v < thr ? .5 * v / thr : .5 + .5 * (v - thr) / Math.max(1e-6, 1 - thr); // 경보 기준을 색의 한가운데(황토)에 맞춤 → 경보 영역이 뚜렷이 보임 / put the alarm threshold at the color midpoint (ochre) → alarm area stands out
-      g.fillStyle = t < .5 ? mix(LOW, MID, t * 2) : mix(MID, HIGH, (t - .5) * 2); // 기준 아래는 종이색→황토, 위는 황토→단풍색 / below threshold paper→ochre, above ochre→maple
+      g.fillStyle = t < .5 ? mix(LOW, MID, t * 2) : t < .75 ? mix(MID, HIGH, (t - .5) * 4) : mix(HIGH, DEEP, (t - .75) * 4); // 기준 아래 종이색→황토, 위로 갈수록 단풍색→검붉은색(위험 구역이 가장 진함) / below: paper→ochre; above: maple→dark crimson (danger zone darkest) // 기준 아래는 종이색→황토, 위는 황토→단풍색 / below threshold paper→ochre, above ochre→maple
       g.fillRect(pad + c * W / n, 4 + r * H / n, W / n + 1, H / n + 1); // 칸을 칠함 / paint the cell
     }
     g.strokeStyle = o.color || "#6e4c82"; g.lineWidth = 2.4; // 경보 경계선 색과 굵기임 / color and width of the alarm boundary
@@ -73,6 +73,11 @@
       if ((grid[r][c] >= thr) !== (grid[r + 1][c] >= thr)) { // 경계면 / boundary
         g.beginPath(); g.arc(pad + (c + .5) * W / n, 4 + (r + 1) * H / n, 1.5, 0, 7); g.stroke(); // 점을 찍음 / put a dot
       }
+    }
+    if (o.danger != null) {                         // ‘위험!’ 구역 경계(빨간 실선 점)를 그림 / draw the 'danger!' zone boundary (red dots)
+      g.fillStyle = "#ff3b30";
+      for (let r = 0; r < n; r++) for (let c = 0; c < n - 1; c++) if ((grid[r][c] >= o.danger) !== (grid[r][c + 1] >= o.danger)) { g.beginPath(); g.arc(pad + (c + 1) * W / n, 4 + (r + .5) * H / n, 2.2, 0, 7); g.fill(); }
+      for (let c = 0; c < n; c++) for (let r = 0; r < n - 1; r++) if ((grid[r][c] >= o.danger) !== (grid[r + 1][c] >= o.danger)) { g.beginPath(); g.arc(pad + (c + .5) * W / n, 4 + (r + 1) * H / n, 2.2, 0, 7); g.fill(); }
     }
     if (o.truth) {                                  // 정답 위험 경계(점선)를 그림 / draw the true risk boundary (dashed)
       g.setLineDash([5, 4]); g.strokeStyle = "#2e2420"; g.lineWidth = 1.5; g.beginPath(); // 점선 설정임 / dashed-line settings
@@ -87,8 +92,9 @@
     }
     if (o.mark) {                                   // 현재 상황 위치를 표시함 / mark the current situation
       const px = pad + o.mark[0] * W, py = 4 + (1 - o.mark[1]) * H; // 화면 좌표임 / screen coordinates
+      if (o.markDanger) { const ph = (performance.now() % 900) / 900; g.save(); g.strokeStyle = "rgba(255,40,40," + (1 - ph).toFixed(2) + ")"; g.lineWidth = 5; g.beginPath(); g.arc(px, py, 28 + 18 * ph, 0, 7); g.stroke(); g.restore(); } // 위험!이면 붉은 고리가 퍼짐 / red ring expands when in danger
       hikerBadge(g, px, py, o.mark[0], o.mark[1]);  // 등산객 배지: 작은 산(기울기=경사) 위의 등산객, 빗방울 수=비 / hiker badge: a hiker on a small mountain (tilt = slope), raindrops = rain
-      if (o.markLabel) { g.font = "bold 12px Malgun Gothic,sans-serif"; const tw = g.measureText(o.markLabel).width + 10, bx = Math.max(pad, Math.min(P.w - tw - 4, px - tw / 2)), by = py > 64 ? py - 58 : py + 32; g.fillStyle = "rgba(255,255,255,.93)"; g.strokeStyle = "#2e2420"; g.lineWidth = 1; g.fillRect(bx, by, tw, 20); g.strokeRect(bx, by, tw, 20); g.fillStyle = "#2e2420"; g.fillText(o.markLabel, bx + 5, by + 14); } // 말풍선: 지금 산행자의 상태와 판정임 / speech bubble: current hiker state and verdict
+      if (o.markLabel) { g.font = "bold 12px Malgun Gothic,sans-serif"; const tw = g.measureText(o.markLabel).width + 10, bx = Math.max(pad, Math.min(P.w - tw - 4, px - tw / 2)), by = py > 64 ? py - 58 : py + 32; const lv = o.markLevel || 0, BG = ["rgba(255,255,255,.93)", "#fff3c4", "#ffb74d", (performance.now() % 600 < 300) ? "#d50000" : "#7f0000"], FG = ["#2e2420", "#5d4300", "#3e1a00", "#fff"]; g.fillStyle = BG[lv]; g.strokeStyle = lv === 3 ? "#fff" : "#2e2420"; g.lineWidth = lv === 3 ? 2 : 1; g.fillRect(bx, by, tw, 20); g.strokeRect(bx, by, tw, 20); g.fillStyle = FG[lv]; g.fillText(o.markLabel, bx + 5, by + 14); /* 단계별 말풍선 색(위험!은 깜빡임) / bubble color per level (danger blinks) */ } // 말풍선: 지금 산행자의 상태와 판정임 / speech bubble: current hiker state and verdict
     }
     if (o.corners) { g.font = "bold 11.5px Malgun Gothic,sans-serif"; g.fillStyle = "rgba(46,36,32,.75)"; g.textAlign = "left"; g.fillText("맑고 완만(안전)", pad + 4, 4 + H - 6); g.textAlign = "right"; g.fillText("비 + 급경사(위험)", pad + W - 4, 18); g.fillText("비만 강함", pad + W - 4, 4 + H - 6); g.textAlign = "left"; g.fillText("경사만 급함", pad + 4, 18); } // 네 모서리의 뜻을 적음 / write the meaning of the four corners
     g.fillStyle = "#6d5e55";                        // 축 글씨 색임 / axis text color

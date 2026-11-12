@@ -155,13 +155,11 @@ def main():                                    # 시작점임 / entry point
         httpd.version = a.version              # 첫 화면 버전을 기록함 / record the entry version
         url = f"http://127.0.0.1:{port}/"      # 이 PC 접속 주소임 / address on this PC
         print("=" * 60)                        # 구분선임 / divider line
-        print(f" 산행안전 양자 실험실  버전 {a.version}  (전체: {', '.join(vs)})")   # 안내임 / notice
-        print(f" 이 PC  : {url}")              # 이 PC 주소를 알림 / show this PC's address
-        for v in vs:                           # 버전마다 / for each version
-            print(f"   {v} : http://127.0.0.1:{port}{entry(v)}")   # 버전별 주소를 알림 / show the address per version
+        print(f" 산행안전 양자 실험실 {a.version}  / Hiking-safety quantum AI lab {a.version}")   # 안내임 / notice
+        print(f" 주소 / URL : {url}")           # 핵심 주소 하나만 알림(지난 버전 주소는 생략) / show only the key address (older versions omitted)
         if a.lan:                              # LAN 허용이면 / if LAN is allowed
             print(f" 같은 와이파이 기기: http://{lan_ip()}:{port}/  (Windows 방화벽 허용 필요)")   # LAN 주소를 알림 / show the LAN address
-        print(" 끝내려면 이 창에서 Ctrl+C")      # 종료 방법을 알림 / show how to quit
+        print(" 끝내려면 이 창에서 Ctrl+C / press Ctrl+C to stop")      # 종료 방법을 알림 / show how to quit
         print("=" * 60)                        # 구분선임 / divider line
         if not getattr(a, "no_autopush", False):   # GitHub 자동 저장(연결된 경우) / automatic GitHub save when connected
             def _autopush():                    # 10분마다 바뀐 것을 GitHub로 올림 / push changes every 10 minutes
@@ -172,7 +170,7 @@ def main():                                    # 시작점임 / entry point
                     except Exception as e: print("auto_push:", e)   # 오류는 알리고 계속 / report and continue
                     time.sleep(600)             # 10분 쉼 / wait 10 minutes
             threading.Thread(target=_autopush, daemon=True).start()   # 뒤에서 시작 / start in background
-            print(" GitHub 자동 저장: 10분마다(연결된 경우), 기록 logs/auto_push.log / auto GitHub save every 10 min")   # 안내 / notice
+            print(" GitHub 자동 저장: 10분마다 / auto-save to GitHub every 10 min")   # 안내 / notice
         if not a.no_browser:                   # 자동 열기가 켜져 있으면 / if auto-open is on
             opened = False                     # Edge로 열었는지 기록함 / records whether Edge opened it
             if a.browser == "edge" and os.name == "nt":   # Windows에서 Edge를 원하면 / if Edge is wanted on Windows

@@ -37,7 +37,7 @@
     const lvl = function (x) { return x > .7 ? "매우 높음" : x > .4 ? "높음" : x > .15 ? "조금" : "낮음"; }; // 수준 말로 바꾸기임 / turn a level into words
     const qa = s.qf >= run.thrQ, la = s.lin >= run.thrL; // 두 AI 경보 여부임 / whether each AI alarms
     const sit = names[0] + " " + lvl(a) + ", " + names[1] + " " + lvl(b) + (s.rain > .5 ? " (비 " + s.rain.toFixed(1) + " mm/h)" : "") + (s.T < 3 ? " (기온 " + s.T.toFixed(1) + "°C)" : ""); // 상황 문장임 / situation sentence
-    const qx = names[0] + " 큐비트 " + Math.round(Math.pow(Math.sin(Math.PI * a / 2), 2) * 100) + "%, " + names[1] + " 큐비트 " + Math.round(Math.pow(Math.sin(Math.PI * b / 2), 2) * 100) + "% 기울어짐 → CNOT 뒤 겹침 점수 " + z.toFixed(2); // 양자 표현 문장임 / quantum-view sentence
+    const qxRest = names[0] + " 큐비트 " + Math.round(Math.pow(Math.sin(Math.PI * a / 2), 2) * 100) + "%, " + names[1] + " 큐비트 " + Math.round(Math.pow(Math.sin(Math.PI * b / 2), 2) * 100) + "% 기울어짐 → CNOT 뒤 겹침 점수 " + z.toFixed(2); const qxEN = QP.I18N && QP.I18N.lang() === "en"; const qx = (qxEN ? "pair " : "쌍 ") + "①②③④⑤⑥"[k] + ": " + (qxEN ? QP.I18N.tr(qxRest) : qxRest); // 쌍 번호 + 양자 표현 문장 / pair number + quantum-view sentence
     const both = a > .45 && b > .45, one = (a > .45) !== (b > .45); // 둘 다 높은지, 한쪽만 높은지임 / whether both are high or only one
     const mean = both ? "두 위험이 동시에 커져 ‘" + MEAN[k][0] + "’ 가능성이 따로일 때보다 크게 늘어나는 순간" : one ? "한 가지 위험만 커진 상태로, 아직 겹침은 아님" : "겹친 위험이 거의 없는 평온한 구간"; // 의미 문장임 / meaning sentence
     const eff = qa && !la ? "양자 특징 AI만 먼저 경보 → 일반 AI보다 앞서 알림(조기 확보)" : qa && la ? "두 AI 모두 경보" : !qa && la ? "일반 AI만 경보(양자 특징 AI는 겹침이 아니라고 판단)" : "두 AI 모두 조용(정상 범위)"; // AI 판단 문장임 / AI decision sentence
@@ -64,7 +64,7 @@
       '<label class="tog"><input type="checkbox" id="mV" checked> 사건 음성</label><span id="mClock" class="clock"></span></div>' +
       '<div class="card mtn"><canvas id="mCv"></canvas></div>' +
       '<div class="card stat" id="mStat"></div>' +
-      '<div class="card qub"><canvas id="mQ"></canvas></div>' +
+      '<div class="card qub"><canvas id="mQ"></canvas><div id="mQx" class="qx6"></div></div>' +
       '<div class="card nn"><canvas id="mN"></canvas></div>' +
       '<div class="card ch1"><canvas id="mSig"></canvas></div>' +
       '<div class="card ch2"><canvas id="mSc"></canvas></div></div>';
@@ -149,13 +149,19 @@
       g.fillStyle = "#1d2a4d"; g.font = "10px sans-serif"; g.textAlign = "left"; g.fillText(c.start + "m", 2, bot); g.fillText(c.summit + "m", 2, top + 4); g.fillText((c.L / 1000).toFixed(1) + " km(편도)", W - 70, bot + 14); // 축 글씨임 / axis labels
     }
     function drawQubits(i) {                        // 6개 신호 쌍 회로를 그림 / draws the six signal-pair circuits
-      const P = A.canvas(qv, qv.parentNode.clientHeight - 16), g = P.g, s = run.steps[i]; // 캔버스와 현재 상태임 / canvas and current state
+      const qx = $("#mQx", el), P = A.canvas(qv, Math.max(90, qv.parentNode.clientHeight - 16 - (qx ? qx.offsetHeight + 4 : 0))), g = P.g, s = run.steps[i]; // 캔버스와 현재 상태임(아래 설명 줄 높이만큼 뺌) / canvas and current state (minus the explanation row)
+      const EN = QP.I18N && QP.I18N.lang() === "en", tr = function (x) { return EN ? QP.I18N.tr(x) : x; }, NUM = "①②③④⑤⑥"; // 쌍 번호 / pair numbers
       let best = 0, bv = -1; D.pairs.forEach(function (p, k) { const v = s.sig[p[0]] * s.sig[p[1]]; if (v > bv) { bv = v; best = k; } }); // 가장 함께 높은 쌍임 / pair highest together
       const w = (P.w - 10) / 6;                     // 위젯 하나 폭임 / width of one widget
       D.pairs.forEach(function (p, k) {             // 쌍마다 / for each pair
         shownA[k] = A.lerp(shownA[k], s.sig[p[0]], .12); shownB[k] = A.lerp(shownB[k], s.sig[p[1]], .12); // 다이얼이 부드럽게 회전하도록 값을 천천히 따라감 / values follow slowly so the dials turn smoothly
-        A.pair(g, 4 + k * w, 2, w - 6, P.h - 4, shownA[k], shownB[k], PAIRN[k], k === best && bv > .1); // 회로 위젯을 그림 / draw the circuit widget
+        A.pair(g, 4 + k * w, 2, w - 6, P.h - 4, shownA[k], shownB[k], [NUM[k] + " " + tr(PAIRN[k][0]), tr(PAIRN[k][1])], k === best && bv > .1); // 회로 위젯을 그림(번호를 붙여 아래 설명과 연결) / draw the circuit widget (numbered to link with the explanation below)
       });
+      if (qx && (frame % 15 === 0 || !qx.childElementCount)) {   // 아래 설명 줄: 같은 번호로 각 쌍의 뜻과 지금 값을 구체적으로 보임 / explanation row: each pair's meaning and current values, same numbers
+        qx.innerHTML = D.pairs.map(function (p, k) { const a = s.sig[p[0]], b = s.sig[p[1]], z = M.pairAnalytic(a, b), hi = a > .45 && b > .45, one = (a > .45) !== (b > .45);
+          const st = hi ? (EN ? "both high: overlapping risk" : "둘 다 높음: 겹친 위험") : one ? (EN ? "one high: not overlapping yet" : "한쪽만 높음: 아직 겹침 아님") : (EN ? "both low: calm" : "둘 다 낮음: 평온");
+          return '<div class="qx' + (hi ? " hot" : one ? " warm" : "") + (k === best && bv > .1 ? " best" : "") + '"><b>' + NUM[k] + " " + tr(PAIRN[k][0]) + " × " + tr(PAIRN[k][1]) + '</b><span class="qr">' + (EN ? QP.I18N.tr(MEAN[k][0]) : MEAN[k][0]) + '</span><span>' + tr(PAIRN[k][0]) + " " + Math.round(a * 100) + "%, " + tr(PAIRN[k][1]) + " " + Math.round(b * 100) + "% → ⟨Z⟩ " + z.toFixed(2) + "</span><em>" + st + "</em></div>"; }).join("");
+      }
     }
     function drawNet(i) {                           // DNN 안의 신호 흐름을 그림 / draws the signal flow inside the DNN
       const P = A.canvas(nv, nv.parentNode.clientHeight - 16), g = P.g; // 캔버스임 / canvas
@@ -239,7 +245,9 @@
       (function () { let b0 = -1, bi = 0; for (let k = 0; k <= c.n; k++) { const on = k < c.n && c.grades[k] > .34; if (on && b0 < 0) b0 = k; if (!on && b0 >= 0) { let mx = 0; g.fillStyle = "rgba(198,40,40,.22)"; g.beginPath(); g.moveTo(X(b0 / c.n * c.L), P.h - 20); for (let j = b0; j <= k; j++) { g.lineTo(X(j / c.n * c.L), Y(c.elev[j])); if (j < k) mx = Math.max(mx, c.grades[j]); } g.lineTo(X(k / c.n * c.L), P.h - 20); g.fill(); g.strokeStyle = "#c62828"; g.lineWidth = 5; g.beginPath(); for (let j = b0; j <= k; j++) g.lineTo(X(j / c.n * c.L), Y(c.elev[j])); g.stroke(); const mk = (b0 + k) / 2 / c.n * c.L, t = "⚠ 급경사 " + Math.round(mx * 100) + "%"; g.font = "bold 11.5px Malgun Gothic,sans-serif"; const tw = g.measureText(t).width + 8, lx = Math.max(2, Math.min(P.w - tw - 2, X(mk) + 8)), ly = Y(G.elevAt(c, mk)) + 18 + (bi++ % 2) * 16; g.fillStyle = "#c62828"; g.fillRect(lx, ly - 12, tw, 16); g.fillStyle = "#fff"; g.textAlign = "left"; g.fillText(t, lx + 4, ly); b0 = -1; } } })(); // 급경사 구간을 붉은 면, 굵은 선, 표지로 강조함 / highlight steep sections with red fill, thick lines and labels
       const st = run.steps, half = st.findIndex(function (s) { return !s.up; }); // 오르는 구간 끝임 / end of the climbing part
       for (let k = 0; k < half; k += 3) { const s = st[k]; g.fillStyle = s.qf >= run.thrQ ? "#6e4c82" : s.lin >= run.thrL ? "#4d6b8c" : "rgba(0,0,0,.08)"; g.fillRect(X(s.x), Y(s.elev) - 4, 3, 4); } // 오르막에서 경보 위치를 색으로 표시함 / mark alarm positions on the climb by color
-      c.pois.forEach(function (q) { g.fillStyle = q.type === "stamp" ? "#ffb500" : "#c76b67"; g.beginPath(); g.arc(X(q.x), Y(G.elevAt(c, q.x)) - 12, 6, 0, 7); g.fill(); g.fillStyle = "#1d2a4d"; g.font = "10px Malgun Gothic,sans-serif"; g.textAlign = "center"; g.fillText(q.name, X(q.x), Y(G.elevAt(c, q.x)) - 22); }); // 위험 지점임 / risk points
+      c.pois.forEach(function (q) { g.fillStyle = q.type === "stamp" ? "#ffb500" : "#c76b67"; g.beginPath(); g.arc(X(q.x), Y(G.elevAt(c, q.x)) - 12, 6, 0, 7); g.fill(); g.fillStyle = "#1d2a4d"; g.font = "10px Malgun Gothic,sans-serif"; g.textAlign = "center"; const py = Y(G.elevAt(c, q.x)), nw = g.measureText(q.name).width, px = Math.min(P.w - nw / 2 - 4, Math.max(nw / 2 + 4, X(q.x))); g.fillText(q.name, px, py - 22); // 오른쪽 끝에서 잘리지 않게 안쪽으로 당김 / pulled inward so it is not clipped at the edge // 지점 이름 / point name
+        const tag = q.type === "stamp" ? "POI 스탬프" : "POI"; g.font = "bold 9px Malgun Gothic,sans-serif"; const tw = g.measureText(tag).width + 8; g.fillStyle = q.type === "stamp" ? "#b07a00" : "#003087"; g.fillRect(px - tw / 2, py - 44, tw, 13); g.fillStyle = "#fff"; g.fillText(tag, px, py - 34.5); }); // 등록된 POI임을 알리는 표지 / tag showing it is a registered POI
+      g.textAlign = "left"; g.font = "11px Malgun Gothic,sans-serif"; g.fillStyle = "#1d2a4d"; g.fillText("POI = iNavi에 등록된 관심 지점(노란 점: 스탬프 인증 POI, 붉은 점: 위험 POI)", 34, 16); // 범례 / legend
       const ev = run.events, ql = ev.filter(function (e) { return e.q >= 0 && e.q <= e.s; }), ll = ev.filter(function (e) { return e.lin >= 0 && e.lin <= e.s; }); // 사건 전에 알린 사건들임 / events warned before they happened
       const avg = function (a, k) { return a.length ? (a.reduce(function (t, e) { return t + (e.s - e[k]) / 6; }, 0) / a.length).toFixed(1) : "-"; }; // 평균 선행 시간(분)임 / mean lead time (min)
       const fa = function (k, thr) { return run.steps.filter(function (s) { return !s.truth && s[k] >= thr; }).length / 6; }; // 위험 아닌데 울린 시간(분)임 / time rung without risk (min)

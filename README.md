@@ -1,5 +1,9 @@
 # 숙명 AGI 산행안전 양자 실험실 (Sookmyung AGI Lab. Quantum AI Hiking-Safety Lab)
 
+- 웹 실험실 / Web lab: https://kaistcs.github.io/safe-quantum-lab/
+- 소스 코드 / Source: https://github.com/kaistcs/safe-quantum-lab
+
+
 Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved.
 행정안전부 재난안전연구개발사업(한국산업기술기획평가원) 「등산로 위험정보 공유를 위한 사용자 참여형 스마트 안전 등산로 플랫폼 및 관리시스템 개발」 과제 결과물입니다.
 
