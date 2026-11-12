@@ -108,7 +108,7 @@
   QP.Pace = {
     last: null,                                     // 마지막으로 맡긴 설명의 표식 / mark of the last narration
     say: function (text) { const P = QP.Pace, av = document.getElementById("autoVoice"), St = QP.State || {};
-      if (!text || !QP.Voice || (av && !av.checked) || St.welcoming) { P.last = { done: true }; return P.last; }
+      if (!text || !QP.Voice || (av && !av.checked && !St.touring) || St.welcoming) { P.last = { done: true }; return P.last; }
       if (!St.touring) { P.last = QP.Voice.speak(text, true); return P.last; }   // 읽는 중이면 끝난 뒤 이어 읽음(끊지 않음) / queued, never cuts
       if (St.hold) { const m = { pending: true }, h0 = St.holdId; P.last = m; (function q() { if (!St.hold || St.holdId !== h0) { m.pending = false; m.done = true; return; } if (QP.Voice.busy()) { setTimeout(q, 400); return; } const r = QP.Voice.speak(text, true, true); m.pending = false; Object.assign(m, r); })(); return m; } // 투어 설명이 끝난 뒤 이어 읽음 / after the tour narration
       P.last = { done: true }; return P.last; },    // 투어 중이고 붙잡지 않은 화면은 투어 설명만 읽음 / otherwise the tour narration only

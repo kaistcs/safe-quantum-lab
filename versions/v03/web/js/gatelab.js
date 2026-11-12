@@ -55,13 +55,23 @@
       if (g === "rs") { st = S.createState(2); hist = []; shots = []; drops = []; title = "처음으로 |00⟩"; why = "두 큐비트를 모두 0(위)으로 되돌렸습니다. 1이 나올 확률은 둘 다 0%입니다."; }
       if (g === "m1") { const p = pr(), r = Math.random(); let k = 0, s = 0; for (; k < 4; k++) { s += p[k]; if (r < s) break; } k = Math.min(3, k); st = S.createState(2); st.re[0] = 0; st.re[k] = 1; flash = 1; drops.push({ k: k, y: 0, v: 0 }); title = "측정 1번 → 결과 " + S.label(k, 2); why = "측정하면 여러 가능성 중 하나(" + S.label(k, 2) + ")로 정해지고, 상태도 그 결과로 무너집니다(측정 후 상태). 얽혀 있었다면 A를 읽는 순간 B도 함께 정해집니다. 다시 측정하면 같은 결과가 나옵니다."; }
       if (g === "m20") { const p = pr(); shots = []; drops = []; for (let n = 0; n < 20; n++) { const r = Math.random(); let k = 0, s = 0; for (; k < 4; k++) { s += p[k]; if (r < s) break; } shots.push(Math.min(3, k)); } title = "측정 20번(같은 준비를 20번 반복)"; const cnt = [0, 0, 0, 0]; shots.forEach(function (k) { cnt[k]++; }); why = "한 번 측정은 하나의 결과만 주므로, 같은 상태를 20번 준비해 측정한 횟수로 확률을 봅니다. 결과 공이 하나씩 떨어집니다. 이번 결과: " + [0, 1, 2, 3].map(function (k) { return S.label(k, 2) + " " + cnt[k] + "번"; }).join(", ") + ". 정확 확률은 " + [0, 1, 2, 3].map(function (k) { return S.label(k, 2) + " " + pct(p[k]); }).join(", ") + "입니다."; }
+      if (QP.I18N && QP.I18N.lang() === "en") {      // 영어 모드 설명 / English explanations
+        const W = { xa: "X swaps the amplitudes of 0 and 1, so arrow A turns half a circle (180°) up and down.", xb: "It swaps the 0 and 1 amplitudes of B, so arrow B turns half a circle.",
+          ry: "RY(θ) turns the arrow by θ. The chance of 1 is sin²(angle/2), so each 45° turn raises the probability along an S-shaped curve. This gate is how hiking signals from 0 to 1 are fed in as an angle of π × signal.",
+          h: "H turns |0⟩ into (|0⟩ + |1⟩)/√2. Both amplitudes are 0.707, and squared they give 50% and 50%. On this screen, with real amplitudes only, it gives the same result as RY(90°) applied to 0.",
+          cx: "B is flipped only in the branch where A is 1. If A holds 0 and 1 at once, the results pair up as 'A=0 then B=0, A=1 then B=1' and can no longer be described separately. This is entanglement, shown by a thick purple link.",
+          rs: "Both qubits were returned to 0 (up). The chance of 1 is 0% for both." };
+        if (W[g]) why = W[g];
+        if (g === "m1") why = "Measuring fixes one of the possibilities, and the state collapses to that result. If the qubits were entangled, reading A fixes B at the same moment. Measuring again gives the same result.";
+        if (g === "m20") { const p2 = pr(), c2 = [0, 0, 0, 0]; drops.forEach(function (d) { c2[d.k]++; }); shots.forEach(function (k2) { c2[k2]++; }); why = "One measurement gives only one result, so we prepare the same state 20 times and count. The result balls drop one by one. This run: " + [0, 1, 2, 3].map(function (k2) { return S.label(k2, 2) + " " + c2[k2] + " times"; }).join(", ") + ". Exact probabilities: " + [0, 1, 2, 3].map(function (k2) { return S.label(k2, 2) + " " + pct(p2[k2]); }).join(", ") + "."; }
+      }
       if (g !== "rs" && g !== "m20") hist.push(g); if (hist.length > 12) hist.shift();
       const a0 = snap();
       trail.push({ q: "a", from: fromA, to: ang(a0.a), life: 1 }); trail.push({ q: "b", from: fromB, to: ang(a0.b), life: 1 }); dot = 0;
       what = "A의 1 확률 " + pct(b0.a) + " → <b>" + pct(a0.a) + "</b>, B의 1 확률 " + pct(b0.b) + " → <b>" + pct(a0.b) + "</b>, 얽힘 정도 C " + b0.c.toFixed(2) + " → <b>" + a0.c.toFixed(2) + "</b>, 결과 확률(00, 10, 01, 11) = " + a0.p.map(pct).join(", ");
       $("#glT").textContent = title;
       $("#glX").innerHTML = "<p><b>1. 무엇을 했나</b> " + title + "</p><p><b>2. 무엇이 바뀌었나</b> " + what + "</p><p><b>3. 왜 그렇게 되나</b> " + why + "</p>";
-      if (!quiet) QP.Pace.say(title + ". " + why.replace(/[|⟩⟨]/g, " "));
+      if (!quiet) QP.Voice.speak(title + ". " + why.replace(/[|⟩⟨]/g, " "), true, true);   // 카드를 직접 누르면 바로 읽음 / direct click reads at once
       return { title: title, why: why };
     }
     // 자동 수업 10단계 / automatic 10-step lesson
@@ -85,7 +95,7 @@
       if (!chain && k === 8) { /* 측정 1번은 얽힘 상태에서 해야 의미가 있음 */ }
       LESSON[k][1]();
       $("#glT").textContent = NUM[k] + " " + LESSON[k][0] + " (" + (k + 1) + "/" + LESSON.length + ")";
-      QP.Pace.say(LESSON[k][2]);
+      QP.Pace.say((QP.I18N && QP.I18N.lang() === "en" && QP.NarrEN) ? QP.NarrEN.lesson[k] : LESSON[k][2]);
       if (chain) { auto = { k: k }; QP.Pace.wait(k === 7 ? 9000 : 7000, function () { if (auto && auto.k === k) { if (k + 1 < LESSON.length) run(k + 1, true); else { auto = null; QP.Pace.hold(false); $("#glAuto").textContent = "▶ 자동 수업 다시 보기"; if (opt.onDone) setTimeout(opt.onDone, 1500); } } }, function () { return alive && !!auto; }); }
     }
     function stopAuto() { auto = null; QP.Pace.hold(false); $("#glAuto").textContent = "▶ 자동 수업 다시 보기"; }

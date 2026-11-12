@@ -69,7 +69,7 @@
       '<div class="card ch1"><canvas id="mSig"></canvas></div>' +
       '<div class="card ch2"><canvas id="mSc"></canvas></div></div>';
     ["mM", "mP", "mW", "mS"].forEach(function (id, k) { $("#" + id, el).value = [cfg.mountain, cfg.persona, cfg.weather, cfg.speed][k]; }); // 현재 설정을 선택 상자에 표시함 / show the current settings in the selects
-    $("#mF", el).checked = cfg.fall;                // 낙상 체크 상태임 / fall checkbox state
+    $("#mF", el).checked = cfg.fall; { const av = document.getElementById("autoVoice"); $("#mV", el).checked = !!(QP.State.touring || (av && av.checked)); } // 사건 음성은 자동 해설 설정을 따름(기본 끔, 전체 안내 중에는 켬) / event voice follows the auto-narration setting                // 낙상 체크 상태임 / fall checkbox state
     let run = runFor(cfg), simT = 0, playing = false, shownA = new Array(6).fill(0), shownB = new Array(6).fill(0), lastI = -1, frame = 0; // 결과, 시뮬 시각, 재생, 다이얼 표시값, 직전 위치임 / result, sim time, playing, dial values, previous position
     let said = {}, log = [], focus = null, focusT = 0, doneHold = false; // 이미 말한 사건, 사건 기록, 지금 설명 중인 지점과 그 시각임 / already-announced events, event log, point being explained and its time
     function flash(level) {                         // 위험 경보 번쩍임(화면 테두리 + 관제실 깜빡임 + 경고 띠) / risk alarm flash (screen border + control-room blink + warning band)
@@ -83,6 +83,15 @@
     let gq = [], gcur = null, gno = 0;             // 설명 대기열, 지금 설명, 설명 번호 / queue, current item, step number
     const GN = "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳";
     function kindText(key, text) {                  // 사건 종류별로 친절한 설명을 덧붙임 / add a kind, detailed explanation per kind
+      if (QP.I18N && QP.I18N.lang() === "en") {      // 영어 모드: 고정 문장은 영어로, 이름은 사전으로 / English mode
+        const T = QP.I18N.tr, mm = /^(.*?)까지 (\d+)미터/.exec(text), i0 = Math.min(run.steps.length - 1, Math.floor(simT / 10)), m0 = meaning(run.steps[i0], run);
+        if (/^near/.test(key) && mm) return T(mm[1]) + " is " + mm[2] + " meters ahead. Detection starts. Among the qubit dials below, the pair for this risk starts to tilt toward 1, and the box at the top right explains what it means. Advice: " + T(m0.act);
+        if (key === "stamp") return "We reached the summit and stamped the passport. The signals from the earlier risk points have all gone down. Now the descent begins. Going down, knee strain and slipping risk increase, so please watch how the signals change when Snowflake passes the same points again.";
+        if (/^ev/.test(key)) return "A risk event has started. The pink band is the actual risk interval, and the triangles above mark when each AI first raised an alarm. Advice: " + T(m0.act);
+        if (/^q/.test(key)) return "The quantum-feature AI raised an alarm. It read, through the overlap score, two signals rising together. Advice: " + T(m0.act);
+        if (key === "done") return text.replace(/^.*$/, function () { const evs = run.events, qe = evs.filter(function (e) { return e.q >= 0 && e.q <= e.s; }).length, le = evs.filter(function (e) { return e.lin >= 0 && e.lin <= e.s; }).length; return "The descent is complete. There were " + evs.length + " risk events on this hike; the quantum-feature AI warned about " + qe + " of them in advance and the classical AI about " + le + ". The triangles in the lower right chart mark when each AI first raised an alarm. The stamp has been saved."; });
+        return T(text);
+      }
       const i = Math.min(run.steps.length - 1, Math.floor(simT / 10)), st0 = run.steps[i], mn = meaning(st0, run);
       if (/^near/.test(key)) return text + " 지금 상황은 " + mn.sit + "입니다. 아래 큐비트 다이얼 가운데 이 위험과 관련된 쌍이 1 쪽으로 기울기 시작하고, 오른쪽 위 상자에 그 의미가 나타납니다. " + mn.eff + ". 권고 드립니다. " + mn.act;
       if (key === "stamp") return text + " 여기까지 오르는 동안 지난 위험 지점들의 신호는 모두 내려갔습니다. 이제 하산을 시작합니다. 내려갈 때는 무릎 부담과 미끄러짐 위험이 커지므로, 눈송이가 같은 지점을 다시 지날 때 신호가 어떻게 바뀌는지 함께 보시기 바랍니다.";
@@ -235,7 +244,7 @@
       if (++frame % 6 === 0 || i !== lastI) { if (frame % 6 === 0) { drawNet(i); drawCharts(i); drawStat(i); } if (i !== lastI) events(i); lastI = i; } // 나머지는 6프레임마다 그림 / the rest every 6 frames
       $("#mClock", el).textContent = hhmm(run.steps[i].min) + ", " + Math.round(simT / 60) + "분 경과";
     });
-    $("#mPlay", el).onclick = function () { QP.Voice.wake(); if (simT >= (run.steps.length - 1) * 10) reset(); playing = !playing; this.textContent = playing ? "❚❚ 멈춤" : "▶ 계속"; QP.Pace.hold(playing); if (playing && simT < 1 && $("#mV", el).checked) { gno = 0; gq.push({ text: run.course.name + " " + run.course.peak + " 코스를 " + G.personas[cfg.persona].name.split(" ")[0] + "과 함께 출발합니다. 날씨는 " + G.weathers[cfg.weather].name + "입니다. 눈송이가 정상까지 올랐다가 하산을 마칠 때까지, 위험 지점이 나타날 때마다 잠시 멈춰 무엇이 바뀌었는지 차례로 설명해 드립니다. 왼쪽 산 그림의 노란 원은 감지 레이더이고, 아래 다이얼은 위험 신호를 큐비트 회전으로 바꾼 모습입니다." }); } }; // 출발, 멈춤 버튼(출발하면 끝까지 단계 안내, 전체 안내도 기다림) / start/stop (guided to the end; the tour waits)
+    $("#mPlay", el).onclick = function () { QP.Voice.wake(); if (simT >= (run.steps.length - 1) * 10) reset(); playing = !playing; this.textContent = playing ? "❚❚ 멈춤" : "▶ 계속"; QP.Pace.hold(playing); if (playing && simT < 1 && $("#mV", el).checked) { gno = 0; gq.push({ text: QP.I18N && QP.I18N.lang() === "en" ? "We set off on the " + QP.I18N.tr(run.course.name) + " course. Until Snowflake reaches the summit and completes the descent, it will pause at every risk point and explain in order what has changed. The yellow circle on the mountain is the detection radar, and the dials below show the risk signals turned into qubit rotations." : run.course.name + " " + run.course.peak + " 코스를 " + G.personas[cfg.persona].name.split(" ")[0] + "과 함께 출발합니다. 날씨는 " + G.weathers[cfg.weather].name + "입니다. 눈송이가 정상까지 올랐다가 하산을 마칠 때까지, 위험 지점이 나타날 때마다 잠시 멈춰 무엇이 바뀌었는지 차례로 설명해 드립니다. 왼쪽 산 그림의 노란 원은 감지 레이더이고, 아래 다이얼은 위험 신호를 큐비트 회전으로 바꾼 모습입니다." }); } }; // 출발, 멈춤 버튼(출발하면 끝까지 단계 안내, 전체 안내도 기다림) / start/stop (guided to the end; the tour waits)
     $("#mReset", el).onclick = function () { playing = false; $("#mPlay", el).textContent = "▶ 출발"; reset(); }; // 처음 버튼임 / reset button
     ["mM", "mP", "mW"].forEach(function (id) { $("#" + id, el).onchange = function (e) { cfg[{ mM: "mountain", mP: "persona", mW: "weather" }[id]] = Number(e.target.value); playing = false; $("#mPlay", el).textContent = "▶ 출발"; reset(); }; }); // 설정이 바뀌면 다시 계산함 / recompute when settings change
     $("#mF", el).onchange = function (e) { cfg.fall = e.target.checked; reset(); }; // 낙상 체크임 / fall checkbox
@@ -320,13 +329,14 @@
       g.textAlign = "left"; g.fillStyle = "#1d2a4d"; g.font = "11px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText("가까울수록 큐비트가 1 쪽으로 돌아감 → 아래 회로", 8, 12); // 연결 설명임 / link explanation
     }
     // 눈송이가 입구(0 m)에서 끝(900 m)까지 걸으며 세 지점마다 멈춰 설명함(투어 중에도 끝까지 감) / Snowflake walks 0 → 900 m, stopping at all three points
-    const TALK = [
+    let TALK = [
       "① 출발: 눈송이가 등산로 입구에서 출발합니다. 앞에 위험구역(250 m), 야생동물 신고 지역(520 m), 낙석 구간(760 m)이 차례로 있습니다. 세 지점까지의 거리가 그대로 큐비트 세 개의 회전 각도가 됩니다.",
       "② 위험구역 도착(0 m): 위험구역까지 거리가 0 m가 되어 q0 화살표가 1 쪽으로 완전히 돌아갔습니다. 나머지 두 지점은 아직 멀어 q1, q2는 0 쪽에 머뭅니다. 첫 번째 CNOT이 이 상태를 보조 큐비트 q3에 모으고, 지금 판단 칸이 위험구역 안내로 바뀝니다.",
       "③ 야생동물 신고 지역 도착(0 m): 회로가 하는 일은 위험구역과 같아 반복처럼 보이지만, 이번에는 q1이 돌아가고 두 번째 CNOT이 쓰입니다. 위험구역은 이미 지나 거리가 다시 멀어졌으므로 q0은 0 쪽으로 돌아왔습니다. 감지 기준이 180 m로 가장 길어 더 멀리서부터 화살표가 기울기 시작한 점이 다릅니다.",
       "④ 낙석 구간 도착(0 m): 같은 원리의 세 번째 반복이며, 이번에는 q2와 세 번째 CNOT입니다. 낙석은 감지 기준이 100 m로 가장 짧아 가까이 와서야 화살표가 급하게 돕니다. 낙석은 위에서 떨어지는 위험이라 머무르지 말고 빨리 지나가라는 안내가 맞습니다.",
       "⑤ 끝 지점 도착: 세 위험 지점을 모두 지나 거리가 멀어졌으므로 q0, q1, q2가 모두 0 쪽으로 돌아왔고 경보가 꺼졌습니다. 정리하면 같은 회로가 세 번 반복되지만, 어느 큐비트가 도는지, 몇 m 앞부터 반응하는지, 현장 안내가 무엇인지가 지점마다 다릅니다."
     ];
+    if (QP.I18N && QP.I18N.lang() === "en" && QP.NarrEN) TALK = QP.NarrEN.talk;   // 영어 모드 해설 / English narration
     let zT0 = 0;
     const ZN2 = ["위험구역", "야생동물 신고 지역", "낙석 구간"];
     function cap(k) { const c = $("#zCap", el); if (c) { c.innerHTML = TALK[k]; c.className = "zcap on"; } }

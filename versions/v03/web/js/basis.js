@@ -48,7 +48,7 @@
     e.stopPropagation(); const t = TERMS[b.dataset.term]; if (!t) return; // 용어 설명을 찾음 / find the term explanation
     const old = document.querySelector(".info-pop"); if (old) old.remove(); // 이전 창을 닫음 / close the previous popup
     const pop = document.createElement("div"); pop.className = "info-pop"; pop.innerHTML = "<b>" + b.dataset.term + "</b><p>" + t[0] + "</p><p class='small'>" + t[1] + "</p><button class='ghost'>🔊 읽기</button>"; // 설명 창을 만듦 / create the popup
-    pop.querySelector("button").onclick = function () { QP.Voice.speak(b.dataset.term + ". " + t[0] + ". " + t[1], true); }; // 읽기 버튼임 / read button
+    pop.querySelector("button").onclick = function () { QP.Voice.speak(b.dataset.term + ". " + t[0] + ". " + t[1], true, true); }; // 읽기 버튼임(직접 누름) / read button
     document.body.appendChild(pop); const r = b.getBoundingClientRect(); pop.style.left = Math.min(window.innerWidth - 330, r.left) + "px"; pop.style.top = Math.min(window.innerHeight - 200, r.bottom + 6) + "px"; // 버튼 아래에 띄움 / show it below the button
   }, true);
   QP.Basis = { box: box, attachReaders: attachReaders, info: info, desc: desc, TERMS: TERMS }; // 공개함 / make public

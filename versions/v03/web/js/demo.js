@@ -142,11 +142,11 @@
     function step(k) {
       if (!alive()) return;
       if (k >= L.length) { clear(); QP.Pace.hold(false); return; }
-      const s = L[k], e = s.sel ? el.querySelector(s.sel) : null;
+      const s = L[k], e = s.sel ? el.querySelector(s.sel) : null, dk = S[key] ? key : String(key).split("-")[0], txt = (QP.I18N && QP.I18N.lang() === "en" && QP.NarrEN) && QP.NarrEN.demo[dk] && QP.NarrEN.demo[dk][k] || s.t;   // 영어 모드면 영어 해설 / English narration in English mode
       try { if (s.act) s.act(el); } catch (x) { }
-      if (e) badge(e, k, L.length, s.t);
+      if (e) badge(e, k, L.length, txt);
       const av = document.getElementById("autoVoice");
-      QP.Pace.last = av && !av.checked ? { done: true } : QP.Voice.speak(s.t, true);   // 읽는 중이면 끝난 뒤 이어 읽음(끊지 않음) / queued, never cuts
+      QP.Pace.last = av && !av.checked && !QP.State.touring ? { done: true } : QP.Voice.speak(txt, true);   // 읽는 중이면 끝난 뒤 이어 읽음(끊지 않음) / queued, never cuts
       QP.Pace.wait(s.min || 6500, function () { step(k + 1); }, alive);
     }
   }

@@ -129,24 +129,31 @@
     return WX(w.code) + ", <b>" + (w.t != null ? w.t.toFixed(1) : "?") + "°C</b>(체감 " + (w.at != null ? w.at.toFixed(0) : "?") + "°C), 바람 " + w.wind.toFixed(1) + "m/s, 강수 " + w.p.toFixed(1) + "mm, 습도 " + (w.rh != null ? w.rh : "?") + "%, 일몰 " + hm(w.sunset);
   }
   function why(j) { const a = j.stop.concat(j.why); return a.length ? a.join(", ") : "감점 요인 없음"; }
+  // 영어 모드: 박스, 띠, 패널 글을 영어로 바꿈(긴 말부터 바꿔 겹침 방지) / English mode: translate box, band and panel text, longest phrases first
+  let PHR = null;
+  function toEN(h) {
+    if (!(QP.I18N && QP.I18N.lang() === "en" && QP.NarrEN)) return h;
+    if (!PHR) { const N = QP.NarrEN.names || {}; PHR = Object.keys(N).map(function (k) { return [k, N[k]]; }).concat(QP.NarrEN.wxPhrases || []).sort(function (a, b) { return b[0].length - a[0].length; }); }
+    PHR.forEach(function (p) { if (h.indexOf(p[0]) >= 0) h = h.split(p[0]).join(p[1]); }); return h;
+  }
   function render() {
     const box = document.getElementById("wxBox"), tag = document.getElementById("wxTag");
     if (!st.data) {
       const msg = st.err || "100대 명산 날씨 불러오는 중…";
-      if (box) box.innerHTML = '<div class="wxb-h">⛰ 100대 명산 실시간 산행 가능성</div><div class="wxb-l">' + msg + "</div>";
-      if (tag) { tag.className = "wxtag"; tag.innerHTML = '<span class="wxh">⛰ 지금 명산 날씨</span> ' + msg; }
+      if (box) box.innerHTML = toEN('<div class="wxb-h">⛰ 100대 명산 실시간 산행 가능성</div><div class="wxb-l">' + msg + "</div>");
+      if (tag) { tag.className = "wxtag"; tag.innerHTML = toEN('<span class="wxh">⛰ 지금 명산 날씨</span> ' + msg); }
       return;
     }
     const n = st.data.length, x = st.data[((st.i % n) + n) % n];
     if (box) {
       box.className = "wxbox wxl" + x.jn.lv;
-      box.innerHTML = '<div class="wxb-h"><span class="wxb-t">⛰ 100대 명산 산행 가능성 <small>' + (st.i % n + 1) + "/" + n + ", " + hm(st.at) + ' 기준</small></span><span class="wxb-l">' + line1(x) + '</span><span class="wxb-btn"><button data-a="prev" title="앞 산">◀</button><button data-a="next" title="다음 산">▶</button><button data-a="list" title="100곳 전체와 권역별 요약 펼치기">☰ 전체 100곳</button></span></div>' +
+      box.innerHTML = toEN('<div class="wxb-h"><span class="wxb-t">⛰ 100대 명산 산행 가능성 <small>' + (st.i % n + 1) + "/" + n + ", " + hm(st.at) + ' 기준</small></span><span class="wxb-l">' + line1(x) + '</span><span class="wxb-btn"><button data-a="prev" title="앞 산">◀</button><button data-a="next" title="다음 산">▶</button><button data-a="list" title="100곳 전체와 권역별 요약 펼치기">☰ 전체 100곳</button></span></div>' +
         '<div class="wxb-l">' + line2(x) + "</div>" +
-        '<div class="wxb-l">' + chip(x.jn, "① 지금 출발") + ' <small>' + why(x.jn) + "</small> " + chip(x.jt, "② 내일") + " <small>" + why(x.jt) + "</small></div>";
+        '<div class="wxb-l">' + chip(x.jn, "① 지금 출발") + ' <small>' + why(x.jn) + "</small> " + chip(x.jt, "② 내일") + " <small>" + why(x.jt) + "</small></div>");
     }
     if (tag) {
       tag.className = "wxtag " + x.jn.L.k;
-      tag.innerHTML = '<span class="wxh">⛰ 지금 날씨 ' + (st.i % n + 1) + "/" + n + "</span> " + line1(x) + " " + line2(x) + ' | <b class="wxs">' + x.jn.L.t + "</b>(" + why(x.jn) + "), 내일 " + x.jt.L.t + " <small>" + hm(st.at) + " 기준</small>";
+      tag.title = toEN("100대 명산 정상의 지금 날씨, 난이도, 산행 가능성. 클릭하면 다음 산"); tag.innerHTML = toEN('<span class="wxh">⛰ 지금 날씨 ' + (st.i % n + 1) + "/" + n + "</span> " + line1(x) + " " + line2(x) + ' | <b class="wxs">' + x.jn.L.t + "</b>(" + why(x.jn) + "), 내일 " + x.jt.L.t + " <small>" + hm(st.at) + " 기준</small>");
     }
     if (st.open) renderPanel();
   }
@@ -166,7 +173,7 @@
     });
     h += "</table></div>";
     h += '<ol class="wxp-src"><li>목록과 번호: 산림청 「한국의 100대 명산」 전자책, 가나다순 번호</li><li>정상 좌표: Wikidata 각 산 항목 좌표(P625), 2026-11-12 조회(공식 SHP로 교체 가능)</li><li>날씨: Open-Meteo 예보 API, 정상 표고 보정, 30분마다 갱신</li><li>난이도: Naismith 규칙(수평 4km/h, 오르막 600m/h) 추정, 실제 등산로 GPX로 교체 예정</li><li>통제: 기상청 강풍주의보 14m/s, 뇌우, 시간당 10mm 비, 체감 -28°C, 일몰 전 하산 불가</li></ol>';
-    p.innerHTML = h;
+    p.innerHTML = toEN(h);
   }
   function ensure() {                               // 박스, 패널, 띠 칸을 만듦 / create box, panel, and band slot
     const top = document.querySelector(".main>.top");

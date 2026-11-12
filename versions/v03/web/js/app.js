@@ -279,9 +279,10 @@
   const WELCOME = "안녕하세요? 숙명여자대학교 AGI연구실에서 개발 중인 산행안전을 위한 양자 특성 AI 에뮬레이팅 실험실에 오신 것을 환영합니다. 자동 시연을 누르셨으니, 양자의 기본 설명부터 시작해서 실험실에 대해 잘 안내하도록 하겠습니다.";
   function welcomeThen(cb) {
     const wt = TB.token = (TB.token || 0) + 1, t0 = Date.now(), rate = QP.Voice.getRate ? QP.Voice.getRate() : 1;
-    const minDur = 1500 + 105 * WELCOME.length / rate, dl = Date.now() + estimate(WELCOME) + 2000; // 최소 낭독 시간(음성 상태가 잠깐 꺼져 보여도 끊지 않음)과 최대 대기 / minimum reading time and watchdog
-    State.welcoming = true; QP.Voice.speak(WELCOME, true, true); alert0("환영합니다. 인사가 끝나면 양자의 기본 설명(1단계)부터 자동 안내를 시작합니다.");
-    $("tLabel").textContent = "환영 인사 중… 끝나면 1단계부터 시작"; const sb = $("sub"); if (sb) sb.textContent = WELCOME;
+    const WT = (QP.I18N && QP.I18N.lang() === "en" && QP.NarrEN) ? QP.NarrEN.welcome : WELCOME;   // 영어 모드면 영어 환영 인사 / English welcome in English mode
+    const minDur = 1500 + 105 * WT.length / rate, dl = Date.now() + estimate(WT) + 2000; // 최소 낭독 시간(음성 상태가 잠깐 꺼져 보여도 끊지 않음)과 최대 대기 / minimum reading time and watchdog
+    State.welcoming = true; QP.Voice.speak(WT, true, true); alert0("환영합니다. 인사가 끝나면 양자의 기본 설명(1단계)부터 자동 안내를 시작합니다.");
+    $("tLabel").textContent = "환영 인사 중… 끝나면 1단계부터 시작"; const sb = $("sub"); if (sb) sb.textContent = WT;
     let heard = false;
     (function waitW() { if (TB.token !== wt) { State.welcoming = false; return; } const talk = QP.Voice.isActive(); if (talk) heard = true; const el = Date.now() - t0;
       if (el < dl - t0 && (talk || el < minDur || (!heard && el < 4000))) { setTimeout(waitW, 400); return; }

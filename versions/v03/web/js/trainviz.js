@@ -58,12 +58,12 @@
         QP.Pace.wait(7000, next, live);
       },
       function (next) {                             // Ⓓ DNN
-        const e = sec(3, "심층 신경망 22 → 12 → 8 → 6 → 1, 반복마다 가중치가 바뀜", '<div class="tv2w"><canvas id="tvD1"></canvas><div><canvas id="tvD2"></canvas><p id="tvD3" class="small"></p></div></div><p class="small">선 색: 청 = 양의 가중치, 장밋빛 = 음의 가중치, 노랑 = 이번 반복에 크게 바뀐 연결. 같은 씨앗으로 다시 학습하므로 실험실이 실제로 쓰는 신경망과 같은 결과입니다.</p>');
+        const e = sec(3, "심층 신경망 22 → 12 → 8 → 6 → 1, 반복마다 가중치가 바뀜", '<div class="tv2w"><canvas id="tvD1"></canvas><div><canvas id="tvD2"></canvas><p id="tvD3" class="small"></p></div></div><p class="small">선 색: 청 = 양의 가중치, 장밋빛 = 음의 가중치, 초록 = 이번 반복에 크게 바뀐 연결. 같은 씨앗으로 다시 학습하므로 실험실이 실제로 쓰는 신경망과 같은 결과입니다.</p>');
         const DN = QP.DNN; DN.method = "quantum"; DN.reset("quantum"); DN.setData(tr, te); const lin = M.mlpCreate(16, 10, 5), linRows = M.mlpRows(tr, "linear"); let ep = 0;
         const draw = function () { const c = document.getElementById("tvD1"); if (!c) return; const P = canvas(c, 330), g = P.g, m = DN.model; A.deepNet(g, m, { x0: 130, x1: P.w - 40, y0: 14, y1: P.h - 24, labels: NM, deltas: m.deltas }); g.fillStyle = "#1d2a4d"; g.font = "bold 13px " + FONT; g.textAlign = "left"; g.fillText("반복 " + ep + " / 25", 8, P.h - 6);
           QP.Charts.line(document.getElementById("tvD2"), [{ values: m.loss.length ? m.loss : [.7], color: "#a9482a" }, { values: m.acc.length ? m.acc : [.5], color: "#003087" }], { height: 200, min: 0, max: 1, xLabel: "반복 → 주황 손실, 청 학습 정확도" }); };
         draw(); const tick = function () { if (!alive) return; if (ep >= 25) { const ta = DN.testAcc(); let ok = 0, tp = 0, P2 = 0; const lt = M.mlpRows(te, "linear"); lt.forEach(function (r) { const o = M.mlpForward(lin, r.f).o; if ((o >= .5 ? 1 : 0) === r.label) ok++; if (r.label) { P2++; if (o >= .5) tp++; } }); document.getElementById("tvD3").innerHTML = "시험 결과(0.5 기준): <b style='color:" + CQ + "'>양자 특징 DNN 정확도 " + pct(ta.acc) + ", 탐지율 " + pct(ta.recall) + "</b>, <b style='color:" + CL + "'>일반 DNN(입력 16개) 정확도 " + pct(ok / lt.length) + ", 탐지율 " + pct(tp / Math.max(1, P2)) + "</b>"; QP.Pace.wait(4000, next, live); return; } DN.step(); M.mlpEpoch(lin, linRows, .3); ep++; draw(); setTimeout(tick, 450); };
-        QP.Pace.say("네 번째는 심층 신경망 학습입니다. 입력 스물두 개가 은닉층 세 개를 지나 위험 점수가 됩니다. 반복할 때마다 역전파로 가중치를 고치며, 노란 선이 이번 반복에 크게 바뀐 연결입니다. 비교를 위해 입력 열여섯 개인 일반 신경망도 같은 방식으로 함께 학습합니다.");
+        QP.Pace.say("네 번째는 심층 신경망 학습입니다. 입력 스물두 개가 은닉층 세 개를 지나 위험 점수가 됩니다. 반복할 때마다 역전파로 가중치를 고치며, 초록 선이 이번 반복에 크게 바뀐 연결입니다. 비교를 위해 입력 열여섯 개인 일반 신경망도 같은 방식으로 함께 학습합니다.");
         setTimeout(tick, 1500);
       },
       function (next) {                             // Ⓔ 메타 / meta

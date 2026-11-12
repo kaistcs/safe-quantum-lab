@@ -98,7 +98,9 @@
     if (recent[key] && now - recent[key] < 120000) return true; recent[key] = now; return false; // 2분 안 반복이면 참임 / true if repeated within 2 minutes
   }
   function speak(text, priority, force) {           // 글을 읽음(force=true는 이전 설명을 끊고 새로 읽음, 그 밖에는 읽는 중이면 끝난 뒤 이어 읽음: 설명이 중간에 끊기지 않게 함) / reads text; only force cuts, otherwise it queues after the current speech
-    if (!text || hushed) return DONE;               // 사용자가 종료를 눌러 조용히 하기로 했으면 화면의 자동 해설도 읽지 않음 / quiet when hushed
+    if (!text || hushed) return DONE;
+    if (!force) { const St = QP.State || {}, av = document.getElementById("autoVoice"); if (av && !av.checked && !St.touring && !St.basicsAuto) return DONE; } // 2026-11-13: 자동 해설이 꺼져 있으면(기본) 화면이 저절로 읽지 않음, 전체 자동 안내, 5과 자동 수업, 직접 누른 듣기는 읽음 / silent unless auto narration is on, touring, the 5-lesson class, or a direct request
+    // 사용자가 종료를 눌러 조용히 하기로 했으면 화면의 자동 해설도 읽지 않음 / quiet when hushed
     if (QP.I18N && QP.I18N.lang() === "en") { text = String(QP.I18N.tr(text)).split(/(?<=[.?!])\s+/).filter(function (x) { return !/[가-힣]/.test(x); }).join(" "); if (!text) return DONE; } // 영문 모드면 영어로 바꿔 읽음 / English mode
     if (!force && repeated(text)) { if (!active) setSub(String(text).split(/(?<=[.?!])\s/)[0]); return DONE; } // 같은 말 반복은 소리 없이 자막만 / skip simple repeats
     if (active && !force) {                         // 읽는 중이면 끊지 않고 뒤에 이어 붙임(2026-11-12: 설명이 끝나기 전에 다음 설명으로 넘어가지 않게) / never cut: append after the current speech
