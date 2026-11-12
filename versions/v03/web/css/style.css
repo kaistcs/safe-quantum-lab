@@ -360,3 +360,14 @@ button,select,input,textarea{font-family:inherit}
 .dqxs{margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:5px} .dqxs>p{grid-column:1/-1;margin:2px 0} .dqx{font-size:12px;line-height:1.45;padding:5px 8px;border-radius:6px;display:flex;flex-direction:column;background:#eef6ef;border-left:4px solid #2e7d32} .dqx.ng{background:#fbeeee;border-left-color:#c62828} .dqx b{font-size:12.5px}
 /* 지시봉을 눈송이 위에, 흰 테두리로 또렷하게 / pointer stick above Snowflake with a white halo */
 .stick{z-index:91!important} .stick line{stroke:#c62828!important;stroke-width:5!important;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 1px #fff)} .stick polygon{filter:drop-shadow(0 0 2px #fff)}
+/* 대문: 눈송이 한 명이 만나는 POI 변화판 / home: POI change panel for the one Snowflake */
+.hero2{position:relative} .hpoi{position:absolute;right:96px;bottom:12px;width:min(360px,38%);background:rgba(255,255,255,.95);border-radius:12px;padding:8px 12px;box-shadow:0 6px 18px rgba(0,0,0,.25);font-size:12.5px;border-top:5px solid #ffb500}
+.hpoi .hph{display:flex;justify-content:space-between;align-items:center} .hpoi .hph b{font-size:14.5px;color:#003087} .hpoi p{margin:4px 0;line-height:1.45} .hpoi table{width:100%;border-collapse:collapse} .hpoi td{padding:1px 4px;font-size:12px}
+.hbar{display:inline-block;width:110px;height:10px;background:#eef0f6;border-radius:5px;overflow:hidden;vertical-align:middle} .hbar i{display:block;height:100%}
+.hpoi-m .hpoi-t{opacity:.85} .hpoi-m.past circle{fill:#ffe9a8} .hpoi-m.past .hpoi-t{opacity:.45} .hpoi-m.on circle{fill:#ffb500;stroke:#c62828} .hpoi-m.on .hpoi-t rect{fill:#c62828} .hpoi-m.on .hpoi-t text{fill:#fff}
+.hpoi-m .hpoi-t{display:none} .hpoi-m.on .hpoi-t{display:inline} .hpoi-m.past circle{fill:#ffe9a8} .hpoi-m.on circle{fill:#ffb500;stroke:#c62828} .hpoi-m .hpoi-i{opacity:.75} .hpoi-m.on .hpoi-i{opacity:1;font-size:22px}
+.hpoi-m .hpoi-t,.hpoi-m.on .hpoi-t{display:none!important}
+.pft td,.pft th{font-size:12px;padding:3px 5px;white-space:nowrap} .pft .hbar{width:60px}
+.hpoi .hadv{margin:4px 0 0;font-weight:700;color:#7d2c22}
+/* 전체 안내 칸에 번호 / numbers in the guide cells */
+.tprog{height:22px!important} .tprog i{font-style:normal;font-size:11px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;min-width:18px;line-height:1} .tprog i.cur{color:#00205e} .tprog i.done{color:#00205e}

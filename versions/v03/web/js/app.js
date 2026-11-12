@@ -135,7 +135,7 @@
     howto: [[/셋업|설치/, ".steps-ol li:nth-child(1)"], [/런 배치|포트/, ".steps-ol li:nth-child(2)"], [/엣지|목소리/, ".steps-ol li:nth-child(3)"], [/메뉴|펼쳐/, ".card:nth-child(2) li:nth-child(1)"], [/근거/, ".card:nth-child(2) li:nth-child(4)"]],
     sim: [[/미터 남았|감지를 시작|도착|돌계단|낙석|절벽|야생동물|음영|능선|출발/, ".mtn"], [/양자 특징 AI가 경보|일반 AI는 아직/, ".ch2"], [/위험 사건|먼저 알렸|놓쳤/, ".ch2"], [/지금 .*이에요\. .*순간/, ".meaning"], [/산 그림|눈송이|등산로|움직/, ".mtn"], [/감지 거리|위험 지점|앞쪽/, ".mtn"], [/다이얼|큐비트 회전|씨낫|노란 연결선|겹침 점수/, ".qub"], [/분홍 띠|자두색 선|청색 선|삼각형|점수예요/, ".ch2"], [/그래프/, ".ch1"], [/의미 상자|이 순간|권고/, ".meaning"], [/신경망|DNN/, ".nn"]],
     stamp: [[/여권|스탬프/, ".passport"], [/자두색 점|청색 점|그림/, "#sCv"], [/몇 분|비교/, "#sRes"], [/관제실에서/, "#sGo"]],
-    zone4q: [[/산길|걸어가|거리/, ".z4in"], [/신뢰도|헛경보/, ".zwhy"], [/씨낫|보조 큐비트|한 번에/, ".z4c"], [/안심|통제|갈림길/, "#zAct"]],
+    zone4q: [[/왼쪽 산길/, "#zScene"], [/첫 세 줄/, ".z4c"], [/왼쪽 아래 슬라이더/, "#zq"], [/네 번째 줄/, ".z4c"], [/왜 이것을 측정하나/, ".zwhy"], [/세 개의 씨낫/, ".z4c"], [/열여섯 칸/, ".z4out .card:nth-child(1)"], [/나란히 비교/, ".z4out .card:nth-child(2)"], [/지금 판단/, "#zAct"], [/예시 버튼/, ".z4in .btns"]], // 왼쪽과 오른쪽을 번갈아 가리킴 / alternate between left and right
     kid: [[/탁자|비트|돌고 있는 동전|큐비트/, "#kc"], [/기울/, "#kDial"], [/만 번|점 하나/, "#kGrid"], [/노란 점의 비율|가까워/, "#kConv"], [/산행|비의 세기/, "#kT"]],
     entangle: [[/뒤집|씨낫/, ".ent-stage"], [/같았는지|달랐는지|표/, "#eT"], [/겹침 점수|인공지능은/, ".tint-plum"], [/자동 시연/, "#eAuto"]],
     basics: [[/1과|일과|비트와 큐비트|화살표/, ".bbody canvas"], [/진폭|그림자|제곱/, ".bbody canvas"], [/게이트|엑스|하다마드/, ".bbody .gates"], [/상태벡터|목록/, ".bbody table"], [/회로도|가로선|계기판/, ".bbody canvas"]],
@@ -243,7 +243,7 @@
   let userNav = true;                               // 화면 이동이 사용자 조작인지임 / whether navigation was a user action
   function tourDraw() {                             // 진행 막대를 그림(안내 중이 아니어도 항상 보이고 누를 수 있음) / draws the progress bar (always visible and clickable even when not guiding)
     if (!TB.steps.length) TB.steps = tourSteps();   // 단계 목록을 준비함 / prepare the step list
-    $("tProg").innerHTML = TB.steps.map(function (st, k) { return '<i class="' + (tourOn && k < TB.i ? "done" : tourOn && k === TB.i ? "cur" : "") + '" data-k="' + k + '" title="' + (k + 1) + ". " + st.title + '"></i>'; }).join(""); // 단계마다 칸 하나임 / one cell per step
+    $("tProg").innerHTML = TB.steps.map(function (st, k) { return '<i class="' + (tourOn && k < TB.i ? "done" : tourOn && k === TB.i ? "cur" : "") + '" data-k="' + k + '" title="' + (k + 1) + ". " + st.title + '">' + (k + 1) + '</i>'; }).join(""); /* 칸마다 번호를 써서 찾아 누를 수 있게 함 / number each cell so it can be found and clicked */ // 단계마다 칸 하나임 / one cell per step
     $("tLabel").textContent = tourOn ? (TB.i + 1) + "/" + TB.steps.length + " " + TB.steps[TB.i].title : "칸을 누르면 그 단계부터 자동 안내(" + TB.steps.length + "단계)"; // 현재 단계 이름 또는 안내 문구임 / current step name or hint text
     $("tProg").querySelectorAll("i").forEach(function (c) { c.onclick = function () { QP.Voice.wake(); interacted = true; tourGo(Number(c.dataset.k)); }; }); // 칸을 누르면 언제든 그 단계로 이동함 / clicking a cell moves to that step anytime
     $("tPause").textContent = tourOn && !TB.paused ? "❚❚ 멈춤" : "▶ 재생"; // 멈춤, 재생 버튼 모양임 / pause and play button labels
