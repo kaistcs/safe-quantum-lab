@@ -2566,7 +2566,7 @@ window.QP_I18N_EN = {
     else if (orig.has(n)) { const o = orig.get(n); orig.delete(n); done.delete(n); n.nodeValue = o; } // 한글로 되돌림 / back to Korean
   }
   function attrs(el) {                              // 속성 번역 / attributes
-    ["title", "placeholder", "alt", "aria-label"].forEach(function (a) { const v = el.getAttribute && el.getAttribute(a); if (!v) return; const key = "__ko_" + a; if (lang === "en") { if (KO.test(v)) { el[key] = v; el.setAttribute(a, tr(v)); } } else if (el[key]) { el.setAttribute(a, el[key]); el[key] = null; } });
+    ["title", "placeholder", "alt", "aria-label"].forEach(function (a) { const v = el.getAttribute && el.getAttribute(a); if (!v) return; const key = "__ko_" + a; if (lang === "en") { if (KO.test(v)) { if (el[key + "_t"] === v) return; el[key] = v; const t = tr(v); el[key + "_t"] = t; if (t !== v) el.setAttribute(a, t); } } /* 2026-11-13: 번역이 안 되는 속성을 같은 값으로 다시 쓰면 감시기가 끝없이 되돌아 화면이 멈추던 문제 해결 / fixed an infinite observer loop */ else if (el[key]) { el.setAttribute(a, el[key]); el[key] = null; el[key + "_t"] = null; } });
   }
   function apply(root) {                            // 아래 모든 것을 번역 / translate a subtree
     const r = root || document.body; if (!r) return;
