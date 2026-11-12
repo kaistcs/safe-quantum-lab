@@ -25,6 +25,7 @@
   "use strict";                                     // 엄격 모드를 켬 / turn on strict mode
   const synth = window.speechSynthesis;             // 브라우저 표준 음성 합성기임 / browser standard speech synthesizer
   const prefer = [/SunHi.*Natural/i, /InJoon.*Natural/i, /Hyunsu.*Natural/i, /Aria.*Natural/i, /Jenny.*Natural/i, /Guy.*Natural/i, /Natural/i, /Online/i, /Google/i, /Yuna/i, /Heami/i, /Zira/i]; // 좋은 목소리 우선순위임 / preferred voice order
+  let gen = 0; const DONE = { done: true }; // 설명 표식: 세대 번호(멈출 때마다 증가) / narration marks: generation number
   let paused = false, cur = null, queue = [], idx = 0, active = false, audio = null, rate = 1, chosen = null, alt = 4, pitch = 1.03, log = [], hushed = false, spoken = 0, speaker = "", onSub = null, onState = null, timer = null, ctx = null, keep = null; // 상태 변수임 / state variables
 
   function wake() {                                 // 오디오 장치를 깨워 두는 keep-alive를 시작함 / starts a keep-alive that keeps the audio device awake
@@ -74,7 +75,7 @@
   function setSub(t) { if (onSub) onSub(t); }       // 자막을 표시함 / show the subtitle
   function setState(s) { if (onState) onState(s); } // 상태를 알림 / report the state
   function stop() {                                 // 모든 음성을 멈춤 / stop all speech
-    active = false; queue = []; idx = 0; clearTimeout(timer); // 대기열과 타이머를 비움 / clear the queue and timer
+    gen++; active = false; queue = []; idx = 0; clearTimeout(timer); // 대기열과 타이머를 비움 / clear the queue and timer
     if (audio) { audio.pause(); audio = null; }     // MP3를 멈춤 / stop the MP3
     if (synth) synth.cancel();                      // 합성 음성을 취소함 / cancel synthesized speech
     setSub(""); setState("stopped");                // 자막과 상태를 되돌림 / reset subtitles and state
@@ -96,28 +97,36 @@
     Object.keys(recent).forEach(function (k) { if (now - recent[k] > 120000) delete recent[k]; }); // 오래된 기록을 지움 / remove old records
     if (recent[key] && now - recent[key] < 120000) return true; recent[key] = now; return false; // 2분 안 반복이면 참임 / true if repeated within 2 minutes
   }
-  function speak(text, priority, force) {           // 글을 읽음(priority=true면 지금 읽던 것을 끊음, force=true면 사용자가 직접 요청한 것) / reads text (priority=true cuts current speech, force=true means the user asked directly)
-    if (!text || hushed) return;                    // 사용자가 종료를 눌러 조용히 하기로 했으면 화면의 자동 해설도 읽지 않음 / if the user pressed end to stay quiet, do not read screen auto narration either
-    if (QP.I18N && QP.I18N.lang() === "en") { text = String(QP.I18N.tr(text)).split(/(?<=[.?!])\s+/).filter(function (x) { return !/[가-힣]/.test(x); }).join(" "); if (!text) return; } // 영문 모드면 영어로 바꿔 읽음(번역 없는 문장은 건너뜀) / speak English in English mode
-    if (!force && repeated(text)) { setSub(String(text).split(/(?<=[.?!])\s/)[0]); return; } // 같은 말 반복은 소리 없이 자막만 잠깐 보여 줌                              // 빈 글은 무시함 / ignore empty text
-    if (active && !priority) { queue = queue.concat(split(text)); return; } // 읽는 중이면 뒤에 이어 붙임 / append if already reading
-    stop(); wake(); paused = false; if (alt === 99) spoken = (Math.floor(spoken / 99) + 1) * 99; // 이전 음성을 멈추고 오디오 장치를 깨움(“단계마다 교대”면 새 설명마다 화자를 바꿈) / stop previous speech and wake the audio device ("per topic" switches the speaker for each new explanation)
+  function speak(text, priority, force) {           // 글을 읽음(force=true는 이전 설명을 끊고 새로 읽음, 그 밖에는 읽는 중이면 끝난 뒤 이어 읽음: 설명이 중간에 끊기지 않게 함) / reads text; only force cuts, otherwise it queues after the current speech
+    if (!text || hushed) return DONE;               // 사용자가 종료를 눌러 조용히 하기로 했으면 화면의 자동 해설도 읽지 않음 / quiet when hushed
+    if (QP.I18N && QP.I18N.lang() === "en") { text = String(QP.I18N.tr(text)).split(/(?<=[.?!])\s+/).filter(function (x) { return !/[가-힣]/.test(x); }).join(" "); if (!text) return DONE; } // 영문 모드면 영어로 바꿔 읽음 / English mode
+    if (!force && repeated(text)) { if (!active) setSub(String(text).split(/(?<=[.?!])\s/)[0]); return DONE; } // 같은 말 반복은 소리 없이 자막만 / skip simple repeats
+    if (active && !force) {                         // 읽는 중이면 끊지 않고 뒤에 이어 붙임(2026-11-12: 설명이 끝나기 전에 다음 설명으로 넘어가지 않게) / never cut: append after the current speech
+      const add = split(text); if (queue.length - idx > 30) { return DONE; } // 밀린 설명이 너무 많으면 새 자동 설명은 생략 / skip if the backlog is too long
+      queue = queue.concat(add); return { g: gen, e: queue.length };
+    }
+    stop(); wake(); paused = false; if (alt === 99) spoken = (Math.floor(spoken / 99) + 1) * 99; // 이전 음성을 멈추고 오디오 장치를 깨움 / stop previous speech and wake the audio
     queue = split(text); idx = 0; active = true; setState("playing"); // 대기열을 만들고 재생 상태로 바꿈 / build the queue and set playing
-    timer = setTimeout(next, 250);                  // 첫 음절 잘림을 막으려고 250ms 쉬고 시작함 / wait 250 ms before starting to avoid clipping the first syllable
+    timer = setTimeout(next, 250);                  // 첫 음절 잘림을 막으려고 250ms 쉬고 시작함 / wait 250 ms before starting
+    return { g: gen, e: queue.length };             // 이 설명이 끝나는 위치 표식 / mark where this narration ends
+  }
+  function finished(m) {                            // 표식의 설명을 다 읽었는지(멈춤, 교체도 끝난 것으로 봄) / whether the marked narration is finished
+    if (!m) return !active; if (m.done) return true; if (m.pending) return false;
+    if (m.mp3) return m.g !== gen || !active; return m.g !== gen || !active || idx > m.e;
   }
   function play(id, text) {                         // 녹음 MP3가 있으면 MP3로, 없으면 TTS로 읽음 / plays the recorded MP3 if available, otherwise TTS
-    if (hushed) return;                             // 조용히 상태면 읽지 않음 / do not read while hushed
-    if (QP.I18N && QP.I18N.lang() === "en") { speak(text, true, true); return; } // 영문이면 한국어 녹음 대신 영어 음성 / English mode uses English TTS
-    stop(); wake();                                 // 정리하고 장치를 깨움 / clean up and wake the device
+    if (hushed) return DONE;                         // 조용히 상태면 읽지 않음 / do not read while hushed
+    if (QP.I18N && QP.I18N.lang() === "en") { return speak(text, true, true); } // 영문이면 한국어 녹음 대신 영어 음성 / English mode uses English TTS
+    stop(); wake(); const mk = { g: gen, mp3: true };  // 정리하고 장치를 깨움 / clean up and wake the device
     const a = new Audio("audio/" + id + ".mp3"); a.playbackRate = rate / 1.1; let started = false; // 녹음 파일(이미 약간 빠르게 녹음됨)임 / recording (already recorded slightly fast)
-    a.onerror = function () { if (!started) speak(text, true); }; // 파일이 없으면 TTS로 대신함 / fall back to TTS if the file is missing
+    a.onerror = function () { if (!started) speak(text, true, true); }; // 파일이 없으면 TTS로 대신함 / fall back to TTS if the file is missing
     a.onplaying = function () {                     // 재생이 시작되면 / when playback starts
       started = true; active = true; setState("playing"); // 상태를 바꿈 / change the state
       const sents = split(text), total = text.length, dur = (a.duration || total / 8) * 1000 / a.playbackRate; let acc = 0; // 자막 시간 배분임 / subtitle time allocation
       sents.forEach(function (s) { const at = dur * acc / total; acc += s.length; setTimeout(function () { if (audio === a) setSub(s); }, at); }); // 문장별 자막 시각을 예약함 / schedule subtitle times per sentence
     };
     a.onended = function () { active = false; setSub(""); setState("done"); }; // 끝나면 정리함 / clean up when finished
-    audio = a; setTimeout(function () { a.play().catch(function () { if (!started) speak(text, true); }); }, 200); // 장치가 깨어난 뒤 재생함 / play after the device wakes
+    active = true; audio = a; setTimeout(function () { a.play().catch(function () { if (!started) speak(text, true, true); }); }, 200); return mk; // 장치가 깨어난 뒤 재생함(재생 준비 중에도 읽는 중으로 봄) / play after the device wakes
   }
   function progress() {                            // 재생 위치(문장 번호, 전체 문장 수)임 / playback position (sentence index, total sentences)
     if (audio && audio.duration) return { i: Math.round(audio.currentTime / audio.duration * 1000), n: 1000, mp3: true }; // MP3는 1000분율로 알려 줌 / MP3 reports per mille
@@ -142,5 +151,5 @@
     hush: function (b) { hushed = !!b; if (b) { stop(); try { if (keep) { keep.stop(); keep = null; } } catch (e) { } } }, shutdown: shutdown, isHushed: function () { return hushed; }, setAlternate: function (n) { alt = n; spoken = 0; }, speaker: function () { return speaker; }, log: function () { return log; }, // 남녀 교대(문장 n개마다, 0은 끄기)와 현재 화자임 / male/female alternation (every n sentences, 0 = off) and current speaker
     genders: function () { return { f: genderVoice(false), m: genderVoice(true) }; }, // 사용 가능한 여성, 남성 음성임 / available female and male voices
     setVoice: function (n) { chosen = n; }, onSubtitle: function (f) { onSub = f; }, onStateChange: function (f) { onState = f; }, // 설정 함수임 / setter functions
-    isActive: function () { return active; }, onVoices: null }; // 상태 확인 함수임 / state query functions
+    isActive: function () { return active; }, finished: finished, onVoices: null }; // 상태 확인 함수임 / state query functions
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace

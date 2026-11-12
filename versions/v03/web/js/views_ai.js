@@ -285,7 +285,7 @@
       '<div class="card"><h3 id="mNetT">심층 신경망 8→16→12→8→1 (청=+, 장밋빛=−, 굵기=크기, 초록=이 사람에게 맞추며 크게 바뀐 연결, 자주=양자 입력)</h3><canvas id="mNet"></canvas></div></div>' +
       '<div class="stack"><div class="card"><h3>가중치 공간: 공통 시작점 θ와 사람별 적응 θ′</h3><canvas id="mPar"></canvas></div>' +
       '<div class="card"><h3>새 사람 적응 곡선 (기록 10개, 걸음 0~10)</h3><canvas id="mAd"></canvas><p id="mNum" class="small"></p></div><div class="card"><div id="mPeople" class="small"></div><div id="mB"></div></div></div></div>';
-    const flowS = { i: 0, g: 0, dwell: true, at: performance.now() }; /* 메타 흐름 단계 상태 / meta flow step state */
+    const flowS = { i: 0, g: 0, dwell: true, at: performance.now(), hold: true, m: null }; QP.Pace.hold(true); /* 첫 흐름 한 바퀴를 다 설명할 때까지 전체 안내가 기다림 / the tour waits for one full flow cycle */ /* 메타 흐름 단계 상태 / meta flow step state */
     function drawFlow() {                            // 관계도: 센서 → 양자 회로 → 겹침 점수 → 메타러너 → 개인 적응 / relationship diagram: sensor → quantum circuit → overlap score → meta-learner → personal adaptation
       const P = A.canvas($("#mFlow", el), 154), g = P.g, W = P.w, tt = performance.now() / 900; // 캔버스임 / canvas
       const t = m.last[cur] || null, per = t ? t.p : { sex: "F", age: 62, rest: 70, max: 151 }; // 지금 보여 줄 사람임 / person shown now
@@ -293,7 +293,7 @@
       const bx = [[6, "센서(워치)", "심박 " + Math.round(90 + load * 90) + "bpm\n피로 " + Math.round(fat * 100) + "%", "#003087"], [.205, "양자 특징 AI", "RY(πa)⊗RY(πb)\nCNOT → ⟨Z⟩", "#6e4c82"], [.41, "겹침 점수", "⟨Z⟩ = " + z.toFixed(2) + "\n(부담×피로)", "#6e4c82"], [.615, "메타러너 θ", "여러 사람에게서\n배운 시작점", "#003087"], [.82, "개인 θ′", (per.sex === "F" ? "여 " : "남 ") + per.age + "세\n10개로 5걸음 적응", "#d81b60"]]; // 다섯 상자임 / five boxes
       const bw = W * .172, bh = 88, y0 = 40; g.font = "bold 13px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; // 상자 크기임 / box size
       const FS = flowS, MSG = ["① 워치가 심박과 피로를 잽니다. 지금 값은 왼쪽 상자에 보입니다.", "② 두 신호를 양자 회로에 넣어 RY 회전과 CNOT으로 엮습니다.", "③ 회로가 두 신호의 겹침 점수 Z를 냅니다.", "④ 메타러너가 여러 사람에게서 배운 공통 시작점에 이 값을 넣습니다.", "⑤ 이 사람의 기록 10개로 몇 걸음 만에 개인 기준을 맞춥니다. 이렇게 센서 값이 개인 맞춤 경보가 됩니다."];
-      if (FS.dwell) { const dw = performance.now() - FS.at; if (dw > 5500 && (!(QP.Voice.isActive && QP.Voice.isActive()) || dw > 12000)) { if (FS.i >= 4) { FS.i = 0; FS.at = performance.now(); QP.Pace.say(MSG[0]); } else FS.dwell = false; } } else { FS.g += .03; if (FS.g >= 1) { FS.i++; FS.g = 0; FS.dwell = true; FS.at = performance.now(); QP.Pace.say(MSG[FS.i]); } } /* 상자마다 설명을 읽고, 다 읽은 뒤 다음 화살표가 자람 / read each box, grow the next arrow only after the explanation ends */
+      if (FS.dwell) { const dw = performance.now() - FS.at; if (dw > 5500 && QP.Pace.done(FS.m)) { if (FS.i >= 4) { if (FS.hold) { FS.hold = false; QP.Pace.hold(false); } FS.i = 0; FS.at = performance.now(); FS.m = QP.Pace.say(MSG[0]); } else FS.dwell = false; } } else { FS.g += .03; if (FS.g >= 1) { FS.i++; FS.g = 0; FS.dwell = true; FS.at = performance.now(); FS.m = QP.Pace.say(MSG[FS.i]); } } /* 상자마다 설명을 읽고, 다 읽은 뒤 다음 화살표가 자람 / read each box, grow the next arrow only after the explanation ends */
       const tp = 1 + (FS.i + (FS.dwell ? 0 : FS.g)) * 1.8 + (FS.dwell && FS.i >= 4 ? 7.3 : 0), SEG = 1.8, prog = function (i) { return i < FS.i ? 1 : i === FS.i && !FS.dwell ? FS.g : 0; }; // 화살표 진행 / arrow progress
       const lit = function (i) { return i <= FS.i; }; // 상자 i가 켜졌는지 / whether box i is lit
       bx.forEach(function (b, i) { const x = i === 0 ? 6 : b[0] * W, on = lit(i); g.globalAlpha = on ? 1 : .28; g.fillStyle = on && i === FS.i ? "#fff8e1" : "#fff"; g.strokeStyle = b[3]; g.lineWidth = on ? 3 : 1.5; g.beginPath(); g.roundRect ? g.roundRect(x, y0, bw, bh, 10) : g.rect(x, y0, bw, bh); g.fill(); g.stroke(); g.fillStyle = b[3]; g.textAlign = "center"; g.font = "bold 13px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText(b[1], x + bw / 2, y0 + 20); g.fillStyle = "#1d2a4d"; g.font = "11.5px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; b[2].split("\n").forEach(function (l, k) { g.fillText(l, x + bw / 2, y0 + 44 + k * 18); });
@@ -339,7 +339,7 @@
     $("#mRe", el).onclick = function () { clearInterval(timer); timer = null; m = QP.Meta.create(77); hist = []; cur = 0; sub = 0; QP.Meta.metaStep(m, 4); hist.push(proj(m.theta)); ev = QP.Meta.evaluate(m); drawAll(); }; // 초기화임 / reset
     QP.Meta.metaStep(m, 4); hist.push(proj(m.theta)); drawAll(); // 처음 한 번 준비함 / prepare once at first
     const flowLoop = setInterval(drawFlow, 120);    // 관계도의 신호 점은 계속 흐르게 함 / keep the signal dots in the diagram flowing
-    return function () { clearInterval(timer); clearInterval(flowLoop); }; // 떠날 때 정리함 / clean up when leaving
+    return function () { clearInterval(timer); clearInterval(flowLoop); QP.Pace.hold(false); }; // 떠날 때 정리함 / clean up when leaving
   }
 
   QP.ViewDefs = (QP.ViewDefs || []).concat([        // 화면 정의를 등록함 / register the screen definitions

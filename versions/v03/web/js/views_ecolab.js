@@ -173,7 +173,7 @@
       if (t) { t.scrollIntoView({ block: "nearest" }); t.classList.add("labaim"); setTimeout(function () { t.classList.remove("labaim"); }, 3200); const r = t.getBoundingClientRect(); if (QP.App && QP.App.pointAt) QP.App.pointAt(r.left + Math.min(40, r.width / 2), r.top + Math.min(r.height / 2, 30)); } // 짚고 반짝임 / point and highlight
       if (g.also) { const a2 = $(g.also, el); if (a2) { a2.classList.add("labaim"); setTimeout(function () { a2.classList.remove("labaim"); }, 3200); } } // 함께 볼 곳임 / also look here
       if (!QP.State.touring) QP.Voice.speak(g.t.replace(/^\d+\.\s*/, "") + ". " + tx, true); // 음성으로 읽음 / read by voice
-      if ($("#xGa", el).checked) { const t0 = Date.now(); (function w() { if (tok !== gTok || !alive) return; if (QP.Voice.isActive() && Date.now() - t0 < 30000 || Date.now() - t0 < 2500) { gT = setTimeout(w, 500); return; } gNext(); })(); } // 자동 넘김이면 말이 끝난 뒤 다음으로 감 / with auto-advance, go next after speaking
+      if ($("#xGa", el).checked) { const t0 = Date.now(); (function w() { if (tok !== gTok || !alive) return; if (QP.Voice.isActive() && Date.now() - t0 < 600000 || Date.now() - t0 < 2500) { gT = setTimeout(w, 500); return; } gNext(); })(); } // 자동 넘김이면 말이 끝난 뒤 다음으로 감 / with auto-advance, go next after speaking
     }
     function gNext() { const L = steps(), g = L[gi]; if (g && g.act) g.act(); if (gi < L.length - 1) gShow(gi + 1); } // 다음 단계(실행 단계면 실행도 함)임 / next step (also runs at the run step)
     $("#xGs", el).onclick = function () { out = {}; $("#xGa", el).checked = true; gShow(0); }; // 처음부터 따라하기(자동 넘김 켬)임 / follow along from the start (auto-advance on)

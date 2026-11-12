@@ -80,15 +80,15 @@
     ];
     function steps() { $("#glSteps").innerHTML = LESSON.map(function (s, k) { return '<button data-k="' + k + '" class="' + (k === stepNo ? "on" : k < stepNo ? "done" : "") + '">' + (k < 10 ? NUM[k] : k + 1) + " " + s[0] + "</button>"; }).join(""); body.querySelectorAll("#glSteps button").forEach(function (b) { b.onclick = function () { stopAuto(); run(+b.dataset.k, false); }; }); }
     function run(k, chain) {
-      if (!alive) return; stepNo = k; steps();
+      if (!alive) return; if (chain && k === 0) QP.Pace.hold(true);   // 자동 수업 동안 전체 안내가 기다림 / the tour waits during the lesson stepNo = k; steps();
       if (!chain) for (let j = 0; j < k; j++) if (j !== 7 && j !== 8) LESSON[j][1]();   // 단계를 바로 고르면 앞 단계 상태를 조용히 다시 만듦(측정 단계는 건너뜀) / rebuild earlier state silently when jumping
       if (!chain && k === 8) { /* 측정 1번은 얽힘 상태에서 해야 의미가 있음 */ }
       LESSON[k][1]();
       $("#glT").textContent = NUM[k] + " " + LESSON[k][0] + " (" + (k + 1) + "/" + LESSON.length + ")";
       QP.Pace.say(LESSON[k][2]);
-      if (chain) { auto = { k: k }; QP.Pace.wait(k === 7 ? 9000 : 7000, function () { if (auto && auto.k === k) { if (k + 1 < LESSON.length) run(k + 1, true); else { auto = null; $("#glAuto").textContent = "▶ 자동 수업 다시 보기"; if (opt.onDone) setTimeout(opt.onDone, 1500); } } }, function () { return alive && !!auto; }); }
+      if (chain) { auto = { k: k }; QP.Pace.wait(k === 7 ? 9000 : 7000, function () { if (auto && auto.k === k) { if (k + 1 < LESSON.length) run(k + 1, true); else { auto = null; QP.Pace.hold(false); $("#glAuto").textContent = "▶ 자동 수업 다시 보기"; if (opt.onDone) setTimeout(opt.onDone, 1500); } } }, function () { return alive && !!auto; }); }
     }
-    function stopAuto() { auto = null; $("#glAuto").textContent = "▶ 자동 수업 다시 보기"; }
+    function stopAuto() { auto = null; QP.Pace.hold(false); $("#glAuto").textContent = "▶ 자동 수업 다시 보기"; }
     $("#glAuto").onclick = function () { $("#glAuto").textContent = "자동 수업 진행 중…"; run(0, true); };
     $("#glStop").onclick = function () { stopAuto(); QP.Voice && QP.Voice.stop && QP.Voice.stop(); };
     body.querySelectorAll(".glab-ctl .gate").forEach(function (b) { b.onclick = function () { stopAuto(); stepNo = -1; steps(); apply(b.dataset.g, false); }; });
@@ -144,7 +144,7 @@
     });
     steps(); apply("rs", true);
     setTimeout(function () { if (alive) { $("#glAuto").textContent = "자동 수업 진행 중…"; run(0, true); } }, 600);   // 화면이 열리면 바로 자동 수업 / start the lesson right away
-    return function () { alive = false; auto = null; stopLoop(); };
+    return function () { alive = false; auto = null; stopLoop(); QP.Pace.hold(false); };
   }
   QP.GateLab = { mount: mount };
 })(window.QP = window.QP || {});

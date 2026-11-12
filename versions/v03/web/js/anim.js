@@ -106,11 +106,15 @@
   QP.Anim = { loop: loop, stopAll: stopAll, lerp: lerp, dial: dial, pair: pair, canvas: canvas, deepNet: deepNet }; // 공개함 / make public
   /* 설명과 같이 가기: 최소 시간이 지나고, 읽던 설명이 끝나야 다음 단계로 감 / keep pace with narration: next step only after a minimum time and after the current speech ends */
   QP.Pace = {
-    say: function (text) { const av = document.getElementById("autoVoice"); if (!text || !QP.Voice || (av && !av.checked)) return; const St = QP.State || {};
-      if (St.welcoming) return;   // 환영 인사 중에는 화면 설명을 끼워 넣지 않음 / no screen narration during the welcome
-      if (!St.touring) { QP.Voice.speak(text, true); return; }
-      if (St.hold) { const h0 = St.holdId; (function q() { if (!St.hold || St.holdId !== h0) return; if (QP.Voice.isActive && QP.Voice.isActive()) { setTimeout(q, 400); return; } QP.Voice.speak(text, true, true); })(); } }, // 단계 설명 읽기(투어 중에는 화면 시연이 붙잡은 경우만, 앞 설명이 끝난 뒤 이어 읽음) / read the step explanation (during the tour only for held demos, after the current speech)
-    hold: function (on) { const St = QP.State || {}; St.hold = !!on; if (on) St.holdId = (St.holdId || 0) + 1; }, // 화면 시연이 끝날 때까지 투어를 붙잡음 / hold the tour until the screen demo finishes
-    wait: function (minMs, cb, alive) { const t0 = Date.now(); (function w() { if (alive && !alive()) return; const talking = QP.Voice && QP.Voice.isActive && QP.Voice.isActive(); if (Date.now() - t0 < minMs || (talking && Date.now() - t0 < 90000)) { setTimeout(w, 400); return; } cb(); })(); } // 기다렸다가 실행 / wait then run
+    last: null,                                     // 마지막으로 맡긴 설명의 표식 / mark of the last narration
+    say: function (text) { const P = QP.Pace, av = document.getElementById("autoVoice"), St = QP.State || {};
+      if (!text || !QP.Voice || (av && !av.checked) || St.welcoming) { P.last = { done: true }; return P.last; }
+      if (!St.touring) { P.last = QP.Voice.speak(text, true); return P.last; }   // 읽는 중이면 끝난 뒤 이어 읽음(끊지 않음) / queued, never cuts
+      if (St.hold) { const m = { pending: true }, h0 = St.holdId; P.last = m; (function q() { if (!St.hold || St.holdId !== h0) { m.pending = false; m.done = true; return; } if (QP.Voice.isActive && QP.Voice.isActive()) { setTimeout(q, 400); return; } const r = QP.Voice.speak(text, true, true); m.pending = false; Object.assign(m, r); })(); return m; } // 투어 설명이 끝난 뒤 이어 읽음 / after the tour narration
+      P.last = { done: true }; return P.last; },    // 투어 중이고 붙잡지 않은 화면은 투어 설명만 읽음 / otherwise the tour narration only
+    done: function (m) { return QP.Voice.finished(m || QP.Pace.last); }, // 그 설명을 다 읽었는지 / whether that narration is finished
+    wait: function (minMs, cb, alive) { const t0 = Date.now(), m = QP.Pace.last; (function w() { if (alive && !alive()) return; if (Date.now() - t0 < minMs || (!QP.Voice.finished(m) && Date.now() - t0 < 600000)) { setTimeout(w, 400); return; } cb(); })(); }, // 최소 시간과, 맡긴 설명이 끝날 때까지 기다린 뒤 실행 / wait for the minimum time and until the narration ends
+    hold: function (on) { const St = QP.State || {}; St.hold = !!on; if (on) St.holdId = (St.holdId || 0) + 1; } // 화면 시연이 끝날 때까지 투어를 붙잡음 / hold the tour until the demo finishes
   };
+
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace

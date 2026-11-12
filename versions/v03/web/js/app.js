@@ -261,7 +261,7 @@
       const wait = function () {                    // 다 읽었는지 확인함 / check whether reading is finished
         if (tok !== TB.token || !tourOn) return;    // 다른 단계로 옮겼거나 종료했으면 끝냄 / stop if moved to another step or ended
         if (TB.paused) { TB.timer = setTimeout(wait, 500); return; } // 멈춤 중이면 기다림(사용자가 멈춘 경우만 멈춤) / wait while paused (only when the user paused)
-        if (QP.Voice.isActive() && Date.now() < deadline) { TB.timer = setTimeout(wait, 500); return; } // 아직 읽는 중이면 기다림 / wait while still reading
+        if (QP.Voice.isActive() && Date.now() < deadline + 600000) { TB.timer = setTimeout(wait, 500); return; } // 아직 읽는 중이면 기다림 / wait while still reading
         if (State.hold && Date.now() < deadline + 300000) { TB.timer = setTimeout(wait, 700); return; } // 화면 시연(눈송이 걷기 등)이 끝까지 가도록 기다림(최대 5분) / wait until the screen demo finishes (max 5 min)
         TB.timer = setTimeout(function () { if (tok !== TB.token) return; if (TB.i < TB.steps.length - 1) tourGo(TB.i + 1); else if ($("tLoop").checked) tourGo(0); else tourEnd(true); }, 1500); // 다음 단계(마지막이면 반복 설정에 따라 처음으로)로 감 / go to the next step (at the end, to the start if looping)
       };

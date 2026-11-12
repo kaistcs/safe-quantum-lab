@@ -92,8 +92,8 @@
     }
     function guideTick() {                          // 매 프레임: 설명을 하나씩 읽고, 다 읽으면 다음으로 / each frame: read one explanation at a time
       const talk = QP.Voice.isActive && QP.Voice.isActive();
-      if (gcur) { const dt = performance.now() - gcur.t; if (dt > 5500 && (!talk || dt > 70000)) gcur = null; else return; }
-      if (gq.length) { if (talk && QP.State.touring) return; gcur = gq.shift(); gcur.t = performance.now(); gno++; const c = $("#mCap", el); if (c) { c.innerHTML = "<b>" + (gno <= 20 ? GN[gno - 1] : gno + ".") + "</b> " + gcur.text; c.className = "mcap on"; } QP.Voice.speak(gcur.text, true, true); return; }
+      if (gcur) { const dt = performance.now() - gcur.t; if (dt > 5500 && QP.Voice.finished(gcur.m)) gcur = null; else return; }
+      if (gq.length) { if (talk || QP.State.welcoming) return; gcur = gq.shift(); gcur.t = performance.now(); gno++; const c = $("#mCap", el); if (c) { c.innerHTML = "<b>" + (gno <= 20 ? GN[gno - 1] : gno + ".") + "</b> " + gcur.text; c.className = "mcap on"; } gcur.m = QP.Voice.speak(gcur.text, true, true); return; }
     }
     const gpaused = function () { return !!gcur || gq.length > 0; };
     function say(key, text) { if (said[key]) return; said[key] = 1; const poi = run.course.pois.find(function (q) { return text.indexOf(q.name) >= 0; }); if (poi) { focus = poi; focusT = performance.now(); } if (/사건|규칙|낙상/.test(text)) flash("red"); log.unshift(hhmm(run.steps[Math.min(run.steps.length - 1, Math.floor(simT / 10))].min) + " " + text); if ($("#mV", el).checked && playing) gq.push({ text: kindText(key, text) }); else if ($("#mV", el).checked && !QP.State.touring) QP.Voice.speak(text, true); } // 사건을 한 번만 기록하고, 재생 중이면 단계 안내 대기열에 넣음 / record once; while playing, queue for guided narration
