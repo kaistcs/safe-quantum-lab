@@ -392,3 +392,25 @@ button,select,input,textarea{font-family:inherit}
 .wxtag.warn{background:#fff7e0;border-left-color:#ffb500} .wxtag.warn .wxh{color:#a06a00}
 .wxtag.bad{background:#fde2de;border-left-color:#c62828} .wxtag.bad .wxh,.wxtag.bad .wxs{color:#c62828}
 .live-h{line-height:1.25;text-align:center}
+/* ---- 100대 명산 실시간 산행 가능성 박스(우측 상단), 패널, 띠 (2026-11-12) ---- */
+.main>.top{height:auto;min-height:56px;gap:10px}
+.wxbox{flex:1 1 auto;max-width:720px;min-width:360px;margin:4px 8px 4px auto;padding:4px 10px;border-radius:10px;border:1px solid #cfd8ea;border-left:6px solid #2e7d32;background:#f6fbf6;font-size:12.3px;line-height:1.45;color:var(--ink);cursor:pointer;overflow:hidden}
+.wxbox.lv1{border-left-color:#1e63c6;background:#f3f7fe} .wxbox.lv2{border-left-color:#e08a00;background:#fff8ea} .wxbox.lv3{border-left-color:#c62828;background:#fdf1ef}
+.wxb-h{font-weight:800;color:var(--maple);display:flex;align-items:center;gap:6px;white-space:nowrap} .wxb-h small{font-weight:500;color:#7a849e}
+.wxb-btn{margin-left:auto;display:flex;gap:3px} .wxb-btn button{font-size:11.5px;padding:1px 7px;border-radius:6px}
+.wxb-l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .wxb-l small{color:#4f5a75}
+.wxv{display:inline-block;color:#fff;font-weight:800;border-radius:99px;padding:0 8px;font-size:11.5px}
+.wxd{display:inline-block;border:1.5px solid;border-radius:99px;padding:0 7px;font-size:11px;font-weight:800;background:#fff}
+.wxpanel{position:fixed;z-index:60;width:min(760px,92vw);max-height:72vh;overflow:auto;background:#fff;border:1px solid #c9d3e6;border-radius:12px;box-shadow:0 10px 30px rgba(20,30,60,.22);padding:10px 12px;font-size:12.5px}
+.wxp-h{display:flex;justify-content:space-between;align-items:center;color:var(--blue);font-size:14px;margin-bottom:4px}
+.wxp-leg{display:flex;flex-wrap:wrap;gap:4px 12px;margin:4px 0 6px} .wxp-leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-2px}
+.wxp-r{width:100%;border-collapse:collapse;margin-bottom:6px} .wxp-r td,.wxp-r th{border-bottom:1px solid #eef1f7;padding:3px 6px;text-align:left}
+.wxbar{display:flex;height:16px;border-radius:4px;overflow:hidden;background:#eef1f7;min-width:180px} .wxbar i{display:block;color:#fff;font-size:10.5px;font-style:normal;font-weight:800;text-align:center;line-height:16px}
+.wxp-t table{width:100%;border-collapse:collapse} .wxp-t th{position:sticky;top:-10px;background:#f2f5fc} .wxp-t td,.wxp-t th{padding:2px 5px;border-bottom:1px solid #f0f2f7;white-space:nowrap}
+.wxp-t tr[data-i]{cursor:pointer} .wxp-t tr[data-i]:hover{background:#f5f8ff} .wxp-t tr.cur{background:#fff4d6}
+.wxdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.wxp-src{margin:8px 0 0 18px;padding:0;color:#5d6680;font-size:11.5px}
+.wxtag.ok{background:#eef6ee;border-left-color:#2e7d32} .wxtag.mid{background:#f3f6fc;border-left-color:#1e63c6} .wxtag.warn{background:#fff7e0;border-left-color:#e08a00} .wxtag.bad{background:#fde2de;border-left-color:#c62828}
+@media (max-width:1150px){.wxbox{display:none}}
+.main{grid-template-rows:auto auto 1fr auto auto 48px!important} .main>.top{padding-top:2px;padding-bottom:2px}
+.wxb-h .wxb-t{flex:none} .wxb-h .wxb-l{flex:1;min-width:0;font-weight:500;color:var(--ink)}

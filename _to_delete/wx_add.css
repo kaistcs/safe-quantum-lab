@@ -1,0 +1,2 @@
+.main{grid-template-rows:auto auto 1fr auto auto 48px!important} .main>.top{padding-top:2px;padding-bottom:2px}
+.wxb-h .wxb-t{flex:none} .wxb-h .wxb-l{flex:1;min-width:0;font-weight:500;color:var(--ink)}
