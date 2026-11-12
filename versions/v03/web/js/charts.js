@@ -18,7 +18,7 @@
     cv.style.height = hh + "px";                    // 화면 높이를 고정함 / fix the displayed height
     const g = cv.getContext("2d");                  // 그리기 도구를 얻음 / get the drawing context
     g.setTransform(dpr, 0, 0, dpr, 0, 0);           // 이후 좌표를 화면 픽셀 기준으로 씀 / use screen-pixel coordinates from now on
-    g.font = "12.5px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif, sans-serif";      // 글꼴을 정함 / set the font
+    g.font = "12.5px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif, sans-serif";      // 글꼴을 정함 / set the font
     return { g: g, w: w, h: hh };                   // 도구와 크기를 돌려줌 / return the context and size
   }
   function mix(a, b, t) {                           // 두 색(RGB 배열)을 t 비율로 섞음 / mixes two colors (RGB arrays) by ratio t
@@ -94,9 +94,9 @@
       const px = pad + o.mark[0] * W, py = 4 + (1 - o.mark[1]) * H; // 화면 좌표임 / screen coordinates
       if (o.markDanger) { const ph = (performance.now() % 900) / 900; g.save(); g.strokeStyle = "rgba(255,40,40," + (1 - ph).toFixed(2) + ")"; g.lineWidth = 5; g.beginPath(); g.arc(px, py, 28 + 18 * ph, 0, 7); g.stroke(); g.restore(); } // 위험!이면 붉은 고리가 퍼짐 / red ring expands when in danger
       hikerBadge(g, px, py, o.mark[0], o.mark[1]);  // 등산객 배지: 작은 산(기울기=경사) 위의 등산객, 빗방울 수=비 / hiker badge: a hiker on a small mountain (tilt = slope), raindrops = rain
-      if (o.markLabel) { g.font = "bold 12px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; const tw = g.measureText(o.markLabel).width + 10, bx = Math.max(pad, Math.min(P.w - tw - 4, px - tw / 2)), by = py > 64 ? py - 58 : py + 32; const lv = o.markLevel || 0, BG = ["rgba(255,255,255,.93)", "#fff3c4", "#ffb74d", (performance.now() % 600 < 300) ? "#d50000" : "#7f0000"], FG = ["#2e2420", "#5d4300", "#3e1a00", "#fff"]; g.fillStyle = BG[lv]; g.strokeStyle = lv === 3 ? "#fff" : "#2e2420"; g.lineWidth = lv === 3 ? 2 : 1; g.fillRect(bx, by, tw, 20); g.strokeRect(bx, by, tw, 20); g.fillStyle = FG[lv]; g.fillText(o.markLabel, bx + 5, by + 14); /* 단계별 말풍선 색(위험!은 깜빡임) / bubble color per level (danger blinks) */ } // 말풍선: 지금 산행자의 상태와 판정임 / speech bubble: current hiker state and verdict
+      if (o.markLabel) { g.font = "bold 12px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; const tw = g.measureText(o.markLabel).width + 10, bx = Math.max(pad, Math.min(P.w - tw - 4, px - tw / 2)), by = py > 64 ? py - 58 : py + 32; const lv = o.markLevel || 0, BG = ["rgba(255,255,255,.93)", "#fff3c4", "#ffb74d", (performance.now() % 600 < 300) ? "#d50000" : "#7f0000"], FG = ["#2e2420", "#5d4300", "#3e1a00", "#fff"]; g.fillStyle = BG[lv]; g.strokeStyle = lv === 3 ? "#fff" : "#2e2420"; g.lineWidth = lv === 3 ? 2 : 1; g.fillRect(bx, by, tw, 20); g.strokeRect(bx, by, tw, 20); g.fillStyle = FG[lv]; g.fillText(o.markLabel, bx + 5, by + 14); /* 단계별 말풍선 색(위험!은 깜빡임) / bubble color per level (danger blinks) */ } // 말풍선: 지금 산행자의 상태와 판정임 / speech bubble: current hiker state and verdict
     }
-    if (o.corners) { g.font = "bold 11.5px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; g.fillStyle = "rgba(46,36,32,.75)"; g.textAlign = "left"; g.fillText("맑고 완만(안전)", pad + 4, 4 + H - 6); g.textAlign = "right"; g.fillText("비 + 급경사(위험)", pad + W - 4, 18); g.fillText("비만 강함", pad + W - 4, 4 + H - 6); g.textAlign = "left"; g.fillText("경사만 급함", pad + 4, 18); } // 네 모서리의 뜻을 적음 / write the meaning of the four corners
+    if (o.corners) { g.font = "bold 11.5px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillStyle = "rgba(46,36,32,.75)"; g.textAlign = "left"; g.fillText("맑고 완만(안전)", pad + 4, 4 + H - 6); g.textAlign = "right"; g.fillText("비 + 급경사(위험)", pad + W - 4, 18); g.fillText("비만 강함", pad + W - 4, 4 + H - 6); g.textAlign = "left"; g.fillText("경사만 급함", pad + 4, 18); } // 네 모서리의 뜻을 적음 / write the meaning of the four corners
     g.fillStyle = "#6d5e55";                        // 축 글씨 색임 / axis text color
     g.fillText(o.xLabel || "x →", pad, P.h - 6);    // 가로축 이름임 / x-axis name
     g.save(); g.translate(11, 4 + H); g.rotate(-Math.PI / 2); g.fillText(o.yLabel || "y →", 0, 0); g.restore(); // 세로축 이름(세워서)임 / y-axis name (rotated)
@@ -118,7 +118,7 @@
       gr.values.forEach(function (v, j) {           // 막대마다 / for each bar
         const x = left + i * gw + (gw - bw * series.length) / 2 + j * bw, h = H * Math.max(0, v) / max; // 막대 위치와 높이임 / bar position and height
         g.fillStyle = series[j].color; g.fillRect(x, 8 + H - h, bw - 3, h); // 막대를 칠함 / paint the bar
-        if (bw >= 15) { g.save(); g.font = (bw >= 24 ? 10 : 8.5) + "px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; g.textAlign = "center"; g.fillStyle = "#2e2420"; g.fillText(o.fmt ? o.fmt(v) : v.toFixed(2), x + (bw - 3) / 2, Math.max(9, 8 + H - h - 3)); g.restore(); } // 막대 위 숫자(막대 가운데 정렬, 좁으면 생략해 겹침 방지)임 / number above the bar (centered; omitted if too narrow to avoid overlap)
+        if (bw >= 15) { g.save(); g.font = (bw >= 24 ? 10 : 8.5) + "px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.textAlign = "center"; g.fillStyle = "#2e2420"; g.fillText(o.fmt ? o.fmt(v) : v.toFixed(2), x + (bw - 3) / 2, Math.max(9, 8 + H - h - 3)); g.restore(); } // 막대 위 숫자(막대 가운데 정렬, 좁으면 생략해 겹침 방지)임 / number above the bar (centered; omitted if too narrow to avoid overlap)
       });
       g.save(); g.fillStyle = "#6d5e55"; g.textAlign = "center"; let lb = gr.label; while (g.measureText(lb).width > gw - 4 && lb.length > 2) lb = lb.slice(0, -1); g.fillText(lb, left + i * gw + gw / 2, P.h - 6); g.restore(); // 묶음 이름(칸 가운데, 칸보다 길면 줄여 겹침 방지)임 / group name (centered; shortened if too long to avoid overlap)
     });

@@ -8,7 +8,7 @@
  * ===================================================================== */
 :root { --blue:#003087; --blue2:#1f4fa8; --yellow:#ffb500; --paper:#f7f8fc; --cream:#fbf7ef; --line:#dfe3ee; --ink:#1d2a4d; --sub:#5d6680;
   --dusk:#4d6b8c; --plum:#6e4c82; --ochre:#c38a2b; --rose:#c76b67; --maple:#a9482a; --sky:#e3ecf8; --lav:#ece4f5; --blush:#f8e4e1; --sand:#f5ead2;
-  font-family:"Times New Roman","Batang","바탕","BatangChe","AppleMyungjo","Noto Serif KR",serif; color:var(--ink); background:var(--paper); font-size:13.5px; line-height:1.5; }
+  font-family:"Times New Roman","Noto Serif KR","AppleMyungjo","Batang","바탕",serif; color:var(--ink); background:var(--paper); font-size:13.5px; line-height:1.5; }
 *{box-sizing:border-box} html,body{margin:0;height:100%;overflow:hidden} button,select,input{font:inherit}
 button{cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:5px 11px} button:hover{border-color:var(--blue2)}
 button.primary{background:var(--blue);border-color:var(--blue);color:#fff} button.primary:hover{background:var(--blue2)} button.ghost{background:transparent}
@@ -342,7 +342,7 @@ nav .grp-h:hover i,.quick .grp-h:hover i{background:rgba(255,210,122,.35)}
 .msec-h{width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.06);border:0;border-bottom:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;min-height:42px;font-size:14.5px!important;color:#ffd77a} .msec-h:hover{background:rgba(255,255,255,.12)} .msec-h.open{background:rgba(255,215,122,.12)}
 .msec-h i{font-style:normal;font-size:22px;line-height:1;width:34px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.14);color:#ffd27a;flex:none}
 
-/* 글꼴: 영문 Times New Roman, 한글 바탕(영문 글꼴에 한글이 없으므로 한글은 자동으로 바탕으로 표시됨) / fonts: English Times New Roman, Korean Batang (Hangul falls back to Batang) */
+/* 글꼴: 영문 Times New Roman, 한글 Noto Serif KR(본명조 계열), 없으면 바탕(영문 글꼴에 한글이 없으므로 한글은 자동으로 바탕으로 표시됨) / fonts: English Times New Roman, Korean Batang (Hangul falls back to Batang) */
 button,select,input,textarea{font-family:inherit}
 /* 로그인 화면 / login screen */
 .login{position:fixed;inset:0;z-index:300;background:rgba(0,32,94,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center}
@@ -355,3 +355,6 @@ button,select,input,textarea{font-family:inherit}
 .uchip{position:relative} .uchip>button{background:#eef4ff;border:1px solid #c9d3ea;border-radius:18px;padding:6px 12px;font-weight:700} .umenu{position:absolute;right:0;top:110%;background:#fff;border:1px solid #c9cfe0;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.15);display:flex;flex-direction:column;z-index:200;min-width:160px} .umenu button{border:0;background:none;text-align:left;padding:8px 12px} .umenu button:hover{background:#f3f5fa}
 .lbody{display:flex;flex-direction:column;gap:8px} .ladm{display:flex;gap:6px;align-items:center;flex-wrap:wrap} .lclose{background:none;border:0;font-size:14px}
 .lpane[hidden],.umenu[hidden]{display:none!important}
+/* 문제 풀기 번호와 설명 / quiz numbers and explanations */
+.dqno{display:inline-block;min-width:20px;color:#003087} .dqn small{color:#6d5e55;font-size:11px}
+.dqxs{margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:5px} .dqxs>p{grid-column:1/-1;margin:2px 0} .dqx{font-size:12px;line-height:1.45;padding:5px 8px;border-radius:6px;display:flex;flex-direction:column;background:#eef6ef;border-left:4px solid #2e7d32} .dqx.ng{background:#fbeeee;border-left-color:#c62828} .dqx b{font-size:12.5px}

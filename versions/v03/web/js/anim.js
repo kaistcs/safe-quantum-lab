@@ -44,7 +44,7 @@
     const ex = x + Math.sin(theta) * reach, ey = y - Math.cos(theta) * reach; // 화살표 끝 좌표(위에서 시계 방향으로 회전)임 / arrow tip coordinates (clockwise from the top)
     g.beginPath(); g.moveTo(x, y); g.lineTo(ex, ey); g.stroke(); // 화살표 몸통임 / arrow body
     g.fillStyle = color; g.beginPath(); g.arc(ex, ey, tipR, 0, 7); g.fill(); // 화살표 끝 점임 / arrow tip dot
-    const fs = Math.max(11.5, Math.min(17, r * .3)); g.fillStyle = "#4a5470"; g.font = fs + "px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; g.textAlign = "center"; // 글씨 설정(다이얼이 크면 글씨도 큼)임 / text settings (bigger text on big dials)
+    const fs = Math.max(11.5, Math.min(17, r * .3)); g.fillStyle = "#4a5470"; g.font = fs + "px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.textAlign = "center"; // 글씨 설정(다이얼이 크면 글씨도 큼)임 / text settings (bigger text on big dials)
     g.fillText("0", x, y - r - 5); g.fillText("1", x, y + r + fs + 1); // 위 0, 아래 1 표시임 / labels 0 at top, 1 at bottom
     if (label) g.fillText(label, x, y + r + fs * 2.1);    // 이름표임 / name tag
     g.restore();                                    // 설정을 되돌림 / restore settings
@@ -57,7 +57,7 @@
     g.save();                                       // 설정을 저장함 / save settings
     g.fillStyle = active ? "#fff8e6" : "#f7f8fc"; g.strokeStyle = active ? "#ffb500" : "#dfe3ee"; g.lineWidth = active ? 2 : 1; // 활성이면 노란 테두리임 / yellow border when active
     g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, 8) : g.rect(x, y, w, h); g.fill(); g.stroke(); // 카드 모양을 그림 / draw the card shape
-    g.fillStyle = "#003087"; g.font = "bold 12.5px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; g.textAlign = "left"; // 제목 글씨임 / title text
+    g.fillStyle = "#003087"; g.font = "bold 12.5px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.textAlign = "left"; // 제목 글씨임 / title text
     g.fillText(names[0] + " × " + names[1], x + 6, y + 13); // 신호 쌍 이름임 / name of the signal pair
     const cx1 = x + w * .22, cx2 = x + w * .52, cy = y + h * .48; // 두 다이얼 위치임 / positions of the two dials
     dial(g, cx1, cy, r, Math.PI * a, Math.round(a * 100) + "", "#003087", a > .5 ? a : 0); // 첫 큐비트(제어) 다이얼임 / first qubit (control) dial
@@ -65,7 +65,7 @@
     const on = Math.pow(Math.sin(Math.PI * a / 2), 2); // 제어 큐비트가 1일 확률 = CNOT이 작동하는 정도임 / probability the control is 1 = how much the CNOT acts
     g.strokeStyle = "rgba(255,181,0," + (.25 + .75 * on) + ")"; g.lineWidth = 1 + 3 * on; // 작동 정도만큼 연결선을 진하게 함 / darken the link by that amount
     g.beginPath(); g.moveTo(cx1 + r, cy); g.lineTo(cx2 - r, cy); g.stroke(); // 제어→대상 연결선(CNOT)임 / control → target link (CNOT)
-    g.fillStyle = "#b07a00"; g.font = "bold 12px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; g.textAlign = "center"; g.fillText("⊕", (cx1 + cx2) / 2, cy - 4); // CNOT 기호임 / CNOT symbol
+    g.fillStyle = "#b07a00"; g.font = "bold 12px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.textAlign = "center"; g.fillText("⊕", (cx1 + cx2) / 2, cy - 4); // CNOT 기호임 / CNOT symbol
     const z = Math.cos(Math.PI * a) * Math.cos(Math.PI * b); // 대상 큐비트 판독값 ⟨Z⟩(에뮬레이터 결과와 같음)임 / target readout ⟨Z⟩ (same as the emulator result)
     const bx = x + w * .74, bw = w * .2, by = y + 20, bh = h - 32; // 판독 막대 위치임 / readout bar position
     g.fillStyle = "#eef0f6"; g.fillRect(bx, by, bw, bh); // 막대 바탕임 / bar background
@@ -95,10 +95,10 @@
       if (l === 0) g.fillStyle = k >= 16 ? "#6e4c82" : "#003087"; else if (last) g.fillStyle = v != null ? "rgba(169,72,42," + (.25 + .75 * v) + ")" : "#a9482a"; else g.fillStyle = v != null ? (v > 0 ? "rgba(255,181,0," + (.2 + .8 * v) + ")" : "rgba(199,107,103," + (.2 - .8 * v) + ")") : "#ffb500"; // 입력=청/자두, 은닉=노랑, 출력=단풍색임 / input = blue/plum, hidden = yellow, output = maple
       g.strokeStyle = "#8892ad"; g.lineWidth = 1; g.beginPath(); g.arc(x, y, last ? r0 * 2.6 : l === 0 ? r0 : r0 * 1.5, 0, 7); g.fill(); if (l) g.stroke(); // 뉴런 원임 / neuron circle
     }
-    g.fillStyle = "#1d2a4d"; g.font = (o.small ? "bold 10px" : "bold 12px") + " Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; g.textAlign = "center"; // 층 이름 글씨임 / layer name text
+    g.fillStyle = "#1d2a4d"; g.font = (o.small ? "bold 10px" : "bold 12px") + " Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.textAlign = "center"; // 층 이름 글씨임 / layer name text
     for (let l = 1; l < L; l++) g.fillText(l === L - 1 ? "출력" : "은닉 " + l + " (" + m.sizes[l] + ")", xs(l), o.y1 + (o.small ? 11 : 16)); // 층 이름임 / layer name
-    if (!o.small) for (let l = 1; l < L - 2; l++) { g.fillStyle = "#8892ad"; g.font = "bold 16px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; g.fillText("⋯", (xs(l) + xs(l + 1)) / 2, o.y0 - 2); } // 층이 이어짐을 뜻하는 표시임 / mark meaning the layers continue
-    if (o.labels) { g.textAlign = "right"; g.font = (o.small ? 9 : 11) + "px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; for (let k = 0; k < m.sizes[0]; k++) { g.fillStyle = k >= 16 ? "#6e4c82" : "#1d2a4d"; g.fillText(o.labels[k] || "", xs(0) - 8, ys(0, k) + 4); } } // 입력 이름임 / input names
+    if (!o.small) for (let l = 1; l < L - 2; l++) { g.fillStyle = "#8892ad"; g.font = "bold 16px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; g.fillText("⋯", (xs(l) + xs(l + 1)) / 2, o.y0 - 2); } // 층이 이어짐을 뜻하는 표시임 / mark meaning the layers continue
+    if (o.labels) { g.textAlign = "right"; g.font = (o.small ? 9 : 11) + "px Times New Roman, Noto Serif KR, AppleMyungjo, Batang, serif"; for (let k = 0; k < m.sizes[0]; k++) { g.fillStyle = k >= 16 ? "#6e4c82" : "#1d2a4d"; g.fillText(o.labels[k] || "", xs(0) - 8, ys(0, k) + 4); } } // 입력 이름임 / input names
     g.textAlign = "left"; return { xs: xs, ys: ys };  // 좌표 함수를 돌려줌 / return the coordinate functions
   }
   function canvas(cv, h) { return QP.Charts.prep(cv, h); } // 캔버스 준비(배율 처리)를 공유함 / share canvas preparation (scaling)
