@@ -8,7 +8,7 @@
  * ===================================================================== */
 :root { --blue:#003087; --blue2:#1f4fa8; --yellow:#ffb500; --paper:#f7f8fc; --cream:#fbf7ef; --line:#dfe3ee; --ink:#1d2a4d; --sub:#5d6680;
   --dusk:#4d6b8c; --plum:#6e4c82; --ochre:#c38a2b; --rose:#c76b67; --maple:#a9482a; --sky:#e3ecf8; --lav:#ece4f5; --blush:#f8e4e1; --sand:#f5ead2;
-  font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif; color:var(--ink); background:var(--paper); font-size:13.5px; line-height:1.5; }
+  font-family:"Times New Roman","Batang","바탕","BatangChe","AppleMyungjo","Noto Serif KR",serif; color:var(--ink); background:var(--paper); font-size:13.5px; line-height:1.5; }
 *{box-sizing:border-box} html,body{margin:0;height:100%;overflow:hidden} button,select,input{font:inherit}
 button{cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:5px 11px} button:hover{border-color:var(--blue2)}
 button.primary{background:var(--blue);border-color:var(--blue);color:#fff} button.primary:hover{background:var(--blue2)} button.ghost{background:transparent}
@@ -334,3 +334,13 @@ nav .grp-h:hover i,.quick .grp-h:hover i{background:rgba(255,210,122,.35)}
 .gnote{display:flex;gap:10px;align-items:flex-start;background:#e8f5e9;border:2px solid #43a047;border-radius:10px;padding:10px 12px;margin:4px 0 8px} .gnote .gni{font-size:28px;line-height:1} .gnote b{font-size:15.5px;color:#1b5e20} .gnote p{margin:3px 0 0;font-size:13.5px;line-height:1.5} .gnote.pop{animation:gpop .9s} @keyframes gpop{0%{transform:scale(.96);box-shadow:0 0 0 0 rgba(67,160,71,.7)}60%{transform:scale(1.01);box-shadow:0 0 0 12px rgba(67,160,71,0)}100%{transform:scale(1)}}
 .quick .grp-b a.qmain{background:#ffb500;color:#00205e;font-weight:900;font-size:14px;margin:2px 0 4px} .quick .grp-b a.qmain:hover{background:#ffc94d} .quick .qhint{color:#cfd8f0;font-size:11px;margin:0 8px 4px;line-height:1.4} .quick .qhint b{color:#ffd27a}
 .quick .qsub{color:#ffd27a;font-weight:800;font-size:12px;margin:8px 8px 2px;border-top:1px dashed rgba(255,210,122,.5);padding-top:6px} .quick .grp-b a.qcyc{font-weight:800;color:#fff;background:rgba(110,76,130,.55)}
+/* 에코 사이클: 지식 압축과 실제 예 / eco-cycle: knowledge digest and real example */
+.ecobar{gap:8px;flex-wrap:wrap} .ecobar select{max-width:190px} .ehk{font-style:normal;font-size:11px;background:#6e4c82;color:#fff;border-radius:9px;padding:1px 7px;margin-left:4px} .ehx{color:#4a3f5c;font-size:11.5px}
+.exbar{display:inline-block;width:120px;height:12px;background:#eef0f6;border-radius:6px;overflow:hidden;vertical-align:middle} .exbar i{display:block;height:100%} tr.exhot td{background:#fff3c4}
+.exlv{font-size:15px} .lv0{color:#2e7d32} .lv1{color:#b07a00} .lv2{color:#e65100} .lv3{color:#fff;background:#d50000;padding:1px 8px;border-radius:6px;animation:dflash .7s steps(2,jump-none) infinite}
+/* 큰 목적(A, B) 접기, 펼치기 / collapsible main sections (A, B) */
+.msec-h{width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.06);border:0;border-bottom:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;min-height:42px;font-size:14.5px!important;color:#ffd77a} .msec-h:hover{background:rgba(255,255,255,.12)} .msec-h.open{background:rgba(255,215,122,.12)}
+.msec-h i{font-style:normal;font-size:22px;line-height:1;width:34px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.14);color:#ffd27a;flex:none}
+
+/* 글꼴: 영문 Times New Roman, 한글 바탕(영문 글꼴에 한글이 없으므로 한글은 자동으로 바탕으로 표시됨) / fonts: English Times New Roman, Korean Batang (Hangul falls back to Batang) */
+button,select,input,textarea{font-family:inherit}

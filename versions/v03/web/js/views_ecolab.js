@@ -107,7 +107,7 @@
       const r = out.run, st = r.steps, P = C.prep($("#xRun2", el), 150), g = P.g, W = P.w, H = P.h - 14; // 캔버스임 / canvas
       st.forEach(function (s, i) { if (s.truth) { g.fillStyle = "rgba(199,107,103,.22)"; g.fillRect(i / st.length * W, 0, W / st.length + 1, H); } }); // 위험 사건 띠임 / risk event bands
       [["lin", "#4d6b8c", r.thrL], ["qf", "#6e4c82", r.thrQ]].forEach(function (k) { g.strokeStyle = k[1]; g.lineWidth = 1.6; g.beginPath(); st.forEach(function (s, i) { const x = i / st.length * W, y = H - s[k[0]] * (H - 4); if (i) g.lineTo(x, y); else g.moveTo(x, y); }); g.stroke(); g.setLineDash([4, 4]); g.beginPath(); g.moveTo(0, H - k[2] * (H - 4)); g.lineTo(W, H - k[2] * (H - 4)); g.stroke(); g.setLineDash([]); }); // 두 AI 점수와 경보 기준선임 / the two AI scores and alarm threshold lines
-      const half = st.findIndex(function (s) { return !s.up; }); g.fillStyle = "#1d2a4d"; g.font = "11px Malgun Gothic,sans-serif"; g.fillText("출발", 2, P.h - 2); if (half > 0) g.fillText("▲ 정상(하산 시작)", half / st.length * W - 40, P.h - 2); g.fillText("하산 완료", W - 52, P.h - 2); // 시간축 글씨임 / time-axis labels
+      const half = st.findIndex(function (s) { return !s.up; }); g.fillStyle = "#1d2a4d"; g.font = "11px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; g.fillText("출발", 2, P.h - 2); if (half > 0) g.fillText("▲ 정상(하산 시작)", half / st.length * W - 40, P.h - 2); g.fillText("하산 완료", W - 52, P.h - 2); // 시간축 글씨임 / time-axis labels
     }
     function drawRe(cfg) {                          // ⑤⑥⑦⑧ 결과 글과 근거 / ⑤⑥⑦⑧ result text and evidence
       const a = out.alarm, b = out.re.before, c = out.re.after; // 경보 결과임 / alarm results

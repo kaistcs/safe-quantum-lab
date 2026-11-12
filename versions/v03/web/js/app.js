@@ -26,7 +26,7 @@
   QP.I18N.onChange = function () { QP.Voice.stop(); langUI(); if (QP.Voice.onVoices) QP.Voice.onVoices(); if (typeof current !== "undefined" && current) { menu(); show(location.hash.slice(1) || current.id); } }; // 바꾸면 음성 멈추고 화면을 다시 그림 / stop voice and re-render
   $("langKo").onclick = function () { QP.I18N.set("ko"); }; $("langEn").onclick = function () { QP.I18N.set("en"); }; // 버튼 / buttons
   QP.I18N.init(); langUI();                         // 지난 선택으로 시작 / start with the last choice
-  $("sign").innerHTML = '<details class="sigd"><summary>' + BR.img("snow", "sig-char", "숙명여대 캐릭터 눈송이") + '<span><b>© 2026 숙명여자대학교 박영호 교수</b><br>' + BR.version + ', 과제 정보 ▾</span></summary><div class="sig-body"><p><b>' + BR.maker + '</b><br>제작 ' + BR.built + ", 배포 " + BR.version + " (" + BR.released + ')</p><p>' + BR.funding + '</p><p>과제: ' + BR.project + '<br>' + BR.partner + '</p><p>© 2025-2026 Sookmyung Women\'s University AGI Lab. (Prof. Young-ho Park). All rights reserved. 숙명여대 CI, 눈송이 캐릭터는 숙명여자대학교 공식 원본을 규정대로 사용함.</p></div></details>'; // 아래 서명: 평소엔 한 줄로 접고, 누르면 과제 정보를 모두 펼침 / bottom signature: folded to one line, expands to all project info on click
+  $("sign").innerHTML = '<details class="sigd"><summary>' + BR.img("snow", "sig-char", "숙명여대 캐릭터 눈송이") + '<span><b>Nov. 2026 숙명여자대학교 AGI연구실</b><br>' + BR.version + ', 과제 정보 ▾</span></summary><div class="sig-body"><p><b>' + BR.maker + '</b><br>제작 ' + BR.built + ", 배포 " + BR.version + " (" + BR.released + ')</p><p>' + BR.funding + '</p><p>과제: ' + BR.project + '<br>' + BR.partner + '</p><p>© 2025-2026 Sookmyung Women\'s University AGI Lab. (Prof. Young-ho Park). All rights reserved. 숙명여대 CI, 눈송이 캐릭터는 숙명여자대학교 공식 원본을 규정대로 사용함.</p></div></details>'; // 아래 서명: 평소엔 한 줄로 접고, 누르면 과제 정보를 모두 펼침 / bottom signature: folded to one line, expands to all project info on click
 
   /* ---------- 2. 기본 데이터와 AI 학습 / 2. Default data and AI training  ---------- */
   function boot() {                                 // 준비 화면이 먼저 보이도록 잠시 뒤에 무거운 계산을 함 / do heavy computation a bit later so the loading screen shows first
@@ -58,12 +58,14 @@
   (function regroup() { const order = []; Object.keys(PLAN).forEach(function (g) { PLAN[g].forEach(function (id) { const v = QP.ViewDefs.find(function (x) { return x.id === id; }); if (v) { v.group = g; order.push(v); } }); }); QP.ViewDefs.forEach(function (v) { if (order.indexOf(v) < 0) { v.group = "④ 실측 데이터 입력 준비"; order.push(v); } }); QP.ViewDefs.length = 0; order.forEach(function (v) { QP.ViewDefs.push(v); }); })(); // 화면 목록을 새 묶음과 순서로 다시 정렬함 / reorder the screen list into the new groups and order
   const groups = Object.keys(PLAN);                 // 메뉴 묶음 순서임 / menu group order
   const icons = { "① 양자와 양자AI 기초": "🪙", "② 실험실 투어": "🧭", "③ 합성 데이터 생성과 실험 관제": "🧪", "④ 실측 데이터 입력 준비": "🗂" }; // 묶음 아이콘임 / group icons
-  State.open = State.open || { "② 실험실 투어": true, "③ 합성 데이터 생성과 실험 관제": true }; // 펼친 그룹 기록임 / record of expanded groups
+  State.open = State.open || {}; State.secOpen = State.secOpen || {}; // 처음에는 모두 접힘(사용자가 눌러 한 단계씩 펼침) / everything collapsed at first (the user expands one level at a time)
   function menu() {                                 // 메뉴를 그림 / draw the menu
     $("menu").innerHTML = groups.map(function (g) {  // 그룹마다 / for each group
-      const sec = SECTIONS.find(function (x) { return x[1][0] === g; }), head = sec ? '<div class="msec">' + sec[0] + "</div>" + (sec[0].indexOf("B.") === 0 ? '<button class="tour-btn tour-b" id="tourB">▶ 에뮬레이팅 실험 자동 안내<small>데이터 생성 → 학습 → 배포, 경보 → 재학습을 차례로 보여 드림</small></button>' : "") : ""; // 큰 목적 제목(묶음 앞에 한 번)임 / main-purpose title (once before its groups)
+      const si = SECTIONS.findIndex(function (x) { return x[1].indexOf(g) >= 0; }), sop = !!State.secOpen[si]; // 이 묶음이 속한 큰 목적과 펼침 여부 / main section of this group and whether it is open
+      const sec = SECTIONS.find(function (x) { return x[1][0] === g; }), head = sec ? '<button class="msec msec-h' + (sop ? " open" : "") + '" data-s="' + si + '"><span>' + sec[0] + "</span><i>" + (sop ? "▾" : "▸") + "</i></button>" + (sec[0].indexOf("B.") === 0 && sop ? '<button class="tour-btn tour-b" id="tourB">▶ 에뮬레이팅 실험 자동 안내<small>데이터 생성 → 학습 → 배포, 경보 → 재학습을 차례로 보여 드림</small></button>' : "") : ""; // 큰 목적 제목(묶음 앞에 한 번)임 / main-purpose title (once before its groups)
       const items = QP.ViewDefs.filter(function (v) { return v.group === g; }); // 그룹의 화면들임 / screens of the group
       const open = State.open[g] || (current && current.group === g); // 펼침 여부임 / expanded or not
+      if (!sop) return head;                         // 큰 목적이 접혀 있으면 제목만 보임(왼쪽을 깔끔하게) / when the section is collapsed, show only its title (keeps the left clean)
       return head + '<div class="grp' + (open ? " open" : "") + '"><button class="grp-h" data-g="' + g + '"><span>' + icons[g] + " " + g + '</span><i>' + (open ? "▾" : "▸") + '</i></button><div class="grp-b">' + items.map(function (v) { // 그룹 머리와 몸통임 / group header and body
         return '<a href="#' + v.id + '" class="' + (current && current.id === v.id && !sub ? "cur" : "") + '">' + v.title + "</a>" + (v.subs ? '<div class="subs">' + v.subs.map(function (s, i) { return '<a href="#' + v.id + "-" + (i + 1) + '" class="sub' + (current && current.id === v.id && Number(sub) === i + 1 ? " cur" : "") + '">' + s + "</a>"; }).join("") + "</div>" : ""); // 항목과 하위 항목임 / items and sub-items
       }).join("") + "</div></div>";
@@ -73,6 +75,7 @@
       State.basicsAuto = false; if (tourOn) tourEnd(true, true); else TB.token = (TB.token || 0) + 1; QP.Voice.stop(); QP.Voice.hush(false); interacted = true;
       if (location.hash === a.getAttribute("href")) setTimeout(readShort, 200); // 같은 화면을 다시 누르면 그 화면 설명만 다시 읽음 / clicking the same screen again re-reads only its guide
     }); });
+    document.querySelectorAll("#menu .msec-h").forEach(function (b) { b.onclick = function () { const k = Number(b.dataset.s); State.secOpen[k] = !State.secOpen[k]; menu(); }; }); // 큰 목적을 누르면 한 단계 펼치거나 접음 / click a section to expand or collapse one level
     document.querySelectorAll("#menu .grp-h").forEach(function (b) { b.onclick = function () { State.open[b.dataset.g] = !b.parentNode.classList.contains("open"); menu(); }; }); // 그룹을 누르면 펼치거나 접음 / click a group to expand or collapse
   }
 
@@ -89,7 +92,7 @@
   function badge() {                                // 위쪽에 "지금 에뮬레이팅 중인 데이터"와 변화를 표시함 / shows "data being emulated now" and its changes at the top
     const d = DS.get(State.dataId), c = State.lastChange; if (!d) return; // 사용 중 데이터와 변화 기록임 / data in use and change log
     const pp = function (v) { return v == null ? "-" : (v * 100).toFixed(1) + "%"; }; // 백분율임 / percentage
-    $("dataBadge").innerHTML = "에뮬레이팅 데이터 <b>" + d.id + "</b> " + d.name + " (" + d.stats.n.toLocaleString("ko-KR") + "행, 위험 " + (d.stats.rate * 100).toFixed(1) + "%, 등급 " + d.grade + ")" + (c && c.from.Q != null ? " · 변화: 양자 " + pp(c.from.Q) + "→" + pp(c.to.Q) + ", 일반 " + pp(c.from.L) + "→" + pp(c.to.L) : ""); // 데이터와 성적 변화를 한 줄로 보임 / show data and score changes in one line
+    $("dataBadge").innerHTML = "에뮬레이팅 데이터 <b>" + d.id + "</b> " + d.name + " (" + d.stats.n.toLocaleString("ko-KR") + "행, 위험 " + (d.stats.rate * 100).toFixed(1) + "%, 등급 " + d.grade + ")" + (c && c.from.Q != null ? ", 변화: 양자 " + pp(c.from.Q) + "→" + pp(c.to.Q) + ", 일반 " + pp(c.from.L) + "→" + pp(c.to.L) : ""); // 데이터와 성적 변화를 한 줄로 보임 / show data and score changes in one line
     if (c && c.at !== shownChange && c.from.Q != null) { shownChange = c.at; const dq = (c.to.Q - c.from.Q) * 100, dl = (c.to.L - c.from.L) * 100; alert0("데이터 변경: " + c.from.name + " → " + c.to.name + " | 양자 탐지율 " + (dq >= 0 ? "+" : "") + dq.toFixed(1) + "%p, 일반 " + (dl >= 0 ? "+" : "") + dl.toFixed(1) + "%p"); $("dataBadge").classList.remove("pulse"); void $("dataBadge").offsetWidth; $("dataBadge").classList.add("pulse"); } // 바뀌면 알림 띠와 깜빡임으로 알림 / notify changes with a toast and a flash
   }
   DS.onChange(quick); DS.onChange(badge);           // 데이터가 바뀌면 패널과 데이터 표시를 갱신함 / update the panel and data badge when data changes
@@ -242,7 +245,7 @@
   function tourGo(k) {                              // k번째 단계를 실행함 / runs step k
     QP.Voice.hush(false); clearTimeout(TB.timer); TB.i = (k + TB.steps.length) % TB.steps.length; TB.paused = false; TB.token = (TB.token || 0) + 1; const tok = TB.token; // 위치를 정함(이전 단계의 기다림은 무효화) / set the position (cancels waiting of the previous step)
     const st = TB.steps[TB.i]; State.touring = true; tourOn = true; // 안내 중 표시임 / mark as guiding
-    const v = QP.ViewDefs.find(function (x) { return x.id === st.id; }); State.open[v.group] = true; // 메뉴 그룹을 자동으로 펼침 / expand the menu group automatically
+    const v = QP.ViewDefs.find(function (x) { return x.id === st.id; }); State.open[v.group] = true; State.secOpen[SECTIONS.findIndex(function (x) { return x[1].indexOf(v.group) >= 0; })] = true; // 메뉴 그룹을 자동으로 펼침 / expand the menu group automatically
     go(st.hash); tourDraw();                        // 화면을 열고 막대를 갱신함 / open the screen and update the bar
     setTimeout(function () {                        // 화면이 그려진 뒤 / after the screen is drawn
       if (tok !== TB.token) return;                 // 그 사이 다른 단계로 이동했으면 무시함 / ignore if moved to another step meanwhile
@@ -303,10 +306,10 @@
     const X = function (d) { return 4 + d / c.L * (M2.w - 8); }, Y = function (e) { return 55 - (e - c.start) / Math.max(1, c.summit - c.start) * 50; }; // 거리, 고도 → 좌표임(높이를 꽉 채워 경사가 잘 보이게) / distance, altitude → coordinates (fills the height so slopes show clearly)
     h.fillStyle = "#9db3dd"; h.beginPath(); h.moveTo(X(0), 58); for (let k = 0; k <= c.n; k++) h.lineTo(X(k / c.n * c.L), Y(c.elev[k])); h.lineTo(X(c.L), 58); h.fill(); // 산 단면을 칠함 / fill the mountain profile
     h.strokeStyle = "#c62828"; h.lineWidth = 3; for (let k = 0; k < c.n; k++) if (c.grades[k] > .34) { h.beginPath(); h.moveTo(X(k / c.n * c.L), Y(c.elev[k])); h.lineTo(X((k + 1) / c.n * c.L), Y(c.elev[k + 1])); h.stroke(); } // 급경사(34% 이상)를 굵은 빨강으로 표시함 / mark steep sections (34% or more) in thick red
-    h.fillStyle = "#c62828"; h.font = "bold 9.5px Malgun Gothic"; h.fillText("━ 급경사", M2.w - 52, 10); // 범례임 / legend
+    h.fillStyle = "#c62828"; h.font = "bold 9.5px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; h.fillText("━ 급경사", M2.w - 52, 10); // 범례임 / legend
     c.pois.forEach(function (q) { if (q.type === "stamp") return; h.fillStyle = "#c76b67"; h.fillRect(X(q.x) - 1.5, Y(QP.Mountain.elevAt(c, q.x)) - 5, 3, 3); }); // 위험 지점을 빨간 점으로 표시함 / mark risk points with red dots
     h.fillStyle = risk ? "#c62828" : al ? "#6e4c82" : "#ffb500"; h.beginPath(); h.arc(X(s0.x), Y(s0.elev) - 2, 4, 0, 7); h.fill(); h.strokeStyle = "#003087"; h.stroke(); // 산행자 위치(위험이면 빨강, 경보면 자두)임 / hiker position (red if risk, plum if alarm)
-    h.fillStyle = "#003087"; h.font = "bold 10px Malgun Gothic"; h.fillText(s0.up ? "↗" : "↘", X(s0.x) + 6, Y(s0.elev) - 4); // 오르막, 내리막 방향임 / uphill or downhill direction
+    h.fillStyle = "#003087"; h.font = "bold 10px Times New Roman, Batang, BatangChe, AppleMyungjo, Noto Serif KR, serif"; h.fillText(s0.up ? "↗" : "↘", X(s0.x) + 6, Y(s0.elev) - 4); // 오르막, 내리막 방향임 / uphill or downhill direction
     $("liveTag").innerHTML = "<b>" + live.course.name + " " + live.course.peak + "</b> 고도 " + Math.round(s0.elev) + "m, 경사 " + Math.round(s0.grade * 100) + "%, <b>심박 " + Math.round(s0.hr) + " bpm</b>(%HRR " + Math.round(s0.pHRR * 100) + "), 기온 " + s0.T.toFixed(1) + "°C, 비 " + s0.rain.toFixed(1) + " mm/h | <span class='c-dusk'>일반 " + Math.round(s0.lin * 100) + "%</span> <span class='c-plum'>양자 " + Math.round(s0.qf * 100) + "%</span> " + (risk ? "<b class='c-rose'>⚠ 위험 구간</b>" : al ? "<b class='c-plum'>⚠ 양자 경보</b>" : "정상"); // 상태 글자(크게, 자세히)임 / status text (large and detailed)
     $("live").className = "live" + (risk ? " risk" : al ? " warn" : ""); // 위험이면 깜빡임 / flash if risky
   }

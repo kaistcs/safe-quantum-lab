@@ -1,0 +1,20 @@
+> Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved.
+
+산행안전 양자 AI 실험실 실행 방법 (학생용)
+
+1. 받은 압축 파일을 원하는 폴더에 "모두 압축 풀기" 합니다.
+   (압축 파일 안에서 바로 실행하지 말고, 반드시 먼저 풀어 주십시오.)
+2. 풀린 폴더 안의 run.bat 을 더블클릭합니다.
+   - Python 3.10 이상이 설치되어 있으면: 실험실 서버가 켜지고 브라우저가 자동으로 열립니다.
+     (데이터 보관함 저장 기능까지 모두 쓸 수 있습니다. 끝낼 때는 검은 창에서 Ctrl+C)
+   - Python이 없으면: 브라우저에서 실험실 화면이 바로 열립니다(보관함 저장만 빼고 모두 동작).
+3. 더 간단한 방법: versions\v03\산행안전_양자실험실_v03.html 을 더블클릭해도 됩니다.
+   (파일 하나에 모든 것이 들어 있어 Python 없이 열립니다.)
+4. 브라우저는 Microsoft Edge 또는 Chrome을 권장합니다. 소리 설명은 화면을 한 번 누른 뒤 나옵니다.
+5. Windows가 "PC 보호" 창을 띄우면 "추가 정보" → "실행"을 누르십시오.
+6. 온라인으로 바로 보기: https://kaistcs.github.io/safe-quantum-lab/
+
+How to run (English)
+1. Extract the zip to any folder (do not run it from inside the zip).
+2. Double-click run.bat. With Python 3.10+ a local server starts and the browser opens; without Python the page opens directly.
+3. Or simply double-click versions\v03\산행안전_양자실험실_v03.html (single self-contained file).
