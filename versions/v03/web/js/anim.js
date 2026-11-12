@@ -104,4 +104,9 @@
   function canvas(cv, h) { return QP.Charts.prep(cv, h); } // 캔버스 준비(배율 처리)를 공유함 / share canvas preparation (scaling)
 
   QP.Anim = { loop: loop, stopAll: stopAll, lerp: lerp, dial: dial, pair: pair, canvas: canvas, deepNet: deepNet }; // 공개함 / make public
+  /* 설명과 같이 가기: 최소 시간이 지나고, 읽던 설명이 끝나야 다음 단계로 감 / keep pace with narration: next step only after a minimum time and after the current speech ends */
+  QP.Pace = {
+    say: function (text) { const av = document.getElementById("autoVoice"); if (text && !(QP.State && QP.State.touring) && (!av || av.checked) && QP.Voice) QP.Voice.speak(text, true); }, // 단계 설명 읽기 / read the step explanation
+    wait: function (minMs, cb, alive) { const t0 = Date.now(); (function w() { if (alive && !alive()) return; const talking = QP.Voice && QP.Voice.isActive && QP.Voice.isActive(); if (Date.now() - t0 < minMs || (talking && Date.now() - t0 < 90000)) { setTimeout(w, 400); return; } cb(); })(); } // 기다렸다가 실행 / wait then run
+  };
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace

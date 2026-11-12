@@ -159,7 +159,7 @@
         body.querySelectorAll("#rcSteps button").forEach(function (b2) { b2.onclick = function () { stopAuto(); go(Number(b2.dataset.k), true); }; });
         ["rcA", "rcB"].forEach(function (id) { const i2 = $("#" + id, body); i2.oninput = function () { i2.nextSibling.value = i2.value; text(); }; });
         function stopAuto() { if (autoT) { clearInterval(autoT); autoT = null; $("#rcAuto", body).textContent = "▶ " + T("천천히 자동 진행", "Slow auto play"); } }
-        function startAuto() { stopAuto(); go(0, false); $("#rcAuto", body).textContent = "■ " + T("멈춤", "Stop"); autoT = setInterval(function () { if (!body.isConnected) return stopAuto(); go((step + 1) % 4, false); }, 6000); } // 6초마다 한 단계 / one step every 6 s
+        function startAuto() { stopAuto(); go(0, false); QP.Pace.say(text()); $("#rcAuto", body).textContent = "■ " + T("멈춤", "Stop"); let at0 = Date.now(); autoT = setInterval(function () { if (!body.isConnected) return stopAuto(); if (QP.Voice.isActive() || Date.now() - at0 < 8000) return; at0 = Date.now(); go((step + 1) % 4, false); QP.Pace.say(text()); }, 500); } /* 단계 설명을 읽고, 다 읽은 뒤(최소 8초) 다음 단계 / read each step and move on only after it finishes (at least 8 s) */ // 6초마다 한 단계 / one step every 6 s
         $("#rcAuto", body).onclick = function () { if (autoT) stopAuto(); else startAuto(); };
         go(0, false); startAuto();                  // 처음에는 천천히 자동으로 보여 줌 / start with the slow auto play
         const stopLoop = A.loop(function () {
