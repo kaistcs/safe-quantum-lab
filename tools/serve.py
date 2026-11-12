@@ -16,6 +16,7 @@ import argparse                                # 명령줄 옵션 도구임 / co
 import datetime                                # 저장 파일 이름의 시각에 씀 / used for the time in saved file names
 import json                                    # 요청 본문(JSON) 처리에 씀 / used to handle request bodies (JSON)
 import subprocess                              # Edge 브라우저 실행에 씀 / used to launch the Edge browser
+import sys                                     # 모듈 경로 조정에 씀 / used to adjust the module path
 import functools                               # 처리기에 폴더를 묶어 넘기는 도구임 / tool to bind the folder to the handler
 import http.server                             # 파이썬 내장 웹 서버임 / Python built-in web server
 import mimetypes                               # 파일 형식(MIME) 표를 다루는 도구임 / tool for file types (MIME)
