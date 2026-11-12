@@ -9,7 +9,7 @@ make_share_zip.py : 학생에게 나눠 줄 깨끗한 압축 파일을 만듦 / 
 import datetime, os, sys, zipfile   # 표준 모듈 / standard modules
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # 프로젝트 루트 / project root
-SKIP_DIRS = {".git", "logs", ".venv", "__pycache__", ".pytest_cache", "node_modules"}   # 뺄 폴더 / folders to skip
+SKIP_DIRS = {".git", "logs", "accounts", ".venv", "__pycache__", ".pytest_cache", "node_modules"}   # 뺄 폴더 / folders to skip
 SKIP_EXT = {".zip", ".pyc"}                                          # 뺄 파일 종류 / file types to skip
 
 

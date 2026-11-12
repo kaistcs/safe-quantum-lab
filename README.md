@@ -92,3 +92,11 @@ Connect once with git_connect.bat (sign in to GitHub); from then on every change
 ## 정직한 범위
 - 2큐비트 회로 특징은 cos 곱 수식과 같으므로 대조군 성적이 같음. 이득의 원인은 “겹침(결합) 특징”임.
 - 양자 고유 이점은 큰 회로, 실제 장비, 실측 데이터에서 검증할 연구 질문임(3차년도 시범연구).
+
+
+## 로그인 / Login
+
+- 누구나 들어가는 기본 계정: **guest / guest** / default account for everyone: guest / guest
+- `run.bat`(로컬 서버)로 열면: 회원가입, 아이디 찾기(가입 이메일), 비밀번호 찾기(확인 질문), 비밀번호 바꾸기, 관리자 접속 기록이 동작함. 계정은 `accounts/users.json`(비밀번호는 PBKDF2 해시), 기록은 `logs/access_log.csv`에 저장되며 둘 다 GitHub에 올라가지 않음.
+- 관리자 계정 `admin`의 초기 비밀번호는 처음 실행할 때 `accounts/관리자_초기비밀번호.txt`에 만들어짐. 로그인 후 바꾸어야 함.
+- GitHub 웹(github.io)이나 html 파일로 열면 서버가 없어 guest / guest 입장만 동작함(브라우저 안의 간단한 잠금이며 보안 로그인은 아님).

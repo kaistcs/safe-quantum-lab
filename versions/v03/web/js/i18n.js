@@ -35,8 +35,8 @@
     return lead + r + tail;                         // 결과 / result
   }
   function node(n) {                                // 텍스트 노드 하나 / one text node
-    const v = n.nodeValue; if (done.get(n) === v) return; // 이미 번역함 / already translated
-    if (lang === "en") { if (!KO.test(v)) return; orig.set(n, v); const t = tr(v); done.set(n, t); if (t !== v) n.nodeValue = t; } // 영문으로 / to English
+    const v = n.nodeValue;                          // 지금 글자 / current text
+    if (lang === "en") { if (done.get(n) === v) return; if (!KO.test(v)) return; /* 이미 번역한 것은 건너뜀(한국어로 돌아갈 때는 이 검사를 하지 않아야 되돌려짐) / skip if already translated (not checked when going back to Korean) */ orig.set(n, v); const t = tr(v); done.set(n, t); if (t !== v) n.nodeValue = t; } // 영문으로 / to English
     else if (orig.has(n)) { const o = orig.get(n); orig.delete(n); done.delete(n); n.nodeValue = o; } // 한글로 되돌림 / back to Korean
   }
   function attrs(el) {                              // 속성 번역 / attributes

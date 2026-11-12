@@ -344,3 +344,14 @@ nav .grp-h:hover i,.quick .grp-h:hover i{background:rgba(255,210,122,.35)}
 
 /* 글꼴: 영문 Times New Roman, 한글 바탕(영문 글꼴에 한글이 없으므로 한글은 자동으로 바탕으로 표시됨) / fonts: English Times New Roman, Korean Batang (Hangul falls back to Batang) */
 button,select,input,textarea{font-family:inherit}
+/* 로그인 화면 / login screen */
+.login{position:fixed;inset:0;z-index:300;background:rgba(0,32,94,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center}
+.lbox{width:min(460px,92vw);background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.35);padding:18px 20px;display:flex;flex-direction:column;gap:8px;max-height:90vh;overflow:auto} .lbox.wide{width:min(980px,94vw)}
+.lhead{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #003087;padding-bottom:6px} .lhead b{color:#003087;font-size:17px} .lhead span{color:#6d5e55}
+.ltabs{display:flex;gap:4px;flex-wrap:wrap} .ltabs button{flex:1;padding:6px 4px;font-size:13px} .ltabs button.on{background:#003087;color:#fff}
+.lpane{display:flex;flex-direction:column;gap:7px} .lpane label,.lbody label{display:flex;flex-direction:column;font-size:13px;gap:3px;color:#1d2a4d} .lpane input,.lpane select,.lbody input{padding:8px;font-size:15px;border:1px solid #c9cfe0;border-radius:7px}
+#lGo,#uGo,#fGo,#rGo{padding:10px;font-size:15px} #lGuest{background:#ffb500;color:#00205e;font-weight:800;border:0;padding:9px;border-radius:8px}
+.lmsg{min-height:18px;margin:0;font-size:13.5px} .lmsg.ok{color:#2e7d32;font-weight:700} .lmsg.bad{color:#c62828;font-weight:700} .lnote{font-size:12px;color:#6d5e55;margin:0;line-height:1.5} .lq{margin:0;color:#6e4c82;font-weight:700}
+.uchip{position:relative} .uchip>button{background:#eef4ff;border:1px solid #c9d3ea;border-radius:18px;padding:6px 12px;font-weight:700} .umenu{position:absolute;right:0;top:110%;background:#fff;border:1px solid #c9cfe0;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.15);display:flex;flex-direction:column;z-index:200;min-width:160px} .umenu button{border:0;background:none;text-align:left;padding:8px 12px} .umenu button:hover{background:#f3f5fa}
+.lbody{display:flex;flex-direction:column;gap:8px} .ladm{display:flex;gap:6px;align-items:center;flex-wrap:wrap} .lclose{background:none;border:0;font-size:14px}
+.lpane[hidden],.umenu[hidden]{display:none!important}

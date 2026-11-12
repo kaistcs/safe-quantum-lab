@@ -8,3 +8,5 @@ _site/
 versions/*/data/public/raw/
 # 자동 저장 기록 / auto-save log
 logs/
+# 로그인 계정(비밀번호 해시)은 올리지 않음 / never push login accounts
+accounts/

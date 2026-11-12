@@ -360,6 +360,17 @@ nav .grp-h:hover i,.quick .grp-h:hover i{background:rgba(255,210,122,.35)}
 
 /* 글꼴: 영문 Times New Roman, 한글 바탕(영문 글꼴에 한글이 없으므로 한글은 자동으로 바탕으로 표시됨) / fonts: English Times New Roman, Korean Batang (Hangul falls back to Batang) */
 button,select,input,textarea{font-family:inherit}
+/* 로그인 화면 / login screen */
+.login{position:fixed;inset:0;z-index:300;background:rgba(0,32,94,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center}
+.lbox{width:min(460px,92vw);background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.35);padding:18px 20px;display:flex;flex-direction:column;gap:8px;max-height:90vh;overflow:auto} .lbox.wide{width:min(980px,94vw)}
+.lhead{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #003087;padding-bottom:6px} .lhead b{color:#003087;font-size:17px} .lhead span{color:#6d5e55}
+.ltabs{display:flex;gap:4px;flex-wrap:wrap} .ltabs button{flex:1;padding:6px 4px;font-size:13px} .ltabs button.on{background:#003087;color:#fff}
+.lpane{display:flex;flex-direction:column;gap:7px} .lpane label,.lbody label{display:flex;flex-direction:column;font-size:13px;gap:3px;color:#1d2a4d} .lpane input,.lpane select,.lbody input{padding:8px;font-size:15px;border:1px solid #c9cfe0;border-radius:7px}
+#lGo,#uGo,#fGo,#rGo{padding:10px;font-size:15px} #lGuest{background:#ffb500;color:#00205e;font-weight:800;border:0;padding:9px;border-radius:8px}
+.lmsg{min-height:18px;margin:0;font-size:13.5px} .lmsg.ok{color:#2e7d32;font-weight:700} .lmsg.bad{color:#c62828;font-weight:700} .lnote{font-size:12px;color:#6d5e55;margin:0;line-height:1.5} .lq{margin:0;color:#6e4c82;font-weight:700}
+.uchip{position:relative} .uchip>button{background:#eef4ff;border:1px solid #c9d3ea;border-radius:18px;padding:6px 12px;font-weight:700} .umenu{position:absolute;right:0;top:110%;background:#fff;border:1px solid #c9cfe0;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.15);display:flex;flex-direction:column;z-index:200;min-width:160px} .umenu button{border:0;background:none;text-align:left;padding:8px 12px} .umenu button:hover{background:#f3f5fa}
+.lbody{display:flex;flex-direction:column;gap:8px} .ladm{display:flex;gap:6px;align-items:center;flex-wrap:wrap} .lclose{background:none;border:0;font-size:14px}
+.lpane[hidden],.umenu[hidden]{display:none!important}
 
 </style>                    <!-- 디자인 -->
 </head>
@@ -1492,6 +1503,30 @@ window.QP_I18N_EN = {
 "어느 피씨에서나 같은 방법으로 설치하고 실행하는 개발 환경 안내입니다.": "A guide to the development environment, installed and run the same way on any PC.",
 "어떤 질문에 답할지 먼저 고릅니다. 실험은 하나의 질문에 하나의 답을 얻는 것입니다. 선택하신 실험은": "First choose which question to answer. An experiment gets one answer to one question. Your chosen experiment is",
 "얼마나 좋아졌나": "How much it improved",
+"로그인": "Log in",
+"회원가입": "Sign up",
+"아이디 찾기": "Find ID",
+"비밀번호 찾기": "Reset password",
+"아이디": "ID",
+"비밀번호": "Password",
+"누구나: guest / guest 로 들어가기": "Anyone: enter as guest / guest",
+"아이디(영문, 숫자 3~20자)": "ID (letters, digits, 3~20)",
+"이름": "Name",
+"이메일(아이디 찾기에 씀)": "E-mail (used to find your ID)",
+"비밀번호(6자 이상)": "Password (6+ characters)",
+"확인 질문(비밀번호 찾기에 씀)": "Security question (used to reset the password)",
+"질문의 답": "Answer",
+"가입하기": "Sign up",
+"가입할 때 쓴 이메일": "E-mail used at sign-up",
+"확인 질문 보기": "Show the question",
+"새 비밀번호(6자 이상)": "New password (6+ characters)",
+"비밀번호 바꾸기": "Change password",
+"접속 기록 보기": "View access log",
+"로그아웃": "Log out",
+"접속 기록": "Access log",
+"지금 비밀번호": "Current password",
+"바꾸기": "Change",
+"✕ 닫기": "✕ Close",
 "Nov. 2026 숙명여자대학교 AGI연구실": "Nov. 2026 AGI Lab., Sookmyung Women's University",
 "▶ 실제 예: 100대 명산 하나를 오르며 8단계 보기": "▶ Real example: climb one of the 100 famous mountains through the 8 stages",
 "◀ 개념 사이클로 돌아가기": "◀ Back to the concept cycle",
@@ -2445,8 +2480,8 @@ window.QP_I18N_EN = {
     return lead + r + tail;                         // 결과 / result
   }
   function node(n) {                                // 텍스트 노드 하나 / one text node
-    const v = n.nodeValue; if (done.get(n) === v) return; // 이미 번역함 / already translated
-    if (lang === "en") { if (!KO.test(v)) return; orig.set(n, v); const t = tr(v); done.set(n, t); if (t !== v) n.nodeValue = t; } // 영문으로 / to English
+    const v = n.nodeValue;                          // 지금 글자 / current text
+    if (lang === "en") { if (done.get(n) === v) return; if (!KO.test(v)) return; /* 이미 번역한 것은 건너뜀(한국어로 돌아갈 때는 이 검사를 하지 않아야 되돌려짐) / skip if already translated (not checked when going back to Korean) */ orig.set(n, v); const t = tr(v); done.set(n, t); if (t !== v) n.nodeValue = t; } // 영문으로 / to English
     else if (orig.has(n)) { const o = orig.get(n); orig.delete(n); done.delete(n); n.nodeValue = o; } // 한글로 되돌림 / back to Korean
   }
   function attrs(el) {                              // 속성 번역 / attributes
@@ -5712,6 +5747,78 @@ window.QP_I18N_EN = {
 </script>
 <script>
 /* Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved.
+ * 행정안전부 재난안전연구개발사업 산행안전 과제 결과물. 이용 조건은 프로젝트 루트의 LICENSE를 따름.
+ * [English] Login screen: full accounts (sign-up, find ID, reset password, access log) when served by run.bat; guest/guest gate on static hosting.
+ *
+ * auth.js : 로그인 화면 / login screen
+ *   - run.bat(로컬 서버)로 열면: 진짜 계정(서버에 해시로 저장), 회원가입, 아이디 찾기(이메일), 비밀번호 찾기(확인 질문), 접속 기록(관리자)
+ *   - GitHub 웹이나 html 파일로 열면: 서버가 없어 guest/guest 입장 화면만 동작하고, 접속 기록은 이 브라우저에만 남음
+ */
+(function (QP) {
+  const $ = function (id) { return document.getElementById(id); };   // 요소 찾기 / find an element
+  const SS = { get: function (k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { sessionStorage.setItem(k, v); } catch (e) { } }, del: function (k) { try { sessionStorage.removeItem(k); } catch (e) { } } }; // 탭을 닫으면 지워지는 저장소 / per-tab storage
+  let server = false, user = null;                  // 서버 사용 가능 여부, 로그인한 사람 / server available, logged-in user
+  function api(op, body) { return fetch("api/auth/" + op, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) }).then(function (r) { return r.json(); }); } // 서버 요청 / server request
+  function localLog(ev, id, ok) { try { const a = JSON.parse(localStorage.getItem("qp_access_log") || "[]"); a.push([new Date().toLocaleString("ko-KR"), ev, id, "이 브라우저", ok ? "성공/ok" : "실패/fail", ""]); localStorage.setItem("qp_access_log", JSON.stringify(a.slice(-300))); } catch (e) { } } // 서버가 없을 때 브라우저 기록 / browser-only log without a server
+  function ping() { return new Promise(function (res) { if (location.protocol === "file:") return res(false); const t = setTimeout(function () { res(false); }, 1500); fetch("api/auth/ping", { cache: "no-store" }).then(function (r) { clearTimeout(t); res(r.ok); }).catch(function () { clearTimeout(t); res(false); }); }); } // 서버 확인 / check the server
+
+  function overlay() {                              // 로그인 화면 만들기 / build the login screen
+    const d = document.createElement("div"); d.id = "login"; d.className = "login";
+    d.innerHTML = '<div class="lbox"><div class="lhead"><b>숙명 AGI 산행안전 양자 실험실</b><span>로그인</span></div>' +
+      '<div class="ltabs"><button data-t="in" class="on">로그인</button><button data-t="up">회원가입</button><button data-t="fid">아이디 찾기</button><button data-t="fpw">비밀번호 찾기</button></div>' +
+      '<div class="lpane" id="lp-in"><label>아이디<input id="lId" autocomplete="username"></label><label>비밀번호<input id="lPw" type="password" autocomplete="current-password"></label><button id="lGo" class="primary">로그인</button><button id="lGuest">누구나: guest / guest 로 들어가기</button></div>' +
+      '<div class="lpane" id="lp-up" hidden><label>아이디(영문, 숫자 3~20자)<input id="uId"></label><label>이름<input id="uName"></label><label>이메일(아이디 찾기에 씀)<input id="uMail" type="email"></label><label>비밀번호(6자 이상)<input id="uPw" type="password"></label><label>확인 질문(비밀번호 찾기에 씀)<select id="uQ"><option>내가 처음 오른 산은?</option><option>초등학교 이름은?</option><option>어릴 때 별명은?</option><option>가장 좋아하는 계절은?</option></select></label><label>질문의 답<input id="uA"></label><button id="uGo" class="primary">가입하기</button></div>' +
+      '<div class="lpane" id="lp-fid" hidden><label>가입할 때 쓴 이메일<input id="fMail" type="email"></label><button id="fGo" class="primary">아이디 찾기</button></div>' +
+      '<div class="lpane" id="lp-fpw" hidden><label>아이디<input id="rId"></label><button id="rQ">확인 질문 보기</button><p id="rQt" class="lq"></p><label>질문의 답<input id="rA"></label><label>새 비밀번호(6자 이상)<input id="rPw" type="password"></label><button id="rGo" class="primary">비밀번호 바꾸기</button></div>' +
+      '<p id="lMsg" class="lmsg"></p><p class="lnote" id="lNote"></p></div>';
+    document.body.appendChild(d); return d;
+  }
+  function msg(t, ok) { const m = $("lMsg"); m.textContent = t || ""; m.className = "lmsg" + (ok ? " ok" : t ? " bad" : ""); } // 안내 문구 / message
+  function done(u, tok, cb) {                       // 로그인 성공 / login succeeded
+    user = u; SS.set("qp_user", JSON.stringify(u)); if (tok) SS.set("qp_tok", tok);
+    const o = $("login"); if (o) o.remove(); chip(); cb();
+  }
+  function gate(cb) {                               // 로그인한 뒤에만 cb를 부름 / call cb only after login
+    const su = SS.get("qp_user"); if (su) { try { user = JSON.parse(su); } catch (e) { user = null; } }
+    ping().then(function (ok) { server = ok;
+      if (user) { chip(); return cb(); }            // 이 탭에서 이미 로그인함 / already logged in on this tab
+      if (!server && /[?&]guest=1/.test(location.search)) return done({ id: "guest", name: "손님", role: "guest" }, null, cb); // 시연, 점검용 바로 입장(서버 없는 화면에서 guest만) / quick guest entry for demos and checks (static pages, guest only)
+      overlay(); $("lNote").innerHTML = server ? "계정과 접속 기록은 이 PC의 실험실 서버(accounts 폴더, logs/access_log.csv)에 저장됩니다. 비밀번호는 해시로만 저장됩니다." : "지금은 서버 없이 열린 화면(GitHub 웹 또는 html 파일)이라 <b>guest / guest</b>로만 들어갈 수 있습니다. 회원가입, 아이디, 비밀번호 찾기는 <b>run.bat</b>으로 실행했을 때 쓸 수 있습니다.";
+      document.querySelectorAll("#login .ltabs button").forEach(function (b) { b.onclick = function () { document.querySelectorAll("#login .ltabs button").forEach(function (x) { x.classList.toggle("on", x === b); }); ["in", "up", "fid", "fpw"].forEach(function (k) { $("lp-" + k).hidden = k !== b.dataset.t; }); msg(!server && b.dataset.t !== "in" ? "이 기능은 run.bat으로 실행했을 때 쓸 수 있습니다." : ""); }; });
+      const tryLogin = function (id, pw) { if (!id) return msg("아이디를 넣으십시오.");
+        if (!server) { if (id === "guest" && pw === "guest") { localLog("login", id, true); return done({ id: "guest", name: "손님", role: "guest" }, null, cb); } localLog("login", id, false); return msg("서버 없이 열린 화면에서는 guest / guest 만 쓸 수 있습니다."); }
+        api("login", { id: id, pw: pw }).then(function (r) { if (r.ok) done(r.user, r.token, cb); else msg(r.msg); }).catch(function () { msg("서버와 연결이 끊겼습니다."); }); };
+      $("lGo").onclick = function () { tryLogin($("lId").value.trim(), $("lPw").value); };
+      $("lPw").onkeydown = function (e) { if (e.key === "Enter") $("lGo").click(); };
+      $("lGuest").onclick = function () { tryLogin("guest", "guest"); };
+      $("uGo").onclick = function () { if (!server) return; api("signup", { id: $("uId").value.trim(), name: $("uName").value, email: $("uMail").value, pw: $("uPw").value, q: $("uQ").value, a: $("uA").value }).then(function (r) { msg(r.msg, r.ok); if (r.ok) { $("lId").value = $("uId").value.trim(); document.querySelector('#login [data-t="in"]').click(); msg(r.msg, true); } }); };
+      $("fGo").onclick = function () { if (!server) return; api("find-id", { email: $("fMail").value }).then(function (r) { msg(r.ok ? "가입한 아이디: " + r.ids.join(", ") + " (일부를 가려서 보여 드립니다)" : r.msg, r.ok); }); };
+      $("rQ").onclick = function () { if (!server) return; fetch("api/auth/question?id=" + encodeURIComponent($("rId").value.trim())).then(function (x) { return x.json(); }).then(function (r) { $("rQt").textContent = r.ok ? "질문: " + r.q : ""; if (!r.ok) msg(r.msg); else msg(""); }); };
+      $("rGo").onclick = function () { if (!server) return; api("reset", { id: $("rId").value.trim(), a: $("rA").value, newpw: $("rPw").value }).then(function (r) { msg(r.msg, r.ok); }); };
+      setTimeout(function () { const i = $("lId"); if (i) i.focus(); }, 50);
+    });
+  }
+  function modal(title, html) {                     // 작은 창 / small dialog
+    const m = document.createElement("div"); m.className = "login"; m.innerHTML = '<div class="lbox wide"><div class="lhead"><b>' + title + '</b><button class="lclose">✕ 닫기</button></div><div class="lbody">' + html + "</div></div>"; document.body.appendChild(m); m.querySelector(".lclose").onclick = function () { m.remove(); }; return m;
+  }
+  function chip() {                                 // 오른쪽 위 사용자 표시 / user chip at the top right
+    const top = document.querySelector("header.top .top-btn"); if (!top || !user) return; let c = $("uChip"); if (!c) { c = document.createElement("div"); c.id = "uChip"; c.className = "uchip"; top.insertBefore(c, top.firstChild); }
+    c.innerHTML = '<button id="uBtn">👤 ' + user.id + (user.role === "admin" ? " (관리자)" : "") + ' ▾</button><div id="uMenu" class="umenu" hidden>' + (server && user.role !== "guest" ? '<button id="uPwc">비밀번호 바꾸기</button>' : "") + (user.role === "admin" || !server ? '<button id="uLog">접속 기록 보기</button>' : "") + '<button id="uOut">로그아웃</button></div>';
+    $("uBtn").onclick = function () { $("uMenu").hidden = !$("uMenu").hidden; };
+    $("uOut").onclick = function () { const tok = SS.get("qp_tok"); if (server && tok) api("logout", { token: tok }).catch(function () { }); else localLog("logout", user.id, true); SS.del("qp_user"); SS.del("qp_tok"); if (QP.Voice) QP.Voice.shutdown && QP.Voice.shutdown(); location.reload(); };
+    if ($("uPwc")) $("uPwc").onclick = function () { const m = modal("비밀번호 바꾸기", '<label>지금 비밀번호<input id="cOld" type="password"></label><label>새 비밀번호(6자 이상)<input id="cNew" type="password"></label><button id="cGo" class="primary">바꾸기</button><p id="cMsg" class="lmsg"></p>'); m.querySelector("#cGo").onclick = function () { api("change", { token: SS.get("qp_tok"), old: m.querySelector("#cOld").value, new: m.querySelector("#cNew").value }).then(function (r) { const p = m.querySelector("#cMsg"); p.textContent = r.msg; p.className = "lmsg " + (r.ok ? "ok" : "bad"); }); }; };
+    if ($("uLog")) $("uLog").onclick = function () {
+      const show = function (rows, users) { const m = modal("접속 기록" + (server ? "" : " (이 브라우저에만 남은 기록)"), (users ? '<p class="small">가입한 사람 ' + users.length + "명: " + users.map(function (u) { return u.id + "(" + u.role + ")"; }).join(", ") + '</p><div class="ladm"><input id="aId" placeholder="아이디"><input id="aPw" type="password" placeholder="새 비밀번호"><button id="aGo">관리자 재설정</button><span id="aMsg"></span></div>' : "") + '<table class="labtbl"><tr><th>시각</th><th>사건</th><th>아이디</th><th>IP</th><th>결과</th><th>비고</th></tr>' + rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + String(c).replace(/</g, "&lt;") + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>");
+        const ag = m.querySelector("#aGo"); if (ag) ag.onclick = function () { api("admin-reset", { token: SS.get("qp_tok"), id: m.querySelector("#aId").value.trim(), newpw: m.querySelector("#aPw").value }).then(function (r) { m.querySelector("#aMsg").textContent = r.msg; }); }; };
+      if (server) api("log", { token: SS.get("qp_tok") }).then(function (r) { if (r.ok) show(r.rows, r.users); else alert(r.msg); }); else { let a = []; try { a = JSON.parse(localStorage.getItem("qp_access_log") || "[]").reverse(); } catch (e) { } show(a, null); }
+    };
+  }
+  QP.Auth = { gate: gate, user: function () { return user; } }; // 공개 / public API
+})(window.QP = window.QP || {});
+
+</script>
+<script>
+/* Copyright (c) 2025-2026 숙명여자대학교 박영호 교수 (Prof. Young-ho Park, Sookmyung Women's University). All rights reserved.
  * 행정안전부 재난안전연구개발사업 산행안전 과제 결과물. 이용 조건은 프로젝트 루트의 LICENSE를 따름. */
 /* [English] Application shell: menu, screen switching, narration sync, Snowflake pointer, full guide (tour), data panel, live band, settings, language switch, data store auto-save. */
 /* =====================================================================
@@ -5736,7 +5843,7 @@ window.QP_I18N_EN = {
   $("brandTop").innerHTML = '<div class="banner-card"><img class="banner" src="' + BR.local("banner") + '" alt="단풍 든 산을 함께 오르는 숙명 눈송이 친구들(사용자 제공 그림)"><div class="univ-strip">' + BR.img("symbol", "u-sym", "숙명여자대학교 심볼마크") + '<span class="brand-text">Sookmyung AGI Lab.</span></div></div><div class="lab-title">' + beaker + '<div><b>숙명 AGI 산행안전<br>양자 실험실</b><small>' + BR.labEn + ", " + BR.version + '</small></div></div>'; // 왼쪽 위 머리임 / top-left header
   /* 한영 전환 / Korean-English switch: 왼쪽 위 버튼으로 화면 글자, 그림 글자, 음성을 한 번에 바꿈 */
   function langUI() { const en = QP.I18N.lang() === "en"; $("langKo").classList.toggle("on", !en); $("langEn").classList.toggle("on", en); } // 버튼 표시 / button state
-  QP.I18N.onChange = function () { QP.Voice.stop(); langUI(); if (QP.Voice.onVoices) QP.Voice.onVoices(); if (typeof current !== "undefined" && current) { menu(); show(location.hash.slice(1) || current.id); } }; // 바꾸면 음성 멈추고 화면을 다시 그림 / stop voice and re-render
+  QP.I18N.onChange = function () { QP.Voice.stop(); langUI(); if (QP.Voice.onVoices) QP.Voice.onVoices(); if (typeof current !== "undefined" && current) { menu(); quick(); show(location.hash.slice(1) || current.id); } }; // 바꾸면 음성 멈추고 화면을 다시 그림 / stop voice and re-render
   $("langKo").onclick = function () { QP.I18N.set("ko"); }; $("langEn").onclick = function () { QP.I18N.set("en"); }; // 버튼 / buttons
   QP.I18N.init(); langUI();                         // 지난 선택으로 시작 / start with the last choice
   $("sign").innerHTML = '<details class="sigd"><summary>' + BR.img("snow", "sig-char", "숙명여대 캐릭터 눈송이") + '<span><b>Nov. 2026 숙명여자대학교 AGI연구실</b><br>' + BR.version + ', 과제 정보 ▾</span></summary><div class="sig-body"><p><b>' + BR.maker + '</b><br>제작 ' + BR.built + ", 배포 " + BR.version + " (" + BR.released + ')</p><p>' + BR.funding + '</p><p>과제: ' + BR.project + '<br>' + BR.partner + '</p><p>© 2025-2026 Sookmyung Women\'s University AGI Lab. (Prof. Young-ho Park). All rights reserved. 숙명여대 CI, 눈송이 캐릭터는 숙명여자대학교 공식 원본을 규정대로 사용함.</p></div></details>'; // 아래 서명: 평소엔 한 줄로 접고, 누르면 과제 정보를 모두 펼침 / bottom signature: folded to one line, expands to all project info on click
@@ -5748,7 +5855,7 @@ window.QP_I18N_EN = {
     DS.retrain(g0.id);                              // 다섯 방식 + DNN을 학습함 / train the five methods + DNN
     quick(); badge(); show(location.hash.slice(1) || "home"); // 첫 화면을 그림 / draw the first screen
     $("loading").remove();                          // 준비 화면을 지움 / remove the loading screen
-    $("stImg").src = BR.local("cheer"); $("starter").hidden = false; // 첫 화면: 자동 시연과 설명을 기본으로 권함(브라우저는 첫 클릭 전에는 소리를 낼 수 없음) / start screen: recommends auto demo and explanation (browsers cannot play sound before the first click)
+    QP.Auth.gate(function () { $("stImg").src = BR.local("cheer"); $("starter").hidden = false; }); /* 로그인한 뒤에 시작 화면을 보임 / show the start screen after login */ // 첫 화면: 자동 시연과 설명을 기본으로 권함(브라우저는 첫 클릭 전에는 소리를 낼 수 없음) / start screen: recommends auto demo and explanation (browsers cannot play sound before the first click)
     $("stGo").onclick = function () {               // 시연 시작: 환영 인사를 먼저 하고, 끝나면 양자 기초부터 전체 자동 안내를 반드시 시작함 / start demo: welcome first, then always start the full guide from quantum basics
       $("starter").hidden = true; QP.Voice.wake(); interacted = true; // 시작 화면을 닫고 오디오를 깨움 / close the start screen and wake the audio
       const W = "안녕하세요? 숙명여자대학교 AGI연구실에서 개발 중인 산행안전을 위한 양자 특성 AI 에뮬레이팅 실험실에 오신 것을 환영합니다. 자동 시연을 누르셨으니, 양자의 기본 설명부터 시작해서 실험실에 대해 잘 안내하도록 하겠습니다."; // 환영 인사임 / welcome message

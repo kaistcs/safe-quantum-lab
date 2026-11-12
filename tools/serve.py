@@ -23,6 +23,8 @@ import mimetypes                               # 파일 형식(MIME) 표를 다�
 import os                                      # 경로 도구임 / path tools
 import socket                                  # 포트 검사, IP 확인 도구임 / port checks, IP lookup
 import socketserver                            # 다중 접속 서버 도구임 / multi-connection server tool
+import sys as _sys; _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # tools 폴더 / tools folder
+import auth_store                              # 로그인 계정 관리 / login accounts
 import webbrowser                              # 브라우저 자동 열기 도구임 / browser auto-open tool
 import threading                               # 자동 GitHub 저장을 뒤에서 돌림 / runs auto GitHub save in the background
 import time                                    # 자동 저장 간격 / auto-save interval
@@ -63,6 +65,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):   # 요청 처리기임 / r
     extensions_map = {**http.server.SimpleHTTPRequestHandler.extensions_map, ".js": "text/javascript", ".css": "text/css", ".mp3": "audio/mpeg"}   # 형식 표를 한 번 더 고정함 / fix the type table once more
 
     def do_GET(self):                          # 주소 요청을 처리함 / handle GET requests
+        if self.path.split("?")[0].endswith("/api/auth/ping"): return self._json(200, {"ok": True})   # 로그인 서버가 있는지 / is the login server available
+        if self.path.split("?")[0].endswith("/api/auth/question"):   # 확인 질문 보기 / get the security question
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query); return self._json(200, auth_store.question(q.get("id", [""])[0]))
         if self.path.split("?")[0].endswith("/api/datasets"):   # 데이터 보관함 목록 / list the data store
             return self._json(200, {"dir": STORE, "items": store_list()})   # 보관된 데이터 목록을 돌려줌 / return the list of stored datasets
         if self.path.split("?")[0].endswith("/api/dataset"):    # 보관된 데이터 하나 읽기 / read one stored dataset
@@ -93,6 +98,18 @@ class Handler(http.server.SimpleHTTPRequestHandler):   # 요청 처리기임 / r
             data = json.loads(self.rfile.read(n).decode("utf-8"))   # 본문 JSON을 읽음 / read the JSON body
         except Exception:                      # 읽기 실패면 / if reading fails
             return self._json(400, {"error": "bad json"})   # 오류로 응답함 / answer with an error
+        ip = self.client_address[0] if self.client_address else "-"   # 접속한 곳 / client address
+        if "/api/auth/" in self.path:          # 로그인 관련 요청 / login-related requests
+            op = self.path.split("/api/auth/")[1].split("?")[0]
+            if op == "login": return self._json(200, auth_store.login(str(data.get("id", "")).strip(), str(data.get("pw", "")), ip))
+            if op == "logout": return self._json(200, auth_store.logout(data.get("token"), ip))
+            if op == "signup": return self._json(200, auth_store.signup(data, ip))
+            if op == "find-id": return self._json(200, auth_store.find_id(data.get("email"), ip))
+            if op == "reset": return self._json(200, auth_store.reset(data, ip))
+            if op == "change": return self._json(200, auth_store.change(data.get("token"), data.get("old"), data.get("new"), ip))
+            if op == "log": return self._json(200, auth_store.admin_log(data.get("token")))
+            if op == "admin-reset": return self._json(200, auth_store.admin_reset(data.get("token"), data.get("id"), data.get("newpw"), ip))
+            return self._json(404, {"ok": False, "msg": "unknown"})
         stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")   # 파일 이름용 시각임 / time for the file name
         ver = self.path.strip("/").split("/")[0] if self.path.strip("/").split("/")[0].startswith("v") else versions()[-1]   # 요청을 보낸 화면의 버전임 / version of the page that sent the request
         if self.path.endswith("/api/request"):  # 데이터 생성 요청 기록이면 / if it is a data-generation request log

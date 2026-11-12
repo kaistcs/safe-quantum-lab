@@ -23,7 +23,7 @@
   $("brandTop").innerHTML = '<div class="banner-card"><img class="banner" src="' + BR.local("banner") + '" alt="단풍 든 산을 함께 오르는 숙명 눈송이 친구들(사용자 제공 그림)"><div class="univ-strip">' + BR.img("symbol", "u-sym", "숙명여자대학교 심볼마크") + '<span class="brand-text">Sookmyung AGI Lab.</span></div></div><div class="lab-title">' + beaker + '<div><b>숙명 AGI 산행안전<br>양자 실험실</b><small>' + BR.labEn + ", " + BR.version + '</small></div></div>'; // 왼쪽 위 머리임 / top-left header
   /* 한영 전환 / Korean-English switch: 왼쪽 위 버튼으로 화면 글자, 그림 글자, 음성을 한 번에 바꿈 */
   function langUI() { const en = QP.I18N.lang() === "en"; $("langKo").classList.toggle("on", !en); $("langEn").classList.toggle("on", en); } // 버튼 표시 / button state
-  QP.I18N.onChange = function () { QP.Voice.stop(); langUI(); if (QP.Voice.onVoices) QP.Voice.onVoices(); if (typeof current !== "undefined" && current) { menu(); show(location.hash.slice(1) || current.id); } }; // 바꾸면 음성 멈추고 화면을 다시 그림 / stop voice and re-render
+  QP.I18N.onChange = function () { QP.Voice.stop(); langUI(); if (QP.Voice.onVoices) QP.Voice.onVoices(); if (typeof current !== "undefined" && current) { menu(); quick(); show(location.hash.slice(1) || current.id); } }; // 바꾸면 음성 멈추고 화면을 다시 그림 / stop voice and re-render
   $("langKo").onclick = function () { QP.I18N.set("ko"); }; $("langEn").onclick = function () { QP.I18N.set("en"); }; // 버튼 / buttons
   QP.I18N.init(); langUI();                         // 지난 선택으로 시작 / start with the last choice
   $("sign").innerHTML = '<details class="sigd"><summary>' + BR.img("snow", "sig-char", "숙명여대 캐릭터 눈송이") + '<span><b>Nov. 2026 숙명여자대학교 AGI연구실</b><br>' + BR.version + ', 과제 정보 ▾</span></summary><div class="sig-body"><p><b>' + BR.maker + '</b><br>제작 ' + BR.built + ", 배포 " + BR.version + " (" + BR.released + ')</p><p>' + BR.funding + '</p><p>과제: ' + BR.project + '<br>' + BR.partner + '</p><p>© 2025-2026 Sookmyung Women\'s University AGI Lab. (Prof. Young-ho Park). All rights reserved. 숙명여대 CI, 눈송이 캐릭터는 숙명여자대학교 공식 원본을 규정대로 사용함.</p></div></details>'; // 아래 서명: 평소엔 한 줄로 접고, 누르면 과제 정보를 모두 펼침 / bottom signature: folded to one line, expands to all project info on click
@@ -35,7 +35,7 @@
     DS.retrain(g0.id);                              // 다섯 방식 + DNN을 학습함 / train the five methods + DNN
     quick(); badge(); show(location.hash.slice(1) || "home"); // 첫 화면을 그림 / draw the first screen
     $("loading").remove();                          // 준비 화면을 지움 / remove the loading screen
-    $("stImg").src = BR.local("cheer"); $("starter").hidden = false; // 첫 화면: 자동 시연과 설명을 기본으로 권함(브라우저는 첫 클릭 전에는 소리를 낼 수 없음) / start screen: recommends auto demo and explanation (browsers cannot play sound before the first click)
+    QP.Auth.gate(function () { $("stImg").src = BR.local("cheer"); $("starter").hidden = false; }); /* 로그인한 뒤에 시작 화면을 보임 / show the start screen after login */ // 첫 화면: 자동 시연과 설명을 기본으로 권함(브라우저는 첫 클릭 전에는 소리를 낼 수 없음) / start screen: recommends auto demo and explanation (browsers cannot play sound before the first click)
     $("stGo").onclick = function () {               // 시연 시작: 환영 인사를 먼저 하고, 끝나면 양자 기초부터 전체 자동 안내를 반드시 시작함 / start demo: welcome first, then always start the full guide from quantum basics
       $("starter").hidden = true; QP.Voice.wake(); interacted = true; // 시작 화면을 닫고 오디오를 깨움 / close the start screen and wake the audio
       const W = "안녕하세요? 숙명여자대학교 AGI연구실에서 개발 중인 산행안전을 위한 양자 특성 AI 에뮬레이팅 실험실에 오신 것을 환영합니다. 자동 시연을 누르셨으니, 양자의 기본 설명부터 시작해서 실험실에 대해 잘 안내하도록 하겠습니다."; // 환영 인사임 / welcome message
