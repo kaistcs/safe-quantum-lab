@@ -4067,6 +4067,7 @@ window.QP_I18N_EN = {
   /* 설명과 같이 가기: 최소 시간이 지나고, 읽던 설명이 끝나야 다음 단계로 감 / keep pace with narration: next step only after a minimum time and after the current speech ends */
   QP.Pace = {
     say: function (text) { const av = document.getElementById("autoVoice"); if (!text || !QP.Voice || (av && !av.checked)) return; const St = QP.State || {};
+      if (St.welcoming) return;   // 환영 인사 중에는 화면 설명을 끼워 넣지 않음 / no screen narration during the welcome
       if (!St.touring) { QP.Voice.speak(text, true); return; }
       if (St.hold) { const h0 = St.holdId; (function q() { if (!St.hold || St.holdId !== h0) return; if (QP.Voice.isActive && QP.Voice.isActive()) { setTimeout(q, 400); return; } QP.Voice.speak(text, true, true); })(); } }, // 단계 설명 읽기(투어 중에는 화면 시연이 붙잡은 경우만, 앞 설명이 끝난 뒤 이어 읽음) / read the step explanation (during the tour only for held demos, after the current speech)
     hold: function (on) { const St = QP.State || {}; St.hold = !!on; if (on) St.holdId = (St.holdId || 0) + 1; }, // 화면 시연이 끝날 때까지 투어를 붙잡음 / hold the tour until the screen demo finishes
@@ -4254,7 +4255,7 @@ window.QP_I18N_EN = {
     let pos = 0, cur = -1, wait = 0, wx = "", lastSay = "", stayT = 0, spoken = true, lapDone = false;
     function sayPOI(t) {                            // 지점 설명을 읽음(투어 중이면 투어 설명이 끝난 뒤 이어서) / read the POI explanation (after the tour narration when touring)
       const av = $("#autoVoice"); spoken = false; if (av && !av.checked) { spoken = true; return; }
-      setTimeout(function q() { if (!document.body.contains(el)) return; if (QP.Voice.isActive && QP.Voice.isActive()) { setTimeout(q, 400); return; } QP.Voice.speak(t, true, true); setTimeout(function () { spoken = true; }, 1200); }, cur <= 0 ? 1500 : 0);
+      setTimeout(function q() { if (!document.body.contains(el)) return; if (QP.State.welcoming || (QP.Voice.isActive && QP.Voice.isActive())) { setTimeout(q, 400); return; } QP.Voice.speak(t, true, true); setTimeout(function () { spoken = true; }, 1200); }, cur <= 0 ? 1500 : 0);
     } /* 머문 시각(실제 시간) / dwell start (real time) */     // 날씨: rain, snow, sunset / weather                // 등산로 위치, 지금 POI, 머무는 시간 / trail position, current POI, dwell time
     const stop = A.loop(function (dt, now) {
       if (wait > 0) { const talk = QP.Voice.isActive && QP.Voice.isActive(); if (performance.now() - stayT > 8000 && (!talk || performance.now() - stayT > 60000) && spoken) { wait = 0; if (cur === POI.length - 1 && !lapDone) { lapDone = true; sayPOI("열두 지점을 모두 지나 정상에 도착했습니다. 정리하면, 위험 신호가 하나뿐인 곳에서는 두 인공지능이 비슷하지만, 비와 급경사, 일몰과 하산 지연처럼 두 위험이 겹치는 곳에서 양자 특징 인공지능이 겹침 점수로 더 강하게 경보했습니다. 눈송이는 처음부터 다시 오르며 같은 변화를 반복해서 보여 드립니다."); wait = 1; stayT = performance.now(); } else if (lapDone && QP.State.hold) QP.Pace.hold(false); } } /* POI마다 7초 이상 머물고, 설명을 다 읽은 뒤에야 다음으로 감 / stay at least 7 s at each POI and move on only after the explanation finishes */
@@ -6631,10 +6632,7 @@ window.QP_I18N_EN = {
     QP.Auth.gate(function () { $("stImg").src = BR.local("cheer"); $("starter").hidden = false; }); /* 로그인한 뒤에 시작 화면을 보임 / show the start screen after login */ // 첫 화면: 자동 시연과 설명을 기본으로 권함(브라우저는 첫 클릭 전에는 소리를 낼 수 없음) / start screen: recommends auto demo and explanation (browsers cannot play sound before the first click)
     $("stGo").onclick = function () {               // 시연 시작: 환영 인사를 먼저 하고, 끝나면 양자 기초부터 전체 자동 안내를 반드시 시작함 / start demo: welcome first, then always start the full guide from quantum basics
       $("starter").hidden = true; QP.Voice.wake(); interacted = true; // 시작 화면을 닫고 오디오를 깨움 / close the start screen and wake the audio
-      const W = "안녕하세요? 숙명여자대학교 AGI연구실에서 개발 중인 산행안전을 위한 양자 특성 AI 에뮬레이팅 실험실에 오신 것을 환영합니다. 자동 시연을 누르셨으니, 양자의 기본 설명부터 시작해서 실험실에 대해 잘 안내하도록 하겠습니다."; // 환영 인사임 / welcome message
-      QP.Voice.speak(W, true, true); alert0("환영합니다. 잠시 후 양자의 기본 설명부터 자동 안내를 시작합니다."); // 인사를 읽고 알림을 띄움 / read the greeting and show a toast
-      const dl = Date.now() + estimate(W) + 2000, t0 = Date.now(), wt = TB.token = (TB.token || 0) + 1; // 음성이 멈춰도 반드시 넘어가도록 정한 최대 대기 시각임 / latest wait time so it moves on even if the voice stalls
-      (function waitW() { if (TB.token !== wt) return; if ((QP.Voice.isActive() || Date.now() - t0 < 1500) && Date.now() < dl) { setTimeout(waitW, 400); return; } setTimeout(function () { if (TB.token !== wt) return; TB.steps = tourSteps(); tourGo(0); }, 600); })(); // 인사가 끝나면 첫 단계(① 양자와 양자AI 기초)부터 시작함 / after the greeting, start from step 1 (① quantum and quantum AI basics)
+      welcomeThen(function () { TB.steps = tourSteps(); tourGo(0); }); // 환영 인사를 끝까지 한 뒤 1단계로 / finish the welcome, then step 1
     }; // 한 번 누르면 환영 인사 뒤 전체 자동 안내가 시작됨 / one click starts the full guide after the welcome
     $("stSkip").onclick = function () { $("starter").hidden = true; interacted = true; QP.Voice.wake(); readShort(); }; // 직접 둘러보기(그래도 화면마다 자동 해설, 자동 시연은 켜짐) / explore myself (auto narration and auto demos stay on per screen)
   }
@@ -6870,7 +6868,19 @@ window.QP_I18N_EN = {
     QP.Voice.speak(W, true, true); alert0("에뮬레이팅 실험 자동 안내: 소개 뒤 ③ 첫 화면부터 시작합니다."); const dl = Date.now() + estimate(W), t0 = Date.now(), wt = TB.token = (TB.token || 0) + 1;
     (function waitB() { if (TB.token !== wt) return; if ((QP.Voice.isActive() || Date.now() - t0 < 1500) && Date.now() < dl) { setTimeout(waitB, 400); return; } setTimeout(function () { if (TB.token === wt) tourGo(k); }, 600); })(); // 소개가 끝나면 B의 첫 단계로 / after the intro, go to the first step of B
   }
-  function tour() { QP.Voice.wake(); interacted = true; State.basicsAuto = false; if (tourOn) tourEnd(true, true); QP.Voice.stop(); QP.Voice.hush(false); TB.steps = tourSteps(); tourGo(0); } /* 누를 때마다 무조건 1단계(양자 기초 첫 화면)부터 시작 / always starts from step 1 on every click */ // 처음부터(또는 진행 중인 단계부터) 시작함 / start from the beginning (or the step in progress)
+  // 환영 인사: 전체 자동 안내를 시작할 때마다(시작 화면 버튼, 왼쪽 위 버튼 모두) 1단계로 가기 전에 끝까지 읽음 / welcome read in full before step 1, from both start buttons
+  const WELCOME = "안녕하세요? 숙명여자대학교 AGI연구실에서 개발 중인 산행안전을 위한 양자 특성 AI 에뮬레이팅 실험실에 오신 것을 환영합니다. 자동 시연을 누르셨으니, 양자의 기본 설명부터 시작해서 실험실에 대해 잘 안내하도록 하겠습니다.";
+  function welcomeThen(cb) {
+    const wt = TB.token = (TB.token || 0) + 1, t0 = Date.now(), rate = QP.Voice.getRate ? QP.Voice.getRate() : 1;
+    const minDur = 1500 + 105 * WELCOME.length / rate, dl = Date.now() + estimate(WELCOME) + 2000; // 최소 낭독 시간(음성 상태가 잠깐 꺼져 보여도 끊지 않음)과 최대 대기 / minimum reading time and watchdog
+    State.welcoming = true; QP.Voice.speak(WELCOME, true, true); alert0("환영합니다. 인사가 끝나면 양자의 기본 설명(1단계)부터 자동 안내를 시작합니다.");
+    $("tLabel").textContent = "환영 인사 중… 끝나면 1단계부터 시작"; const sb = $("sub"); if (sb) sb.textContent = WELCOME;
+    let heard = false;
+    (function waitW() { if (TB.token !== wt) { State.welcoming = false; return; } const talk = QP.Voice.isActive(); if (talk) heard = true; const el = Date.now() - t0;
+      if (el < dl - t0 && (talk || el < minDur || (!heard && el < 4000))) { setTimeout(waitW, 400); return; }
+      setTimeout(function () { State.welcoming = false; if (TB.token === wt) cb(); }, 900); })();
+  }
+  function tour() { QP.Voice.wake(); interacted = true; State.basicsAuto = false; if (tourOn) tourEnd(true, true); QP.Voice.stop(); QP.Voice.hush(false); welcomeThen(function () { TB.steps = tourSteps(); tourGo(0); }); } /* 누를 때마다 환영 인사를 끝까지 한 뒤 무조건 1단계(양자 기초 첫 화면)부터 시작 / welcome first, then always step 1 */ // 처음부터(또는 진행 중인 단계부터) 시작함 / start from the beginning (or the step in progress)
   function tourEnd(done, silent) { if (silent) { clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); tourDraw(); return; } clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); if (!done) { QP.Voice.hush(true); hidePointer(); alert0("전체 안내를 종료했습니다. 다른 화면을 고르시거나 설명 듣기를 누르면 다시 말합니다."); } tourDraw(); if (done) QP.Voice.speak("전체 자동 안내를 마쳤습니다. 들어 주셔서 감사합니다. 숙명여자대학교 에이지아이 연구실이었습니다.", true, true); } // 끝냄(막대는 계속 보임) / end (the bar stays visible)
   $("tourBtn").onclick = tour;                      // 왼쪽 위 원클릭 버튼임 / one-click button at the top left
   $("tPrev").onclick = function () { QP.Voice.wake(); tourGo(TB.i - 1); }; $("tNext").onclick = function () { QP.Voice.wake(); tourGo(TB.i + 1); }; // 이전, 다음임 / previous and next

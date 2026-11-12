@@ -38,10 +38,7 @@
     QP.Auth.gate(function () { $("stImg").src = BR.local("cheer"); $("starter").hidden = false; }); /* 로그인한 뒤에 시작 화면을 보임 / show the start screen after login */ // 첫 화면: 자동 시연과 설명을 기본으로 권함(브라우저는 첫 클릭 전에는 소리를 낼 수 없음) / start screen: recommends auto demo and explanation (browsers cannot play sound before the first click)
     $("stGo").onclick = function () {               // 시연 시작: 환영 인사를 먼저 하고, 끝나면 양자 기초부터 전체 자동 안내를 반드시 시작함 / start demo: welcome first, then always start the full guide from quantum basics
       $("starter").hidden = true; QP.Voice.wake(); interacted = true; // 시작 화면을 닫고 오디오를 깨움 / close the start screen and wake the audio
-      const W = "안녕하세요? 숙명여자대학교 AGI연구실에서 개발 중인 산행안전을 위한 양자 특성 AI 에뮬레이팅 실험실에 오신 것을 환영합니다. 자동 시연을 누르셨으니, 양자의 기본 설명부터 시작해서 실험실에 대해 잘 안내하도록 하겠습니다."; // 환영 인사임 / welcome message
-      QP.Voice.speak(W, true, true); alert0("환영합니다. 잠시 후 양자의 기본 설명부터 자동 안내를 시작합니다."); // 인사를 읽고 알림을 띄움 / read the greeting and show a toast
-      const dl = Date.now() + estimate(W) + 2000, t0 = Date.now(), wt = TB.token = (TB.token || 0) + 1; // 음성이 멈춰도 반드시 넘어가도록 정한 최대 대기 시각임 / latest wait time so it moves on even if the voice stalls
-      (function waitW() { if (TB.token !== wt) return; if ((QP.Voice.isActive() || Date.now() - t0 < 1500) && Date.now() < dl) { setTimeout(waitW, 400); return; } setTimeout(function () { if (TB.token !== wt) return; TB.steps = tourSteps(); tourGo(0); }, 600); })(); // 인사가 끝나면 첫 단계(① 양자와 양자AI 기초)부터 시작함 / after the greeting, start from step 1 (① quantum and quantum AI basics)
+      welcomeThen(function () { TB.steps = tourSteps(); tourGo(0); }); // 환영 인사를 끝까지 한 뒤 1단계로 / finish the welcome, then step 1
     }; // 한 번 누르면 환영 인사 뒤 전체 자동 안내가 시작됨 / one click starts the full guide after the welcome
     $("stSkip").onclick = function () { $("starter").hidden = true; interacted = true; QP.Voice.wake(); readShort(); }; // 직접 둘러보기(그래도 화면마다 자동 해설, 자동 시연은 켜짐) / explore myself (auto narration and auto demos stay on per screen)
   }
@@ -277,7 +274,19 @@
     QP.Voice.speak(W, true, true); alert0("에뮬레이팅 실험 자동 안내: 소개 뒤 ③ 첫 화면부터 시작합니다."); const dl = Date.now() + estimate(W), t0 = Date.now(), wt = TB.token = (TB.token || 0) + 1;
     (function waitB() { if (TB.token !== wt) return; if ((QP.Voice.isActive() || Date.now() - t0 < 1500) && Date.now() < dl) { setTimeout(waitB, 400); return; } setTimeout(function () { if (TB.token === wt) tourGo(k); }, 600); })(); // 소개가 끝나면 B의 첫 단계로 / after the intro, go to the first step of B
   }
-  function tour() { QP.Voice.wake(); interacted = true; State.basicsAuto = false; if (tourOn) tourEnd(true, true); QP.Voice.stop(); QP.Voice.hush(false); TB.steps = tourSteps(); tourGo(0); } /* 누를 때마다 무조건 1단계(양자 기초 첫 화면)부터 시작 / always starts from step 1 on every click */ // 처음부터(또는 진행 중인 단계부터) 시작함 / start from the beginning (or the step in progress)
+  // 환영 인사: 전체 자동 안내를 시작할 때마다(시작 화면 버튼, 왼쪽 위 버튼 모두) 1단계로 가기 전에 끝까지 읽음 / welcome read in full before step 1, from both start buttons
+  const WELCOME = "안녕하세요? 숙명여자대학교 AGI연구실에서 개발 중인 산행안전을 위한 양자 특성 AI 에뮬레이팅 실험실에 오신 것을 환영합니다. 자동 시연을 누르셨으니, 양자의 기본 설명부터 시작해서 실험실에 대해 잘 안내하도록 하겠습니다.";
+  function welcomeThen(cb) {
+    const wt = TB.token = (TB.token || 0) + 1, t0 = Date.now(), rate = QP.Voice.getRate ? QP.Voice.getRate() : 1;
+    const minDur = 1500 + 105 * WELCOME.length / rate, dl = Date.now() + estimate(WELCOME) + 2000; // 최소 낭독 시간(음성 상태가 잠깐 꺼져 보여도 끊지 않음)과 최대 대기 / minimum reading time and watchdog
+    State.welcoming = true; QP.Voice.speak(WELCOME, true, true); alert0("환영합니다. 인사가 끝나면 양자의 기본 설명(1단계)부터 자동 안내를 시작합니다.");
+    $("tLabel").textContent = "환영 인사 중… 끝나면 1단계부터 시작"; const sb = $("sub"); if (sb) sb.textContent = WELCOME;
+    let heard = false;
+    (function waitW() { if (TB.token !== wt) { State.welcoming = false; return; } const talk = QP.Voice.isActive(); if (talk) heard = true; const el = Date.now() - t0;
+      if (el < dl - t0 && (talk || el < minDur || (!heard && el < 4000))) { setTimeout(waitW, 400); return; }
+      setTimeout(function () { State.welcoming = false; if (TB.token === wt) cb(); }, 900); })();
+  }
+  function tour() { QP.Voice.wake(); interacted = true; State.basicsAuto = false; if (tourOn) tourEnd(true, true); QP.Voice.stop(); QP.Voice.hush(false); welcomeThen(function () { TB.steps = tourSteps(); tourGo(0); }); } /* 누를 때마다 환영 인사를 끝까지 한 뒤 무조건 1단계(양자 기초 첫 화면)부터 시작 / welcome first, then always step 1 */ // 처음부터(또는 진행 중인 단계부터) 시작함 / start from the beginning (or the step in progress)
   function tourEnd(done, silent) { if (silent) { clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); tourDraw(); return; } clearTimeout(TB.timer); TB.token = (TB.token || 0) + 1; tourOn = false; State.touring = false; QP.Voice.stop(); if (!done) { QP.Voice.hush(true); hidePointer(); alert0("전체 안내를 종료했습니다. 다른 화면을 고르시거나 설명 듣기를 누르면 다시 말합니다."); } tourDraw(); if (done) QP.Voice.speak("전체 자동 안내를 마쳤습니다. 들어 주셔서 감사합니다. 숙명여자대학교 에이지아이 연구실이었습니다.", true, true); } // 끝냄(막대는 계속 보임) / end (the bar stays visible)
   $("tourBtn").onclick = tour;                      // 왼쪽 위 원클릭 버튼임 / one-click button at the top left
   $("tPrev").onclick = function () { QP.Voice.wake(); tourGo(TB.i - 1); }; $("tNext").onclick = function () { QP.Voice.wake(); tourGo(TB.i + 1); }; // 이전, 다음임 / previous and next
