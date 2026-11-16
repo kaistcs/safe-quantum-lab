@@ -1,0 +1,11 @@
+[
+ {
+  "file": "synthetic_seed202646_2026-11-16.csv",
+  "seed": 202646,
+  "n": 2750,
+  "cut": 0.46,
+  "noise": 0.03,
+  "positives": 860,
+  "created": "2026-11-16"
+ }
+]
