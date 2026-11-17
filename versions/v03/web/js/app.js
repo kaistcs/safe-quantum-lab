@@ -49,7 +49,7 @@
   const PLAN = {                                    // 묶음별 화면 순서(이해 흐름: 개념 → 비교 → 학습 방식 → 참고)임 / screen order per group (understanding flow: concept → comparison → learning → reference)
     "① 양자와 양자AI 기초": ["kid", "entangle", "basics", "lab2q", "compare", "overlap", "same", "vqc", "scale", "glossary"],
     "② 실험실 투어": ["home", "howto", "sim", "stamp", "zone4q", "persona"],
-    "③ 합성 데이터 생성과 실험 관제": ["ecolab", "lab", "datamgr", "store", "grounded", "bench", "dnn", "meta", "eco"],
+    "③ 합성 데이터 생성과 실험 관제": ["ecolab", "lab", "datamgr", "store", "grounded", "bench", "dnn", "meta", "lstmlab", "eco"],
     "④ 실측 데이터 입력 준비": ["realdata", "dev"]
   };
   (function regroup() { const order = []; Object.keys(PLAN).forEach(function (g) { PLAN[g].forEach(function (id) { const v = QP.ViewDefs.find(function (x) { return x.id === id; }); if (v) { v.group = g; order.push(v); } }); }); QP.ViewDefs.forEach(function (v) { if (order.indexOf(v) < 0) { v.group = "④ 실측 데이터 입력 준비"; order.push(v); } }); QP.ViewDefs.length = 0; order.forEach(function (v) { QP.ViewDefs.push(v); }); })(); // 화면 목록을 새 묶음과 순서로 다시 정렬함 / reorder the screen list into the new groups and order

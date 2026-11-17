@@ -62,11 +62,20 @@
     if (c <= 57) return "이슬비"; if (c <= 67) return "비"; if (c <= 77) return "눈"; if (c <= 82) return "소나기"; if (c <= 86) return "눈보라"; return "뇌우";
   };
   const DIFF = ["쉬움", "보통", "어려움", "매우 어려움"], DCOL = ["#2e7d32", "#1e63c6", "#e08a00", "#8e24aa"];
-  function difficulty(m) {                          // 근거 4: Naismith 규칙 추정 / Naismith-rule estimate
-    const H = m[3], trail = Math.max(30, Math.min(750, H * 0.3)), up = H - trail, dist = up / 1000 / 0.18;   // km
-    const tUp = dist / 4 + up / 600, rt = tUp * 1.7 + 0.5;
+  // 근거 4: 실제 등산로 GPX(한국등산트레킹지원센터, 607개 코스)의 대표 코스 시간이 있으면 그 값을, 없으면 Naismith 근사를 씀
+  // real-trail course time from the GPX summary (gpx100.js) when available, otherwise a Naismith-rule estimate
+  function difficulty(m) {
+    const G = QP.GPX100 && QP.GPX100[m[1]];
+    let up, dist, rt, src, extra = null;
+    if (G && G[1] > 0) {                            // 실측: 대표 코스(시간 중앙값) 시간 + 휴식 30분 / measured: median course time + 30 min rest
+      dist = G[2]; up = G[3]; rt = G[4] + 0.5; src = "gpx";
+      extra = { courses: G[0], used: G[1], minH: G[5] + 0.5, maxH: G[6] + 0.5, danger: G[7] };
+    } else {                                        // 추정: 정상 높이로 오르막과 거리 근사 / estimate from summit height
+      const H = m[3], trail = Math.max(30, Math.min(750, H * 0.3));
+      up = H - trail; dist = up / 1000 / 0.18; rt = (dist / 4 + up / 600) * 1.7 + 0.5; src = "est";
+    }
     const g = rt < 3.5 ? 0 : rt < 5 ? 1 : rt < 6.5 ? 2 : 3;
-    return { g: g, t: DIFF[g], c: DCOL[g], up: Math.round(up), dist: dist, rt: rt };
+    return { g: g, t: DIFF[g], c: DCOL[g], up: Math.round(up), dist: dist, rt: rt, src: src, gpx: extra };
   }
   const hm = function (x) { return x ? String(x.getHours()).padStart(2, "0") + ":" + String(x.getMinutes()).padStart(2, "0") : "?"; };
   const hrs = function (h) { const H = Math.floor(h), M = Math.round((h - H) * 60); return H + "시간" + (M ? " " + M + "분" : ""); };
@@ -122,7 +131,10 @@
     return S;
   }
   const chip = function (j, lab) { return '<span class="wxv" style="background:' + j.L.c + '">' + lab + " " + j.L.t + (j.lv < 3 ? " " + j.s + "점" : "") + "</span>"; };
-  const dchip = function (d) { return '<span class="wxd" style="border-color:' + d.c + ";color:" + d.c + '">난이도 ' + d.t + ", 왕복 약 " + hrs(d.rt) + "</span>"; };
+  const dchip = function (d) {
+    const tip = d.src === "gpx" ? "실측 코스 " + d.gpx.used + "개(전체 " + d.gpx.courses + "개) 중 대표, 거리 " + d.dist.toFixed(1) + "km, 오르막 " + d.up + "m, 코스별 " + hrs(d.gpx.minH) + "~" + hrs(d.gpx.maxH) + ", 위험 표지 평균 " + d.gpx.danger + "개" : "실측 코스 없음, 정상 높이로 추정";
+    return '<span class="wxd" style="border-color:' + d.c + ";color:" + d.c + '" title="' + tip + '">난이도 ' + d.t + ", 왕복 약 " + hrs(d.rt) + (d.src === "gpx" ? "(실측 코스 " + d.gpx.used + "개" + (d.gpx.danger >= 1 ? ", 위험 표지 " + d.gpx.danger + "개" : "") + ")" : "(추정)") + "</span>";
+  };
   function line1(x) { const m = x.m; return "<b>No." + m[0] + " " + m[1] + (m[2] ? " " + m[2] : "") + "(" + m[3] + "m)</b> " + m[4] + " " + dchip(x.d); }
   function line2(x) {
     const w = x.now;
@@ -147,7 +159,7 @@
     const n = st.data.length, x = st.data[((st.i % n) + n) % n];
     if (box) {
       box.className = "wxbox wxl" + x.jn.lv;
-      box.innerHTML = toEN('<div class="wxb-h"><span class="wxb-t">⛰ 100대 명산 산행 가능성 <small>' + (st.i % n + 1) + "/" + n + ", " + hm(st.at) + ' 기준</small></span><span class="wxb-l">' + line1(x) + '</span><span class="wxb-btn"><button data-a="prev" title="앞 산">◀</button><button data-a="next" title="다음 산">▶</button><button data-a="list" title="100곳 전체와 권역별 요약 펼치기">☰ 전체 100곳</button></span></div>' +
+      box.innerHTML = toEN('<div class="wxb-h"><span class="wxb-t">⛰ 100대 명산 산행 가능성 ' + (QP.Guide ? QP.Guide.btn("wx") : "") + '<small>' + (st.i % n + 1) + "/" + n + ", " + hm(st.at) + ' 기준</small></span><span class="wxb-l">' + line1(x) + '</span><span class="wxb-btn"><button data-a="prev" title="앞 산">◀</button><button data-a="next" title="다음 산">▶</button><button data-a="list" title="100곳 전체와 권역별 요약 펼치기">☰ 전체 100곳</button></span></div>' +
         '<div class="wxb-l">' + line2(x) + "</div>" +
         '<div class="wxb-l">' + chip(x.jn, "① 지금 출발") + ' <small>' + why(x.jn) + "</small> " + chip(x.jt, "② 내일") + " <small>" + why(x.jt) + "</small></div>");
     }
@@ -161,7 +173,7 @@
   function renderPanel() {
     let p = document.getElementById("wxPanel"); if (!p) return;
     const S = summary(), n = st.data.length, cur = ((st.i % n) + n) % n;
-    let h = '<div class="wxp-h"><b>⛰ 100대 명산 산행 가능성, 권역별 요약</b><button data-a="close">✕ 닫기</button></div>';
+    let h = '<div class="wxp-h"><b>⛰ 100대 명산 산행 가능성, 권역별 요약 ' + (QP.Guide ? QP.Guide.btn("wx") : "") + '</b><button data-a="close">✕ 닫기</button></div>';
     h += '<div class="wxp-leg">' + LV.map(function (L, k) { return '<span><i style="background:' + L.c + '"></i>' + (k + 1) + ". " + L.t + (k === 0 ? "(75점 이상)" : k === 1 ? "(55~74점)" : k === 2 ? "(35~54점)" : "(34점 이하 또는 통제 조건)") + "</span>"; }).join("") +
       '<span class="wxp-dl">난이도 색: ' + DIFF.map(function (t, k) { return '<b style="color:' + DCOL[k] + '">' + t + "</b>"; }).join(", ") + "</span></div>";
     h += '<table class="wxp-r"><tr><th>권역</th><th>산 수</th><th>① 지금 출발 기준</th><th>② 내일 기준</th></tr>' + REGS.map(function (r, k) { const o = S[r]; return "<tr><td>" + (k + 1) + ". " + r + "</td><td>" + o.n + "</td><td>" + bar(o.now, o.n) + "</td><td>" + bar(o.tm, o.n) + "</td></tr>"; }).join("") + "</table>";
@@ -172,7 +184,7 @@
         '<td title="' + why(x.jn) + '"><span class="wxdot" style="background:' + x.jn.L.c + '"></span>' + x.jn.L.t + '</td><td title="' + why(x.jt) + '"><span class="wxdot" style="background:' + x.jt.L.c + '"></span>' + x.jt.L.t + " <small>" + (t.tmin != null ? t.tmin.toFixed(0) : "?") + ", " + (t.t != null ? t.t.toFixed(0) : "?") + "°C, " + t.wind.toFixed(0) + "m/s, " + t.p.toFixed(0) + "mm</small></td></tr>";
     });
     h += "</table></div>";
-    h += '<ol class="wxp-src"><li>목록과 번호: 산림청 「한국의 100대 명산」 전자책, 가나다순 번호</li><li>정상 좌표: Wikidata 각 산 항목 좌표(P625), 2026-11-12 조회(공식 SHP로 교체 가능)</li><li>날씨: Open-Meteo 예보 API, 정상 표고 보정, 30분마다 갱신</li><li>난이도: Naismith 규칙(수평 4km/h, 오르막 600m/h) 추정, 실제 등산로 GPX로 교체 예정</li><li>통제: 기상청 강풍주의보 14m/s, 뇌우, 시간당 10mm 비, 체감 -28°C, 일몰 전 하산 불가</li></ol>';
+    h += '<ol class="wxp-src"><li>목록과 번호: 산림청 「한국의 100대 명산」 전자책, 가나다순 번호</li><li>정상 좌표: Wikidata 각 산 항목 좌표(P625), 2026-11-12 조회(공식 SHP로 교체 가능)</li><li>날씨: Open-Meteo 예보 API, 정상 표고 보정, 30분마다 갱신</li><li>난이도: 공공데이터포털 15098177 「한국등산트레킹지원센터_산림청 100대명산_20220112」 GPX 607개 코스에서 정상까지 오르는 코스(편도 코스는 왕복으로 환산)의 시간 중앙값 코스 거리와 오르막으로 Naismith 규칙(수평 4km/h, 오르막 600m/h)을 적용하고 휴식 30분을 더함, 97개 산 실측, 대암산, 서대산, 점봉산은 정상 높이로 추정</li><li>통제: 기상청 강풍주의보 14m/s, 뇌우, 시간당 10mm 비, 체감 -28°C, 일몰 전 하산 불가</li></ol>';
     p.innerHTML = toEN(h);
   }
   function ensure() {                               // 박스, 패널, 띠 칸을 만듦 / create box, panel, and band slot
