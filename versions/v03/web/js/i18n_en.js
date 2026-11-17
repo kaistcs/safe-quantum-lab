@@ -1574,7 +1574,7 @@ window.QP_I18N_EN = {
 "한 줄 요약": "One-line summary",
 "한계": "Limits",
 "한국어 음성 없음": "No English voice",
-"한국어 음성 없음(자막만 표시), 남녀 교대(같은 음성 높낮이 변환, Edge에서 열면 진짜 남성 음성)": "no English voice (subtitles only); voice alternation (pitch shift of one voice; real male voice in Edge)",
+"한국어 음성 없음(자막만 표시), 성인 음성 하나(Edge에서 열면 남녀 교대)": "no English voice (subtitles only); voice alternation (pitch shift of one voice; real male voice in Edge)",
 "한국천문연구원 API": "KASI API",
 "한라산": "Hallasan",
 "한라산 백록담 #m": "Hallasan Baengnokdam # m",

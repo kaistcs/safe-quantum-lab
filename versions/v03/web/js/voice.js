@@ -26,7 +26,7 @@
   const synth = window.speechSynthesis;             // 브라우저 표준 음성 합성기임 / browser standard speech synthesizer
   const prefer = [/SunHi.*Natural/i, /InJoon.*Natural/i, /Hyunsu.*Natural/i, /Aria.*Natural/i, /Jenny.*Natural/i, /Guy.*Natural/i, /Natural/i, /Online/i, /Google/i, /Yuna/i, /Heami/i, /Zira/i]; // 좋은 목소리 우선순위임 / preferred voice order
   let gen = 0; const DONE = { done: true }; // 설명 표식: 세대 번호(멈출 때마다 증가) / narration marks: generation number
-  let paused = false, cur = null, queue = [], idx = 0, active = false, audio = null, rate = 1, chosen = null, alt = 4, pitch = 1.03, log = [], hushed = false, spoken = 0, speaker = "", onSub = null, onState = null, timer = null, ctx = null, keep = null; // 상태 변수임 / state variables
+  let paused = false, cur = null, queue = [], idx = 0, active = false, audio = null, rate = 1, chosen = null, alt = 4, pitch = 1, log = [], hushed = false, spoken = 0, speaker = "", onSub = null, onState = null, timer = null, ctx = null, keep = null; // 상태 변수임 / state variables
 
   function wake() {                                 // 오디오 장치를 깨워 두는 keep-alive를 시작함 / starts a keep-alive that keeps the audio device awake
     try {                                           // 지원하지 않는 환경에서도 멈추지 않게 함 / does not stop even in unsupported environments
@@ -38,7 +38,8 @@
       osc.connect(g).connect(ctx.destination); osc.start(); keep = osc; // 스피커로 계속 흘려보냄 / keep streaming to the speaker
     } catch (e) { }                                 // 실패해도 음성은 계속 진행함 / voice continues even on failure
   }
-  function koreanVoices() { const en = QP.I18N && QP.I18N.lang() === "en"; return synth ? synth.getVoices().filter(function (v) { return en ? /^en/i.test(v.lang) : /^ko/i.test(v.lang); }) : []; } // 현재 언어(한국어 또는 영어)의 음성 목록임 / voices for the current language
+  function koreanVoices() { const en = QP.I18N && QP.I18N.lang() === "en"; return synth ? synth.getVoices().filter(function (v) { return (en ? /^en/i.test(v.lang) : /^ko/i.test(v.lang)) && !CHILD.test(v.name); }) : []; } // 2026-11-17 어린이 음성(SeoHyeon, Ana 등)은 쓰지 않음, 성인 음성만 / adult voices only // 현재 언어(한국어 또는 영어)의 음성 목록임 / voices for the current language
+  const CHILD = /SeoHyeon|\bAna\b|Child|Kid|어린이|아동/i;   // 어린이 목소리 이름 / child voice names
   const MALE = /InJoon|Hyunsu|BongJin|GookMin|Guy|Christopher|Eric|Andrew|Brian|Davis|Roger|Steffan|David|Mark|Daniel|Male|남/i, FEMALE = /SunHi|Heami|JiMin|SeoHyeon|SoonBok|YuJin|Yuna|Aria|Jenny|Michelle|Ana|Emma|Ava|Zira|Hazel|Susan|Samantha|Google|Female|여/i; // 이름으로 남녀 음성 구분(한국어, 영어) / gender by voice name (Korean, English) // 이름으로 남성, 여성 음성을 구분하는 규칙임 / rule telling male and female voices apart by name
   function genderVoice(male) {                      // 원하는 성별의 가장 좋은 음성을 고름(없으면 null) / picks the best voice of the wanted gender (null if none)
     const list = koreanVoices().filter(function (v) { return male ? MALE.test(v.name) : (FEMALE.test(v.name) && !MALE.test(v.name)); }); // 성별에 맞는 목록임 / list matching the gender
@@ -49,11 +50,11 @@
     if (alt > 0 && !chosen) {                       // 교대가 켜져 있고 사용자가 목소리를 고정하지 않았으면 / if alternation is on and the user has not fixed a voice
       const f = genderVoice(false), m = genderVoice(true); // 여성, 남성 음성임 / female and male voices
       const male = Math.floor(spoken / alt) % 2 === 1; // 이번 문장이 남성 차례인지임(문장 alt개마다 바뀜) / whether this sentence is the male turn (switches every alt sentences)
-      if (f && m) { const v = male ? m : f; pitch = 1.03; speaker = (male ? "남성 " : "여성 ") + short(v.name); return v; } // 진짜 남성, 여성 음성이 모두 있으면 그대로 교대함 / alternate as is if real male and female voices both exist
+      if (f && m) { const v = male ? m : f; pitch = 1; speaker = (male ? "남성 " : "여성 ") + short(v.name); return v; } // 진짜 남성, 여성 음성이 모두 있으면 그대로 교대함 / alternate as is if real male and female voices both exist
       const one = f || m || bestVoice();            // 한쪽 성별만 있으면 그 음성 하나로 / if only one gender exists, use that one voice
-      if (one) { pitch = f ? (male ? .55 : 1.08) : (male ? .95 : 1.45); speaker = (male ? (f ? "남성(저음 변환) " : "남성 ") : (f ? "여성 " : "여성(고음 변환) ")) + short(one.name); return one; } // 한쪽 성별만 있으면 높이를 크게 바꿔 남녀를 구분함(여성 음성만 있으면 낮춰서 남성, 남성 음성만 있으면 높여서 여성) / with only one gender, shift pitch strongly to tell them apart (lower for male with a female voice, higher for female with a male voice)
+      if (one) { pitch = 1; /* 높이를 바꿔 남녀를 흉내 내면 만화 목소리처럼 들려 쓰지 않음, 원래 성인 목소리 그대로 / no pitch tricks: they sound cartoonish */ speaker = short(one.name); return one; } // 한쪽 성별만 있으면 높이를 크게 바꿔 남녀를 구분함(여성 음성만 있으면 낮춰서 남성, 남성 음성만 있으면 높여서 여성) / with only one gender, shift pitch strongly to tell them apart (lower for male with a female voice, higher for female with a male voice)
     }
-    const b = bestVoice(); pitch = 1.03; speaker = b ? short(b.name) : ""; return b; // 교대를 껐으면 가장 좋은 음성임 / best voice if alternation is off
+    const b = bestVoice(); pitch = 1; speaker = b ? short(b.name) : ""; return b; // 교대를 껐으면 가장 좋은 음성임 / best voice if alternation is off
   }
   function short(n) { return n.replace(/Microsoft |Online \(Natural\)| - Korean \(Kore(a|an)\)/g, "").trim(); } // 음성 이름을 짧게 줄임 / shorten the voice name
   function bestVoice() {                            // 가장 좋은 한국어 음성을 고름 / picks the best Korean voice
