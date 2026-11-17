@@ -21,7 +21,7 @@
     root.querySelectorAll(".card").forEach(function (c) { // 카드마다 / for each card
       if (c.querySelector(":scope > .say")) return; // 이미 있으면 건너뜀 / skip if already present
       const b = document.createElement("button");   // 작은 버튼을 만듦 / create a small button
-      b.className = "say"; b.title = "이 카드 읽어 주기"; b.textContent = "🔊"; // 모양과 설명임 / look and tooltip
+      b.className = "say"; b.title = "이 카드 읽어 주기"; b.textContent = "듣기"; // 모양과 설명임 / look and tooltip
       b.onclick = function (e) { e.stopPropagation(); const t = c.cloneNode(true); t.querySelectorAll("button,select,input,.basis,canvas,svg").forEach(function (x) { x.remove(); }); t.querySelectorAll("h3,p,li,tr,div,label").forEach(function (x) { x.append("\n"); }); t.querySelectorAll("td,th,b,span").forEach(function (x) { x.append(" "); }); QP.Voice.speak(t.textContent.replace(/\s*\n\s*/g, ". ").replace(/\.\s*\./g, ".").replace(/\s+/g, " ").trim(), true, true); }; // 블록마다 문장을 끊어 자연스럽게 읽음 / sentence breaks per block // 버튼, 그림을 뺀 글만 읽음 / read only the text without buttons and pictures
       c.appendChild(b);                             // 카드 오른쪽 위에 붙임 / attach at the top right of the card
     });
@@ -47,7 +47,7 @@
     const b = e.target.closest && e.target.closest(".info"); if (!b) { const old = document.querySelector(".info-pop"); if (old && !e.target.closest(".info-pop")) old.remove(); return; } // ⓘ가 아니면 열린 창을 닫음 / close the open popup if not clicking ⓘ
     e.stopPropagation(); const t = TERMS[b.dataset.term]; if (!t) return; // 용어 설명을 찾음 / find the term explanation
     const old = document.querySelector(".info-pop"); if (old) old.remove(); // 이전 창을 닫음 / close the previous popup
-    const pop = document.createElement("div"); pop.className = "info-pop"; pop.innerHTML = "<b>" + b.dataset.term + "</b><p>" + t[0] + "</p><p class='small'>" + t[1] + "</p><button class='ghost'>🔊 읽기</button>"; // 설명 창을 만듦 / create the popup
+    const pop = document.createElement("div"); pop.className = "info-pop"; pop.innerHTML = "<b>" + b.dataset.term + "</b><p>" + t[0] + "</p><p class='small'>" + t[1] + "</p><button class='ghost'>읽기</button>"; // 설명 창을 만듦 / create the popup
     pop.querySelector("button").onclick = function () { QP.Voice.speak(b.dataset.term + ". " + t[0] + ". " + t[1], true, true); }; // 읽기 버튼임(직접 누름) / read button
     document.body.appendChild(pop); const r = b.getBoundingClientRect(); pop.style.left = Math.min(window.innerWidth - 330, r.left) + "px"; pop.style.top = Math.min(window.innerHeight - 200, r.bottom + 6) + "px"; // 버튼 아래에 띄움 / show it below the button
   }, true);

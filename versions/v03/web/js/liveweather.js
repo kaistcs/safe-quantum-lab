@@ -152,20 +152,20 @@
     const box = document.getElementById("wxBox"), tag = document.getElementById("wxTag");
     if (!st.data) {
       const msg = st.err || "100대 명산 날씨 불러오는 중…";
-      if (box) box.innerHTML = toEN('<div class="wxb-h">⛰ 100대 명산 실시간 산행 가능성</div><div class="wxb-l">' + msg + "</div>");
-      if (tag) { tag.className = "wxtag"; tag.innerHTML = toEN('<span class="wxh">⛰ 지금 명산 날씨</span> ' + msg); }
+      if (box) box.innerHTML = toEN('<div class="wxb-h">100대 명산 실시간 산행 가능성</div><div class="wxb-l">' + msg + "</div>");
+      if (tag) { tag.className = "wxtag"; tag.innerHTML = toEN('<span class="wxh">지금 명산 날씨</span> ' + msg); }
       return;
     }
     const n = st.data.length, x = st.data[((st.i % n) + n) % n];
     if (box) {
       box.className = "wxbox wxl" + x.jn.lv;
-      box.innerHTML = toEN('<div class="wxb-h"><span class="wxb-t">⛰ 100대 명산 산행 가능성 ' + (QP.Guide ? QP.Guide.btn("wx") : "") + '<small>' + (st.i % n + 1) + "/" + n + ", " + hm(st.at) + ' 기준</small></span><span class="wxb-l">' + line1(x) + '</span><span class="wxb-btn"><button data-a="prev" title="앞 산">◀</button><button data-a="next" title="다음 산">▶</button><button data-a="list" title="100곳 전체와 권역별 요약 펼치기">☰ 전체 100곳</button></span></div>' +
+      box.innerHTML = toEN('<div class="wxb-h"><span class="wxb-t">100대 명산 산행 가능성 ' + (QP.Guide ? QP.Guide.btn("wx") : "") + '<small>' + (st.i % n + 1) + "/" + n + ", " + hm(st.at) + ' 기준</small></span><span class="wxb-l">' + line1(x) + '</span><span class="wxb-btn"><button data-a="prev" title="앞 산">◀</button><button data-a="next" title="다음 산">▶</button><button data-a="list" title="100곳 전체와 권역별 요약 펼치기">☰ 전체 100곳</button></span></div>' +
         '<div class="wxb-l">' + line2(x) + "</div>" +
         '<div class="wxb-l">' + chip(x.jn, "① 지금 출발") + ' <small>' + why(x.jn) + "</small> " + chip(x.jt, "② 내일") + " <small>" + why(x.jt) + "</small></div>");
     }
     if (tag) {
       tag.className = "wxtag " + x.jn.L.k;
-      tag.title = toEN("100대 명산 정상의 지금 날씨, 난이도, 산행 가능성. 클릭하면 다음 산"); tag.innerHTML = toEN('<span class="wxh">⛰ 지금 날씨 ' + (st.i % n + 1) + "/" + n + "</span> " + line1(x) + " " + line2(x) + ' | <b class="wxs">' + x.jn.L.t + "</b>(" + why(x.jn) + "), 내일 " + x.jt.L.t + " <small>" + hm(st.at) + " 기준</small>");
+      tag.title = toEN("100대 명산 정상의 지금 날씨, 난이도, 산행 가능성. 클릭하면 다음 산"); tag.innerHTML = toEN('<span class="wxh">지금 날씨 ' + (st.i % n + 1) + "/" + n + "</span> " + line1(x) + " " + line2(x) + ' | <b class="wxs">' + x.jn.L.t + "</b>(" + why(x.jn) + "), 내일 " + x.jt.L.t + " <small>" + hm(st.at) + " 기준</small>");
     }
     if (st.open) renderPanel();
   }
@@ -173,7 +173,7 @@
   function renderPanel() {
     let p = document.getElementById("wxPanel"); if (!p) return;
     const S = summary(), n = st.data.length, cur = ((st.i % n) + n) % n;
-    let h = '<div class="wxp-h"><b>⛰ 100대 명산 산행 가능성, 권역별 요약 ' + (QP.Guide ? QP.Guide.btn("wx") : "") + '</b><button data-a="close">✕ 닫기</button></div>';
+    let h = '<div class="wxp-h"><b>100대 명산 산행 가능성, 권역별 요약 ' + (QP.Guide ? QP.Guide.btn("wx") : "") + '</b><button data-a="close">✕ 닫기</button></div>';
     h += '<div class="wxp-leg">' + LV.map(function (L, k) { return '<span><i style="background:' + L.c + '"></i>' + (k + 1) + ". " + L.t + (k === 0 ? "(75점 이상)" : k === 1 ? "(55~74점)" : k === 2 ? "(35~54점)" : "(34점 이하 또는 통제 조건)") + "</span>"; }).join("") +
       '<span class="wxp-dl">난이도 색: ' + DIFF.map(function (t, k) { return '<b style="color:' + DCOL[k] + '">' + t + "</b>"; }).join(", ") + "</span></div>";
     h += '<table class="wxp-r"><tr><th>권역</th><th>산 수</th><th>① 지금 출발 기준</th><th>② 내일 기준</th></tr>' + REGS.map(function (r, k) { const o = S[r]; return "<tr><td>" + (k + 1) + ". " + r + "</td><td>" + o.n + "</td><td>" + bar(o.now, o.n) + "</td><td>" + bar(o.tm, o.n) + "</td></tr>"; }).join("") + "</table>";

@@ -4,7 +4,7 @@
 /* =====================================================================
  * guides.js (2026-11-17) : 카드 제목 옆 ⓘ를 누르면 열리는 "자세한 안내" 창
  *  창 안의 순서 : 1. 무엇이 바뀌었나(날짜) 2. 사용 방법(번호 순서) 3. 결과 읽는 법 4. 근거와 한계
- *  🔊 읽기(직접 누름이라 바로 읽음), ▶ 그 화면으로 가기, ✕ 닫기. Esc나 바깥을 눌러도 닫힘
+ *  읽기(직접 누름이라 바로 읽음), ▶ 그 화면으로 가기, ✕ 닫기. Esc나 바깥을 눌러도 닫힘
  *  사용 : QP.Guide.btn("키") 를 제목 HTML 뒤에 붙임
  * ===================================================================== */
 (function (QP) {
@@ -43,12 +43,12 @@
         why: ["The picture explains the idea; real numbers are computed in the 'Honest comparison' card.", "Finn et al. ICML 2017 (MAML), Nichol et al. 2018 (first-order)."] } },
     metaCmp: { go: "meta", ko: { t: "정직한 비교 실험: 메타 vs 모두 섞어 학습 vs 무작위",
         what: ["2026-11-17 새로 넣은 카드입니다. 이전에는 메타를 무작위 시작하고만 비교해 메타가 크게 좋아 보였습니다.", "공정한 기준인 ‘모두 섞어 학습 후 미세 조정(pooled)’을 같은 사람, 같은 기록, 같은 Adam 0.05로 학습해 함께 비교합니다."],
-        how: ["1. 개인차 크기를 고릅니다: 1배(지금 자료), 3배, 6배. 사람마다 위험 경계가 다른 정도입니다.", "2. ‘▶ 세 방법 비교 실험’을 누릅니다. 아래 다섯 단계 표시가 차례로 켜집니다.", "3. 왼쪽 손실 곡선이 내려가는 동안 학습(시작 씨앗 3개 × 150회)이 진행됩니다.", "4. 오른쪽 막대가 0, 1, 5걸음 적응 정확도로 자라며, 가장 높은 막대에 ★이 붙습니다.", "5. 판정 문장과 기록표를 확인하고, 개인차를 바꾸어 다시 실행하면 기록표에 줄이 쌓입니다."],
+        how: ["1. 개인차 크기를 고릅니다: 1배(지금 자료), 3배, 6배. 사람마다 위험 경계가 다른 정도입니다.", "2. ‘▶ 세 방법 비교 실험’을 누릅니다. 아래 다섯 단계 표시가 차례로 켜집니다.", "3. 왼쪽 손실 곡선이 내려가는 동안 학습(시작 씨앗 3개 × 150회)이 진행됩니다.", "4. 오른쪽 막대가 0, 1, 5걸음 적응 정확도로 자라며, 가장 높은 막대에 ‘1위’ 표시가 붙습니다.", "5. 판정 문장과 기록표를 확인하고, 개인차를 바꾸어 다시 실행하면 기록표에 줄이 쌓입니다."],
         read: ["0걸음은 그 사람 기록을 보기 전, 1걸음과 5걸음은 그 사람 기록 10개로 고친 뒤의 정확도입니다.", "1배에서는 섞어 학습이 메타보다 약 3%p 높고, 개인차가 커질수록 격차가 사라집니다.", "무작위보다 메타가 20%p 이상 높으므로 ‘여러 사람에게서 배운 출발점’의 효과는 분명하지만, ‘메타 방식만의 효과’는 지금 자료로는 확인되지 않습니다."],
         why: ["처음 보는 12명 × 시험 묶음 3개 × 시작 씨앗 3개의 평균입니다.", "섞어 학습은 미세 조정 학습률 0.1을 씁니다(0.5에서는 오히려 떨어져 각 방법에 맞는 값을 씀).", "Chen 등 ICLR 2019, Tian 등 ECCV 2020: 함께 학습 후 미세 조정이 강한 기준선이라는 보고와 같은 경향입니다.", "가상 자료 기준이며 실제 워치 기록으로 다시 확인해야 합니다."] },
       en: { t: "Honest comparison: meta vs pooled vs random",
         what: ["New card on 2026-11-17. Before, meta was compared only with a random start, which made it look much better.", "The fair baseline 'pooled training plus fine-tuning' is trained with the same people, the same records and the same Adam 0.05, and compared together."],
-        how: ["1. Choose the size of personal differences: ×1 (current data), ×3, ×6, meaning how much the risk boundary differs between people.", "2. Press '▶ Run 3-way comparison'. The five step markers light up in order.", "3. Training (3 seeds × 150) runs while the loss curves on the left go down.", "4. Bars on the right grow to the accuracy after 0, 1 and 5 adaptation steps; the highest gets a ★.", "5. Read the verdict and the record table; run again with another size and rows accumulate."],
+        how: ["1. Choose the size of personal differences: ×1 (current data), ×3, ×6, meaning how much the risk boundary differs between people.", "2. Press '▶ Run 3-way comparison'. The five step markers light up in order.", "3. Training (3 seeds × 150) runs while the loss curves on the left go down.", "4. Bars on the right grow to the accuracy after 0, 1 and 5 adaptation steps; the highest is marked 'best'.", "5. Read the verdict and the record table; run again with another size and rows accumulate."],
         read: ["Step 0 is before seeing the person's records; steps 1 and 5 are after fitting with 10 of their records.", "At ×1, pooled is about 3 pp higher than meta; the gap disappears as differences grow.", "Meta is more than 20 pp above random, so a start learned from many people clearly helps, but an effect specific to meta is not confirmed on the current data."],
         why: ["Mean over 12 new people × 3 test sets × 3 seeds.", "Pooled uses fine-tuning learning rate 0.1 (0.5 made it worse, so each method uses a suitable value).", "Same trend as Chen et al. ICLR 2019 and Tian et al. ECCV 2020: pooled training plus fine-tuning is a strong baseline.", "Virtual data; must be rechecked on real watch records."] } },
     metaCurve: { go: "meta", ko: { t: "새 사람 적응 곡선(세 방법)",
@@ -78,7 +78,7 @@
   function open(key, anchor) {
     const g = G[key]; if (!g) return; close(); const L = en() ? g.en : g.ko, H = en() ? HEAD.en : HEAD.ko;
     const pop = document.createElement("div"); pop.className = "guide-pop";
-    pop.innerHTML = '<div class="gp-h"><b>ⓘ ' + L.t + '</b><span><button class="ghost" data-a="read">🔊 ' + (en() ? "Read" : "읽기") + "</button>" + (g.go && location.hash.slice(1).split("-")[0] !== g.go ? '<button class="ghost" data-a="go">▶ ' + (en() ? "Go to the screen" : "그 화면으로 가기") + "</button>" : "") + '<button class="ghost" data-a="x">✕</button></span></div>' +
+    pop.innerHTML = '<div class="gp-h"><b>ⓘ ' + L.t + '</b><span><button class="ghost" data-a="read">' + (en() ? "Read" : "읽기") + "</button>" + (g.go && location.hash.slice(1).split("-")[0] !== g.go ? '<button class="ghost" data-a="go">▶ ' + (en() ? "Go to the screen" : "그 화면으로 가기") + "</button>" : "") + '<button class="ghost" data-a="x">✕</button></span></div>' +
       [L.what, L.how, L.read, L.why].map(function (a, k) { return "<h4>" + H[k] + "</h4><ol>" + a.map(function (x) { return "<li>" + x.replace(/^\d+\.\s/, "") + "</li>"; }).join("") + "</ol>"; }).join("");
     pop.addEventListener("click", function (e) { e.stopPropagation(); const a = e.target.closest("[data-a]"); if (!a) return; const k = a.dataset.a;
       if (k === "x") close(); if (k === "go") { close(); QP.App.go(g.go); }

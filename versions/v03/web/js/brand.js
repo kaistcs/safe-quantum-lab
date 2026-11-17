@@ -47,7 +47,7 @@
   function fallback(el) {                           // 이미지가 안 열릴 때의 대체 처리임 / fallback when an image fails to load
     if (el.dataset.remote && el.src !== el.dataset.remote) { el.src = el.dataset.remote; return; } // 처음 실패면 공식 주소로 다시 시도함 / on the first failure, retry with the official URL
     el.onerror = null; el.style.display = "none";   // 그래도 실패면 이미지를 숨김 / hide the image if it still fails
-    el.insertAdjacentHTML("afterend", el.classList.contains("u-logo") ? '<span class="brand-text">숙명여자대학교</span>' : '<span class="brand-fallback" title="' + el.alt + '">❄</span>'); // 로고는 글자로, 그 밖은 눈 결정 기호로 자리를 표시함 / mark the spot with text for the logo, a snow symbol otherwise
+    el.insertAdjacentHTML("afterend", el.classList.contains("u-logo") ? '<span class="brand-text">숙명여자대학교</span>' : '<span class="brand-fallback" title="' + el.alt + '"></span>'); // 로고는 글자로, 그 밖은 눈 결정 기호로 자리를 표시함 / mark the spot with text for the logo, a snow symbol otherwise
   }
   QP.Brand = {                                      // 공개할 정보임 / info to make public
     univ: "숙명여자대학교", univEn: "SOOKMYUNG WOMEN'S UNIVERSITY",
