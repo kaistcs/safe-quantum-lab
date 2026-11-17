@@ -220,10 +220,10 @@
   $("vSeek").addEventListener("input", function () { seeking = true; const p = QP.Voice.progress(); $("vPos").textContent = p.mp3 ? Math.round(this.value / 10) + "%" : (Number(this.value) + 1) + "/" + p.n + " 문장"; }); // 끄는 동안 위치를 미리 보여 줌 / preview the position while dragging
   $("vSeek").addEventListener("change", function () { seeking = false; QP.Voice.seek(Number(this.value)); }); // 놓으면 그 위치로 이동함 / jump there on release
   setInterval(function () { if (seeking) return; const p = QP.Voice.progress(); $("vSeek").max = Math.max(0, p.n - (p.mp3 ? 0 : 1)); $("vSeek").value = p.i; $("vPos").textContent = p.n ? (p.mp3 ? Math.round(p.i / 10) + "%" : (p.i + 1) + "/" + p.n + " 문장") : "0/0"; }, 300); // 0.3초마다 막대를 갱신함 / update the bar every 0.3 s
-  /* 2026-11-17 눈송이 말풍선 = 실시간 자막: 말하는 만큼 글자가 차례로 나타나고, 지금 단어는 굵게 강조, 바로 앞 문장은 흐리게 위에 남김
+  /* 2026-11-17 눈송이 말풍선 = 눈송이 자막: 말하는 만큼 글자가 차례로 나타나고, 지금 단어는 굵게 강조, 바로 앞 문장은 흐리게 위에 남김
    위치 = 브라우저 음성의 단어 경계 신호(정확), 신호가 없으면 예상 읽기 속도(한국어 글자당 약 0.17초 / 속도, 영어 0.08초)로 진행하되 신호가 오면 그 위치로 맞춤 */
   const Cap = (function () {
-    // 2026-11-17 누적형 실시간 자막: 말풍선 크기 고정, 읽은 문장은 지우지 않고 위에 쌓이며 새 문장은 맨 아래에 이어서 씀(최근 80줄)
+    // 2026-11-17 누적형 눈송이 자막: 말풍선 크기 고정, 읽은 문장은 지우지 않고 위에 쌓이며 새 문장은 맨 아래에 이어서 씀(최근 80줄)
     // 정확성: 글자는 음성에 넘긴 원문(아래 자막 막대와 같은 문자열)을 그대로 씀. 문장 전체를 처음부터 보여 주고, 읽은 부분만 진하게, 지금 단어는 노란 바탕
     // 음성 엔진이 문장 중간(예: "~요 ", "~함 ")에서 잘라 읽어도 마침표, 물음표, 느낌표로 끝날 때까지는 같은 줄에 이어 붙임
     let cur = "", base = "", pos = 0, t0 = 0, msPer = 170, last = 0, line = null, stick = true;

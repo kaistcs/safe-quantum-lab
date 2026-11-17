@@ -453,7 +453,7 @@ button.info.info-g{width:18px;height:18px;font-size:11px;line-height:16px;backgr
 .guide-pop ol{margin:0;padding-left:22px}
 .guide-pop li{margin:2px 0}
 .card.news{grid-column:1/-1;border:2px solid #ffb500}
-/* 2026-11-17 눈송이 말풍선 실시간 자막(크게) / Snowflake bubble as live captions (larger) */
+/* 2026-11-17 눈송이 말풍선 눈송이 자막(크게) / Snowflake bubble as Snowflake captions (larger) */
 .mascot{align-items:flex-start}
 .mascot img{width:54px}
 .mascot .bubble{font-size:14.5px!important;line-height:1.5;max-height:168px;min-height:64px;overflow-y:auto;flex:1;padding:7px 10px;scroll-behavior:smooth}
@@ -509,3 +509,7 @@ body.lowfold .live{padding:2px 12px!important;justify-content:flex-start}
 .xst.pick{outline:3px solid #39d500!important}
 .labex{border-color:#39d500!important;background:#f6fff0!important}
 .zcap.on{background:#f0ffe0!important;border-left-color:#39d500!important}
+/* 눈송이 자막은 왼쪽 메뉴를 내려도 항상 보이게 고정 / the Snowflake caption stays visible while the left menu scrolls */
+.side>.mascot{position:sticky;top:0;z-index:3}
+/* 아래 음성 막대의 글자 자막 줄은 쓰지 않음(자막은 왼쪽 눈송이 말풍선 하나만) / no subtitle strip in the voice bar */
+.voicebar>.sub{display:none!important}

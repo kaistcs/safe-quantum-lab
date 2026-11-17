@@ -73,7 +73,7 @@
     return text.replace(/\s+/g, " ").split(/(?<=[.?!요다임함])\s+/).filter(function (s) { return s.trim().length; }); // 마침표, ~요, ~다, ~임, ~함 뒤에서 자름 / split after periods and Korean sentence endings
   }
   function setSub(t, dur) { if (onSub) onSub(t, dur); }   // dur: 그 문장을 읽는 예상 시간(ms, 모르면 없음) / expected duration of the sentence
-  let onWord = null; function word(s, pos) { if (onWord) onWord(s, pos); }   // 2026-11-17 실시간 자막: 지금 읽는 글자 위치 / live caption: position being spoken       // 자막을 표시함 / show the subtitle
+  let onWord = null; function word(s, pos) { if (onWord) onWord(s, pos); }   // 2026-11-17 눈송이 자막: 지금 읽는 글자 위치 / Snowflake caption: position being spoken       // 자막을 표시함 / show the subtitle
   function setState(s) { if (onState) onState(s); } // 상태를 알림 / report the state
   function stop() {                                 // 모든 음성을 멈춤 / stop all speech
     gen++; active = false; queue = []; idx = 0; clearTimeout(timer); // 대기열과 타이머를 비움 / clear the queue and timer
