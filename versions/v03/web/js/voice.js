@@ -39,6 +39,7 @@
     } catch (e) { }                                 // 실패해도 음성은 계속 진행함 / voice continues even on failure
   }
   function koreanVoices() { const en = QP.I18N && QP.I18N.lang() === "en"; return synth ? synth.getVoices().filter(function (v) { return (en ? /^en/i.test(v.lang) : /^ko/i.test(v.lang)) && !CHILD.test(v.name); }) : []; } // 2026-11-17 어린이 음성(SeoHyeon, Ana 등)은 쓰지 않음, 성인 음성만 / adult voices only // 현재 언어(한국어 또는 영어)의 음성 목록임 / voices for the current language
+  const THIN = /Heami|Yuna|Google 한국/i;   // Windows, Chrome 기본 한국어 여성 음성: 가늘어 아이처럼 들림 / thin default voices that sound childlike
   const CHILD = /SeoHyeon|\bAna\b|Child|Kid|어린이|아동/i;   // 어린이 목소리 이름 / child voice names
   const MALE = /InJoon|Hyunsu|BongJin|GookMin|Guy|Christopher|Eric|Andrew|Brian|Davis|Roger|Steffan|David|Mark|Daniel|Male|남/i, FEMALE = /SunHi|Heami|JiMin|SeoHyeon|SoonBok|YuJin|Yuna|Aria|Jenny|Michelle|Ana|Emma|Ava|Zira|Hazel|Susan|Samantha|Google|Female|여/i; // 이름으로 남녀 음성 구분(한국어, 영어) / gender by voice name (Korean, English) // 이름으로 남성, 여성 음성을 구분하는 규칙임 / rule telling male and female voices apart by name
   function genderVoice(male) {                      // 원하는 성별의 가장 좋은 음성을 고름(없으면 null) / picks the best voice of the wanted gender (null if none)
@@ -88,7 +89,7 @@
     const v = pickVoice(); spoken++;               // 목소리를 고름(남녀 교대 반영)하고 읽은 문장 수를 셈 / pick the voice (male/female alternation) and count sentences read
     if (!v || !window.SpeechSynthesisUtterance) { timer = setTimeout(next, 210 * sentence.length / rate); return; } // 음성이 없으면 자막만 넘김 / only advance subtitles if there is no voice
     const u = new SpeechSynthesisUtterance(sentence); u.onboundary = function (e) { if (cur === u) word(sentence, (e.charIndex || 0) + (e.charLength || 0)); }; // 단어 경계마다 자막 위치를 맞춤 / sync caption at each word boundary // 한 문장 음성 요청임 / speech request for one sentence
-    u.voice = v; u.lang = v.lang; u.rate = rate; u.pitch = pitch; u.volume = 1; // 목소리, 속도, 높이를 정함 / set voice, rate and pitch
+    u.voice = v; u.lang = v.lang; u.rate = rate; u.pitch = THIN.test(v.name) ? .8 : pitch; /* 가늘고 어리게 들리는 기본 음성(Heami 등)은 낮춰 성인 목소리로 / deepen thin desktop voices so they sound adult */ u.volume = 1; // 목소리, 속도, 높이를 정함 / set voice, rate and pitch
     u.onend = function () { clearTimeout(u._guard); if (u._skip) return; next(); }; u.onerror = function () { clearTimeout(u._guard); if (u._skip) return; timer = setTimeout(next, 120); }; cur = u; log.push({ t: Date.now(), who: speaker, pitch: pitch, voice: v.name, text: sentence.slice(0, 20) }); if (log.length > 60) log.shift(); // 끝나면 다음 문장으로 감(검증용 기록을 남김) / go to the next sentence when done (keeps a log for checks)
     u._guard = setTimeout(function () { if (cur === u && active && !paused) { u._skip = true; synth.cancel(); next(); } }, 4000 + 260 * sentence.length / rate); // 감시 장치: 브라우저가 끝 신호를 빠뜨려도 예상 시간 뒤 다음 문장으로 넘어가 멈추지 않게 함 // 끝나면 다음으로, 오류여도 진행함 / next when done, continue even on errors
     synth.speak(u);                                 // 읽기 시작함 / start reading
