@@ -453,3 +453,39 @@ button.info.info-g{width:18px;height:18px;font-size:11px;line-height:16px;backgr
 .guide-pop ol{margin:0;padding-left:22px}
 .guide-pop li{margin:2px 0}
 .card.news{grid-column:1/-1;border:2px solid #ffb500}
+/* 2026-11-17 눈송이 말풍선 실시간 자막(크게) / Snowflake bubble as live captions (larger) */
+.mascot{align-items:flex-start}
+.mascot img{width:54px}
+.mascot .bubble{font-size:14.5px!important;line-height:1.5;max-height:168px;min-height:64px;overflow-y:auto;flex:1;padding:7px 10px;scroll-behavior:smooth}
+.mascot .bubble .cap-prev{display:block;color:#7d88a6;font-size:12.5px;line-height:1.4;margin-bottom:4px;border-bottom:1px dashed #c9d2e6;padding-bottom:3px}
+.mascot .bubble .cap-now{color:#00205e}
+.mascot .bubble .cap-now b{background:#ffe08a;border-radius:3px;padding:0 1px}
+.mascot .bubble .cap-cur{font-style:normal;color:#e08a00}
+/* 2026-11-17 작은 화면 대응: 아래 띠 접기 / small screens: fold the bottom band */
+.live-fold{flex:none;font-size:12px;padding:1px 8px;border-radius:10px;border:1px solid #9fb0d6;background:#fff;color:#003087;cursor:pointer;white-space:nowrap}
+body.lowfold .live>*:not(.live-fold){display:none!important}
+body.lowfold .live{padding:2px 12px!important;justify-content:flex-start}
+@media (max-width:1400px){#tLabel{display:none}}
+@media (max-height:820px){.main>.top{padding-top:4px!important;padding-bottom:4px!important}.top h1{font-size:18px!important}}
+/* 2026-11-17 좁은 화면 겹침 근본 해결: 띠 안의 요소는 줄어들지 않고, 단계 번호 칸만 줄어들다가 모자라면 가로로 넘겨 봄 */
+.tourbar>*:not(.tprog){flex:none}
+.tourbar .tprog{flex:1 1 0;min-width:0!important;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;padding-bottom:1px}
+.tourbar .tprog i{flex:1 0 16px;min-width:16px!important}
+.voicebar>*{flex:none} .voicebar>.sub{flex:1 1 0;min-width:0}
+/* 표가 카드보다 넓으면 옆 카드 밑으로 넘치지 않고 카드 안에서 가로로 넘겨 봄 / wide tables scroll inside their card */
+#view .card:has(table){overflow-x:auto}
+#view .card{min-width:0}
+/* 아래 음성 막대: 폭이 좁으면 덜 중요한 것부터 숨김(자막은 왼쪽 눈송이 말풍선에 그대로 나옴) / voice bar: hide less important items on narrow screens */
+@media (max-width:1500px){#vQ{display:none}}
+@media (max-width:1320px){#vAlt,#vPos{display:none} #vSeek{width:90px!important}}
+@media (max-width:1150px){.voicebar>.sub{display:none} #vVoice{max-width:120px}}
+/* 입력칸이 카드보다 넓어지지 않게 / inputs never wider than their card */
+#view .card select,#view .card input:not([type=checkbox]):not([type=radio]),#view .card textarea{max-width:100%;box-sizing:border-box}
+/* 카드 해설 꼬리표는 항상 한 줄 전체를 차지(옆 제목과 겹치지 않게) / the demo caption always takes a full row */
+.demo-on{flex-wrap:wrap} .democap{flex:0 0 100%;width:100%;box-sizing:border-box;order:-1}
+#view .stack{grid-template-columns:minmax(0,1fr)} #view .stack>*{min-width:0}
+/* 2026-11-17 누적 자막: 말풍선 크기 고정, 읽은 문장 위로 쌓임 / cumulative captions: fixed bubble, past sentences stack above */
+.mascot .bubble{height:168px!important;max-height:168px!important;min-height:168px!important;overflow-y:auto!important;scroll-behavior:smooth}
+.mascot .bubble .cap-done{display:block;color:#5b6684;font-size:13px;line-height:1.45;margin-bottom:3px;padding-bottom:3px;border-bottom:1px dotted #d3dbec}
+.mascot .bubble .cap-now{display:block;color:#00205e;font-size:14.5px;line-height:1.5}
+.mascot .bubble .cap-now b{background:#ffe08a;border-radius:3px;padding:0 1px}

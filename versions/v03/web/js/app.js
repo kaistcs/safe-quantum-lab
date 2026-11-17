@@ -220,7 +220,32 @@
   $("vSeek").addEventListener("input", function () { seeking = true; const p = QP.Voice.progress(); $("vPos").textContent = p.mp3 ? Math.round(this.value / 10) + "%" : (Number(this.value) + 1) + "/" + p.n + " 문장"; }); // 끄는 동안 위치를 미리 보여 줌 / preview the position while dragging
   $("vSeek").addEventListener("change", function () { seeking = false; QP.Voice.seek(Number(this.value)); }); // 놓으면 그 위치로 이동함 / jump there on release
   setInterval(function () { if (seeking) return; const p = QP.Voice.progress(); $("vSeek").max = Math.max(0, p.n - (p.mp3 ? 0 : 1)); $("vSeek").value = p.i; $("vPos").textContent = p.n ? (p.mp3 ? Math.round(p.i / 10) + "%" : (p.i + 1) + "/" + p.n + " 문장") : "0/0"; }, 300); // 0.3초마다 막대를 갱신함 / update the bar every 0.3 s
-  QP.Voice.onSubtitle(function (t) { $("sub").textContent = t || "▶ 또는 🔊를 누르면 목소리와 자막으로 설명해 드립니다."; spotlight(t); if (t) { $("mBub").textContent = t; $("mascot").classList.add("talk"); pose(tourOn ? "tour" : "talk"); } else { $("mascot").classList.remove("talk"); pose("idle"); } }); // 자막, 화면 가리킴, 눈송이 말풍선을 함께 맞춤 / sync subtitles, pointing and Snowflake's speech bubble
+  /* 2026-11-17 눈송이 말풍선 = 실시간 자막: 말하는 만큼 글자가 차례로 나타나고, 지금 단어는 굵게 강조, 바로 앞 문장은 흐리게 위에 남김
+   위치 = 브라우저 음성의 단어 경계 신호(정확), 신호가 없으면 예상 읽기 속도(한국어 글자당 약 0.17초 / 속도, 영어 0.08초)로 진행하되 신호가 오면 그 위치로 맞춤 */
+  const Cap = (function () {
+    // 2026-11-17 누적형: 말풍선 크기는 고정, 읽은 문장은 지우지 않고 위에 쌓이며, 새 문장은 맨 아래에 이어서 씀(최근 80문장 보관)
+    let cur = "", pos = 0, t0 = 0, msPer = 170, last = 0, nowEl = null, stick = true;
+    const esc = function (s) { return String(s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); };
+    function box() { const b = $("mBub"); if (b && !b._cap) { b._cap = true; const first = b.textContent.trim(); b.innerHTML = first ? '<span class="cap-done">' + esc(first) + "</span>" : ""; b.addEventListener("scroll", function () { stick = b.scrollHeight - b.scrollTop - b.clientHeight < 24; }); } return b; } // 사용자가 위로 올려 읽는 중이면 자동으로 내리지 않음 / do not auto-scroll while the user reads above
+    function draw() { const b = box(); if (!b || !nowEl || !cur) return; const p = Math.min(cur.length, Math.floor(pos)); let we = cur.indexOf(" ", p); if (we < 0 || p >= cur.length) we = cur.length; const ws = p >= cur.length ? cur.length : cur.lastIndexOf(" ", Math.max(0, p - 1)) + 1;
+      nowEl.innerHTML = esc(cur.slice(0, ws)) + "<b>" + esc(cur.slice(ws, we)) + "</b>" + (we < cur.length ? '<i class="cap-cur">…</i>' : ""); if (stick) b.scrollTop = b.scrollHeight; }
+    function finish() { if (nowEl && cur) { nowEl.className = "cap-done"; nowEl.textContent = cur; } nowEl = null; }
+    function start(t, dur) { const b = box(); if (!b) return; if (t === cur && nowEl) return; finish(); cur = t; pos = 0; t0 = performance.now();
+      nowEl = document.createElement("span"); nowEl.className = "cap-now"; b.appendChild(nowEl); const all = b.querySelectorAll(".cap-done"); for (let k = 0; k < all.length - 80; k++) all[k].remove();
+      const sp = (QP.Voice.getRate && QP.Voice.getRate()) || 1; msPer = dur ? dur / Math.max(1, t.length) : (/[가-힣]/.test(t) ? 170 : 80) / sp; draw(); }
+    QP.Voice.onWord(function (s, p) { if (s === cur && p > pos) { pos = p; t0 = performance.now() - pos * msPer; draw(); } });
+    (function tick() { const now = performance.now(), pz = QP.Voice.isPaused && QP.Voice.isPaused(); if (cur && nowEl && !pz && now - last > 60) { last = now; const est = (now - t0) / msPer; if (est > pos) { pos = Math.min(cur.length, est); draw(); } } else if (pz) { t0 += now - (last || now); last = now; } requestAnimationFrame(tick); })();
+    return { start: start, finish: finish };
+  })();
+  /* 2026-11-17 작은 화면: 아래 실시간 산행 띠를 접어 본문을 넓힘(화면 높이 820px 미만이면 처음부터 접음, 사용자가 고른 값은 기억함) */
+  (function lowFold() {
+    const lv = $("live"); if (!lv) return; const b = document.createElement("button"); b.className = "live-fold"; lv.insertBefore(b, lv.firstChild);
+    let saved = null; try { saved = localStorage.getItem("qpLowFold"); } catch (x) { }
+    const set = function (on) { document.body.classList.toggle("lowfold", on); b.textContent = on ? "▴ 실시간 산행 정보 펼치기" : "▾ 접기"; b.title = on ? "아래 실시간 산행 관제와 날씨 띠를 다시 펼침" : "아래 띠를 접어 본문 화면을 더 넓게 봄(작은 화면 권장)"; };
+    set(saved === null ? innerHeight < 820 : saved === "1");
+    b.onclick = function (e) { e.stopPropagation(); const on = !document.body.classList.contains("lowfold"); set(on); try { localStorage.setItem("qpLowFold", on ? "1" : "0"); } catch (x) { } };
+  })();
+  QP.Voice.onSubtitle(function (t, dur) { $("sub").textContent = t || "▶ 또는 🔊를 누르면 목소리와 자막으로 설명해 드립니다."; spotlight(t); if (t) { Cap.start(t, dur); $("mascot").classList.add("talk"); pose(tourOn ? "tour" : "talk"); } else { if (QP.Voice.isActive && !QP.Voice.isActive()) Cap.finish(); $("mascot").classList.remove("talk"); pose("idle"); } }); /* 다 읽으면 마지막 문장도 완성해 둠(지우지 않음) / complete the last sentence, never clear */ // 자막, 화면 가리킴, 눈송이 말풍선을 함께 맞춤 / sync subtitles, pointing and Snowflake's speech bubble
   QP.Voice.onStateChange(function (s) { $("vPlay").dataset.state = s; document.querySelector(".voicebar").classList.toggle("playing", s === "playing"); }); // 상태 표시임 / status display
   function quality() { const q = QP.Voice.quality(), g = QP.Voice.genders(); $("vQ").textContent = q.text + (Number($("vAlt").value) > 0 ? (g.f && g.m ? ", 남녀 신경망 음성 교대" : ", 남녀 교대(같은 음성 높낮이 변환, Edge에서 열면 진짜 남성 음성)") : ""); $("vQ").className = "vq q" + q.level; } // 음성 품질과 교대 가능 여부 표시임 / show voice quality and whether alternation is possible
   setInterval(function () { const sp = QP.Voice.speaker(); if (QP.Voice.isActive() && sp) $("vQ").textContent = "🎙 " + sp; }, 500); // 읽는 동안 지금 말하는 목소리를 보여 줌 / show the voice currently speaking
@@ -244,6 +269,7 @@
     if (!TB.steps.length) TB.steps = tourSteps();   // 단계 목록을 준비함 / prepare the step list
     $("tProg").innerHTML = TB.steps.map(function (st, k) { return '<i class="' + (tourOn && k < TB.i ? "done" : tourOn && k === TB.i ? "cur" : "") + '" data-k="' + k + '" title="' + (k + 1) + ". " + st.title + '">' + (k + 1) + '</i>'; }).join(""); /* 칸마다 번호를 써서 찾아 누를 수 있게 함 / number each cell so it can be found and clicked */ // 단계마다 칸 하나임 / one cell per step
     $("tLabel").textContent = tourOn ? (TB.i + 1) + "/" + TB.steps.length + " " + TB.steps[TB.i].title : "칸을 누르면 그 단계부터 자동 안내(" + TB.steps.length + "단계)"; // 현재 단계 이름 또는 안내 문구임 / current step name or hint text
+    (function () { const pg = $("tProg"), c = pg.querySelector("i.cur"); if (c && pg.scrollWidth > pg.clientWidth) pg.scrollLeft = Math.max(0, c.offsetLeft - pg.offsetLeft - pg.clientWidth / 2); })(); // 좁은 화면이면 지금 단계가 보이게 넘김 / keep the current step visible on narrow screens
     $("tProg").querySelectorAll("i").forEach(function (c) { c.onclick = function () { QP.Voice.wake(); interacted = true; tourGo(Number(c.dataset.k)); }; }); // 칸을 누르면 언제든 그 단계로 이동함 / clicking a cell moves to that step anytime
     $("tPause").textContent = tourOn && !TB.paused ? "❚❚ 멈춤" : "▶ 재생"; // 멈춤, 재생 버튼 모양임 / pause and play button labels
   }

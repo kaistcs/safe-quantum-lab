@@ -72,7 +72,8 @@
   function split(text) {                            // 문장 단위로 자름 / split into sentences
     return text.replace(/\s+/g, " ").split(/(?<=[.?!요다임함])\s+/).filter(function (s) { return s.trim().length; }); // 마침표, ~요, ~다, ~임, ~함 뒤에서 자름 / split after periods and Korean sentence endings
   }
-  function setSub(t) { if (onSub) onSub(t); }       // 자막을 표시함 / show the subtitle
+  function setSub(t, dur) { if (onSub) onSub(t, dur); }   // dur: 그 문장을 읽는 예상 시간(ms, 모르면 없음) / expected duration of the sentence
+  let onWord = null; function word(s, pos) { if (onWord) onWord(s, pos); }   // 2026-11-17 실시간 자막: 지금 읽는 글자 위치 / live caption: position being spoken       // 자막을 표시함 / show the subtitle
   function setState(s) { if (onState) onState(s); } // 상태를 알림 / report the state
   function stop() {                                 // 모든 음성을 멈춤 / stop all speech
     gen++; active = false; queue = []; idx = 0; clearTimeout(timer); // 대기열과 타이머를 비움 / clear the queue and timer
@@ -82,10 +83,10 @@
   }
   function next() {                                 // 다음 문장을 읽음 / read the next sentence
     if (!active || idx >= queue.length) { active = false; setState("done"); setSub(""); return; } // 끝났으면 정리함 / clean up when finished
-    const sentence = queue[idx++]; setSub(sentence); // 문장을 꺼내 자막에 표시함 / take the sentence and show it as a subtitle
+    const sentence = queue[idx++]; setSub(sentence, (!synth || !window.SpeechSynthesisUtterance || !koreanVoices().length) ? 210 * sentence.length / rate : null); // 문장을 꺼내 자막에 표시함 / take the sentence and show it as a subtitle
     const v = pickVoice(); spoken++;               // 목소리를 고름(남녀 교대 반영)하고 읽은 문장 수를 셈 / pick the voice (male/female alternation) and count sentences read
     if (!v || !window.SpeechSynthesisUtterance) { timer = setTimeout(next, 210 * sentence.length / rate); return; } // 음성이 없으면 자막만 넘김 / only advance subtitles if there is no voice
-    const u = new SpeechSynthesisUtterance(sentence); // 한 문장 음성 요청임 / speech request for one sentence
+    const u = new SpeechSynthesisUtterance(sentence); u.onboundary = function (e) { if (cur === u) word(sentence, (e.charIndex || 0) + (e.charLength || 0)); }; // 단어 경계마다 자막 위치를 맞춤 / sync caption at each word boundary // 한 문장 음성 요청임 / speech request for one sentence
     u.voice = v; u.lang = v.lang; u.rate = rate; u.pitch = pitch; u.volume = 1; // 목소리, 속도, 높이를 정함 / set voice, rate and pitch
     u.onend = function () { clearTimeout(u._guard); if (u._skip) return; next(); }; u.onerror = function () { clearTimeout(u._guard); if (u._skip) return; timer = setTimeout(next, 120); }; cur = u; log.push({ t: Date.now(), who: speaker, pitch: pitch, voice: v.name, text: sentence.slice(0, 20) }); if (log.length > 60) log.shift(); // 끝나면 다음 문장으로 감(검증용 기록을 남김) / go to the next sentence when done (keeps a log for checks)
     u._guard = setTimeout(function () { if (cur === u && active && !paused) { u._skip = true; synth.cancel(); next(); } }, 4000 + 260 * sentence.length / rate); // 감시 장치: 브라우저가 끝 신호를 빠뜨려도 예상 시간 뒤 다음 문장으로 넘어가 멈추지 않게 함 // 끝나면 다음으로, 오류여도 진행함 / next when done, continue even on errors
@@ -125,7 +126,7 @@
     a.onplaying = function () {                     // 재생이 시작되면 / when playback starts
       started = true; active = true; setState("playing"); // 상태를 바꿈 / change the state
       const sents = split(text), total = text.length, dur = (a.duration || total / 8) * 1000 / a.playbackRate; let acc = 0; // 자막 시간 배분임 / subtitle time allocation
-      sents.forEach(function (s) { const at = dur * acc / total; acc += s.length; setTimeout(function () { if (audio === a) setSub(s); }, at); }); // 문장별 자막 시각을 예약함 / schedule subtitle times per sentence
+      sents.forEach(function (s) { const at = dur * acc / total; acc += s.length; const sd = dur * s.length / total; setTimeout(function () { if (audio === a) setSub(s, sd); }, at); }); // 문장별 자막 시각을 예약함 / schedule subtitle times per sentence
     };
     a.onended = function () { active = false; setSub(""); setState("done"); }; // 끝나면 정리함 / clean up when finished
     active = true; audio = a; setTimeout(function () { a.play().catch(function () { if (!started) speak(text, true, true); }); }, 200); return mk; // 장치가 깨어난 뒤 재생함(재생 준비 중에도 읽는 중으로 봄) / play after the device wakes
@@ -152,6 +153,6 @@
     setRate: function (r) { rate = r; if (audio) { audio.playbackRate = r / 1.1; return; } if (active && cur && synth && synth.speaking && !paused) seek(Math.max(0, idx - 1)); }, getRate: function () { return rate; }, // 속도 조절(읽던 문장을 새 속도로 바로 다시 읽어 차이가 즉시 느껴짐) / speed control (re-reads the current sentence at the new rate so the change is immediate)
     hush: function (b) { hushed = !!b; if (b) { stop(); try { if (keep) { keep.stop(); keep = null; } } catch (e) { } } }, shutdown: shutdown, isHushed: function () { return hushed; }, setAlternate: function (n) { alt = n; spoken = 0; }, speaker: function () { return speaker; }, log: function () { return log; }, // 남녀 교대(문장 n개마다, 0은 끄기)와 현재 화자임 / male/female alternation (every n sentences, 0 = off) and current speaker
     genders: function () { return { f: genderVoice(false), m: genderVoice(true) }; }, // 사용 가능한 여성, 남성 음성임 / available female and male voices
-    setVoice: function (n) { chosen = n; }, onSubtitle: function (f) { onSub = f; }, onStateChange: function (f) { onState = f; }, // 설정 함수임 / setter functions
+    setVoice: function (n) { chosen = n; }, onSubtitle: function (f) { onSub = f; }, onWord: function (f) { onWord = f; }, onStateChange: function (f) { onState = f; }, // 설정 함수임 / setter functions
     isActive: function () { return active; }, busy: function () { const St = QP.State || {}; return active || !!St.stepNarrPending || !!St.welcoming; }, finished: finished, onVoices: null }; // 상태 확인 함수임 / state query functions
 })(window.QP = window.QP || {});                    // QP 이름공간을 넘김 / pass the QP namespace
