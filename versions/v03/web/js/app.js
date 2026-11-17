@@ -223,19 +223,23 @@
   /* 2026-11-17 눈송이 말풍선 = 실시간 자막: 말하는 만큼 글자가 차례로 나타나고, 지금 단어는 굵게 강조, 바로 앞 문장은 흐리게 위에 남김
    위치 = 브라우저 음성의 단어 경계 신호(정확), 신호가 없으면 예상 읽기 속도(한국어 글자당 약 0.17초 / 속도, 영어 0.08초)로 진행하되 신호가 오면 그 위치로 맞춤 */
   const Cap = (function () {
-    // 2026-11-17 누적형: 말풍선 크기는 고정, 읽은 문장은 지우지 않고 위에 쌓이며, 새 문장은 맨 아래에 이어서 씀(최근 80문장 보관)
-    let cur = "", pos = 0, t0 = 0, msPer = 170, last = 0, nowEl = null, stick = true;
+    // 2026-11-17 누적형 실시간 자막: 말풍선 크기 고정, 읽은 문장은 지우지 않고 위에 쌓이며 새 문장은 맨 아래에 이어서 씀(최근 80줄)
+    // 정확성: 글자는 음성에 넘긴 원문(아래 자막 막대와 같은 문자열)을 그대로 씀. 문장 전체를 처음부터 보여 주고, 읽은 부분만 진하게, 지금 단어는 노란 바탕
+    // 음성 엔진이 문장 중간(예: "~요 ", "~함 ")에서 잘라 읽어도 마침표, 물음표, 느낌표로 끝날 때까지는 같은 줄에 이어 붙임
+    let cur = "", base = "", pos = 0, t0 = 0, msPer = 170, last = 0, line = null, stick = true;
     const esc = function (s) { return String(s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); };
-    function box() { const b = $("mBub"); if (b && !b._cap) { b._cap = true; const first = b.textContent.trim(); b.innerHTML = first ? '<span class="cap-done">' + esc(first) + "</span>" : ""; b.addEventListener("scroll", function () { stick = b.scrollHeight - b.scrollTop - b.clientHeight < 24; }); } return b; } // 사용자가 위로 올려 읽는 중이면 자동으로 내리지 않음 / do not auto-scroll while the user reads above
-    function draw() { const b = box(); if (!b || !nowEl || !cur) return; const p = Math.min(cur.length, Math.floor(pos)); let we = cur.indexOf(" ", p); if (we < 0 || p >= cur.length) we = cur.length; const ws = p >= cur.length ? cur.length : cur.lastIndexOf(" ", Math.max(0, p - 1)) + 1;
-      nowEl.innerHTML = esc(cur.slice(0, ws)) + "<b>" + esc(cur.slice(ws, we)) + "</b>" + (we < cur.length ? '<i class="cap-cur">…</i>' : ""); if (stick) b.scrollTop = b.scrollHeight; }
-    function finish() { if (nowEl && cur) { nowEl.className = "cap-done"; nowEl.textContent = cur; } nowEl = null; }
-    function start(t, dur) { const b = box(); if (!b) return; if (t === cur && nowEl) return; finish(); cur = t; pos = 0; t0 = performance.now();
-      nowEl = document.createElement("span"); nowEl.className = "cap-now"; b.appendChild(nowEl); const all = b.querySelectorAll(".cap-done"); for (let k = 0; k < all.length - 80; k++) all[k].remove();
-      const sp = (QP.Voice.getRate && QP.Voice.getRate()) || 1; msPer = dur ? dur / Math.max(1, t.length) : (/[가-힣]/.test(t) ? 170 : 80) / sp; draw(); }
+    const ends = function (t) { return /[.?!。…]["'”’)\]]*\s*$/.test(t); };
+    function box() { const b = $("mBub"); if (b && !b._cap) { b._cap = true; const first = b.textContent.trim(); b.innerHTML = first ? '<span class="cap-done">' + esc(first) + "</span>" : ""; b.addEventListener("scroll", function () { stick = b.scrollHeight - b.scrollTop - b.clientHeight < 24; }); } return b; } // 사용자가 위로 올려 읽는 중이면 자동으로 내리지 않음
+    function draw() { const b = box(); if (!b || !line || !cur) return; const p = Math.min(cur.length, Math.floor(pos)); let we = cur.indexOf(" ", p); if (we < 0 || p >= cur.length) we = cur.length; const ws = p >= cur.length ? cur.length : cur.lastIndexOf(" ", Math.max(0, p - 1)) + 1;
+      line.innerHTML = esc(base) + esc(cur.slice(0, ws)) + "<b>" + esc(cur.slice(ws, we)) + "</b>" + '<span class="cap-todo">' + esc(cur.slice(we)) + "</span>"; if (stick) b.scrollTop = b.scrollHeight; }
+    function finish() { if (line && cur) { base += cur + " "; line.innerHTML = esc(base.trim()); } cur = ""; if (line && ends(base)) { line.className = "cap-done"; line = null; base = ""; } }
+    function start(t, dur) { if (dur === -1) return; const b = box(); if (!b) return; if (t === cur && line) return; finish();
+      if (!line) { line = document.createElement("span"); line.className = "cap-now"; b.appendChild(line); base = ""; const all = b.querySelectorAll(".cap-done"); for (let k = 0; k < all.length - 80; k++) all[k].remove(); }
+      cur = t; pos = 0; t0 = performance.now(); const sp = (QP.Voice.getRate && QP.Voice.getRate()) || 1; msPer = dur ? dur / Math.max(1, t.length) : (/[가-힣]/.test(t) ? 170 : 80) / sp; draw(); }
+    function end() { finish(); if (line) { line.className = "cap-done"; line = null; base = ""; } } // 음성이 끝나면 줄을 닫음
     QP.Voice.onWord(function (s, p) { if (s === cur && p > pos) { pos = p; t0 = performance.now() - pos * msPer; draw(); } });
-    (function tick() { const now = performance.now(), pz = QP.Voice.isPaused && QP.Voice.isPaused(); if (cur && nowEl && !pz && now - last > 60) { last = now; const est = (now - t0) / msPer; if (est > pos) { pos = Math.min(cur.length, est); draw(); } } else if (pz) { t0 += now - (last || now); last = now; } requestAnimationFrame(tick); })();
-    return { start: start, finish: finish };
+    (function tick() { const now = performance.now(), pz = QP.Voice.isPaused && QP.Voice.isPaused(); if (cur && line && !pz && now - last > 60) { last = now; const est = (now - t0) / msPer; if (est > pos) { pos = Math.min(cur.length, est); draw(); } } else if (pz) { t0 += now - (last || now); last = now; } requestAnimationFrame(tick); })();
+    return { start: start, finish: end };
   })();
   /* 2026-11-17 작은 화면: 아래 실시간 산행 띠를 접어 본문을 넓힘(화면 높이 820px 미만이면 처음부터 접음, 사용자가 고른 값은 기억함) */
   (function lowFold() {

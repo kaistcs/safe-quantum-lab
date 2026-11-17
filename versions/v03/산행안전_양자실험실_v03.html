@@ -505,6 +505,13 @@ body.lowfold .live{padding:2px 12px!important;justify-content:flex-start}
 .mascot .bubble .cap-done{display:block;color:#5b6684;font-size:13px;line-height:1.45;margin-bottom:3px;padding-bottom:3px;border-bottom:1px dotted #d3dbec}
 .mascot .bubble .cap-now{display:block;color:#00205e;font-size:14.5px;line-height:1.5}
 .mascot .bubble .cap-now b{background:#ffe08a;border-radius:3px;padding:0 1px}
+.mascot .bubble .cap-todo{color:#a3acc4}
+/* 2026-11-17 눈송이 자막 글자 줄임, 옆으로 잘리지 않게 / smaller caption text, never clipped sideways */
+.mascot{min-width:0;box-sizing:border-box;max-width:100%}
+.mascot img{width:46px!important}
+.mascot .bubble{min-width:0;box-sizing:border-box;font-size:12.5px!important;padding:6px 8px!important;word-break:keep-all;overflow-wrap:anywhere;overflow-x:hidden!important}
+.mascot .bubble .cap-now{font-size:12.8px;line-height:1.45}
+.mascot .bubble .cap-done{font-size:11.8px;line-height:1.4}
 
 </style>                    <!-- 디자인 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet"> <!-- 한글: 본명조 계열 Noto Serif KR(인터넷이 없으면 바탕으로 대신 표시) / Korean font -->
@@ -4358,7 +4365,7 @@ window.QP_I18N_EN = {
     if (!force) { const St = QP.State || {}, av = document.getElementById("autoVoice"); if (av && !av.checked && !St.touring && !St.basicsAuto) return DONE; } // 2026-11-13: 자동 해설이 꺼져 있으면(기본) 화면이 저절로 읽지 않음, 전체 자동 안내, 5과 자동 수업, 직접 누른 듣기는 읽음 / silent unless auto narration is on, touring, the 5-lesson class, or a direct request
     // 사용자가 종료를 눌러 조용히 하기로 했으면 화면의 자동 해설도 읽지 않음 / quiet when hushed
     if (QP.I18N && QP.I18N.lang() === "en") { text = String(QP.I18N.tr(text)).split(/(?<=[.?!])\s+/).filter(function (x) { return !/[가-힣]/.test(x); }).join(" "); if (!text) return DONE; } // 영문 모드면 영어로 바꿔 읽음 / English mode
-    if (!force && repeated(text)) { if (!active) setSub(String(text).split(/(?<=[.?!])\s/)[0]); return DONE; } // 같은 말 반복은 소리 없이 자막만 / skip simple repeats
+    if (!force && repeated(text)) { if (!active) setSub(String(text).split(/(?<=[.?!])\s/)[0], -1); return DONE; } /* 소리 없는 반복은 말풍선 자막에 쌓지 않음 / not added to the caption log */ // 같은 말 반복은 소리 없이 자막만 / skip simple repeats
     if (active && !force) {                         // 읽는 중이면 끊지 않고 뒤에 이어 붙임(2026-11-12: 설명이 끝나기 전에 다음 설명으로 넘어가지 않게) / never cut: append after the current speech
       const add = split(text); if (queue.length - idx > 30) { return DONE; } // 밀린 설명이 너무 많으면 새 자동 설명은 생략 / skip if the backlog is too long
       queue = queue.concat(add); return { g: gen, e: queue.length };
@@ -7803,19 +7810,23 @@ window.QP_I18N_EN = {
   /* 2026-11-17 눈송이 말풍선 = 실시간 자막: 말하는 만큼 글자가 차례로 나타나고, 지금 단어는 굵게 강조, 바로 앞 문장은 흐리게 위에 남김
    위치 = 브라우저 음성의 단어 경계 신호(정확), 신호가 없으면 예상 읽기 속도(한국어 글자당 약 0.17초 / 속도, 영어 0.08초)로 진행하되 신호가 오면 그 위치로 맞춤 */
   const Cap = (function () {
-    // 2026-11-17 누적형: 말풍선 크기는 고정, 읽은 문장은 지우지 않고 위에 쌓이며, 새 문장은 맨 아래에 이어서 씀(최근 80문장 보관)
-    let cur = "", pos = 0, t0 = 0, msPer = 170, last = 0, nowEl = null, stick = true;
+    // 2026-11-17 누적형 실시간 자막: 말풍선 크기 고정, 읽은 문장은 지우지 않고 위에 쌓이며 새 문장은 맨 아래에 이어서 씀(최근 80줄)
+    // 정확성: 글자는 음성에 넘긴 원문(아래 자막 막대와 같은 문자열)을 그대로 씀. 문장 전체를 처음부터 보여 주고, 읽은 부분만 진하게, 지금 단어는 노란 바탕
+    // 음성 엔진이 문장 중간(예: "~요 ", "~함 ")에서 잘라 읽어도 마침표, 물음표, 느낌표로 끝날 때까지는 같은 줄에 이어 붙임
+    let cur = "", base = "", pos = 0, t0 = 0, msPer = 170, last = 0, line = null, stick = true;
     const esc = function (s) { return String(s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); };
-    function box() { const b = $("mBub"); if (b && !b._cap) { b._cap = true; const first = b.textContent.trim(); b.innerHTML = first ? '<span class="cap-done">' + esc(first) + "</span>" : ""; b.addEventListener("scroll", function () { stick = b.scrollHeight - b.scrollTop - b.clientHeight < 24; }); } return b; } // 사용자가 위로 올려 읽는 중이면 자동으로 내리지 않음 / do not auto-scroll while the user reads above
-    function draw() { const b = box(); if (!b || !nowEl || !cur) return; const p = Math.min(cur.length, Math.floor(pos)); let we = cur.indexOf(" ", p); if (we < 0 || p >= cur.length) we = cur.length; const ws = p >= cur.length ? cur.length : cur.lastIndexOf(" ", Math.max(0, p - 1)) + 1;
-      nowEl.innerHTML = esc(cur.slice(0, ws)) + "<b>" + esc(cur.slice(ws, we)) + "</b>" + (we < cur.length ? '<i class="cap-cur">…</i>' : ""); if (stick) b.scrollTop = b.scrollHeight; }
-    function finish() { if (nowEl && cur) { nowEl.className = "cap-done"; nowEl.textContent = cur; } nowEl = null; }
-    function start(t, dur) { const b = box(); if (!b) return; if (t === cur && nowEl) return; finish(); cur = t; pos = 0; t0 = performance.now();
-      nowEl = document.createElement("span"); nowEl.className = "cap-now"; b.appendChild(nowEl); const all = b.querySelectorAll(".cap-done"); for (let k = 0; k < all.length - 80; k++) all[k].remove();
-      const sp = (QP.Voice.getRate && QP.Voice.getRate()) || 1; msPer = dur ? dur / Math.max(1, t.length) : (/[가-힣]/.test(t) ? 170 : 80) / sp; draw(); }
+    const ends = function (t) { return /[.?!。…]["'”’)\]]*\s*$/.test(t); };
+    function box() { const b = $("mBub"); if (b && !b._cap) { b._cap = true; const first = b.textContent.trim(); b.innerHTML = first ? '<span class="cap-done">' + esc(first) + "</span>" : ""; b.addEventListener("scroll", function () { stick = b.scrollHeight - b.scrollTop - b.clientHeight < 24; }); } return b; } // 사용자가 위로 올려 읽는 중이면 자동으로 내리지 않음
+    function draw() { const b = box(); if (!b || !line || !cur) return; const p = Math.min(cur.length, Math.floor(pos)); let we = cur.indexOf(" ", p); if (we < 0 || p >= cur.length) we = cur.length; const ws = p >= cur.length ? cur.length : cur.lastIndexOf(" ", Math.max(0, p - 1)) + 1;
+      line.innerHTML = esc(base) + esc(cur.slice(0, ws)) + "<b>" + esc(cur.slice(ws, we)) + "</b>" + '<span class="cap-todo">' + esc(cur.slice(we)) + "</span>"; if (stick) b.scrollTop = b.scrollHeight; }
+    function finish() { if (line && cur) { base += cur + " "; line.innerHTML = esc(base.trim()); } cur = ""; if (line && ends(base)) { line.className = "cap-done"; line = null; base = ""; } }
+    function start(t, dur) { if (dur === -1) return; const b = box(); if (!b) return; if (t === cur && line) return; finish();
+      if (!line) { line = document.createElement("span"); line.className = "cap-now"; b.appendChild(line); base = ""; const all = b.querySelectorAll(".cap-done"); for (let k = 0; k < all.length - 80; k++) all[k].remove(); }
+      cur = t; pos = 0; t0 = performance.now(); const sp = (QP.Voice.getRate && QP.Voice.getRate()) || 1; msPer = dur ? dur / Math.max(1, t.length) : (/[가-힣]/.test(t) ? 170 : 80) / sp; draw(); }
+    function end() { finish(); if (line) { line.className = "cap-done"; line = null; base = ""; } } // 음성이 끝나면 줄을 닫음
     QP.Voice.onWord(function (s, p) { if (s === cur && p > pos) { pos = p; t0 = performance.now() - pos * msPer; draw(); } });
-    (function tick() { const now = performance.now(), pz = QP.Voice.isPaused && QP.Voice.isPaused(); if (cur && nowEl && !pz && now - last > 60) { last = now; const est = (now - t0) / msPer; if (est > pos) { pos = Math.min(cur.length, est); draw(); } } else if (pz) { t0 += now - (last || now); last = now; } requestAnimationFrame(tick); })();
-    return { start: start, finish: finish };
+    (function tick() { const now = performance.now(), pz = QP.Voice.isPaused && QP.Voice.isPaused(); if (cur && line && !pz && now - last > 60) { last = now; const est = (now - t0) / msPer; if (est > pos) { pos = Math.min(cur.length, est); draw(); } } else if (pz) { t0 += now - (last || now); last = now; } requestAnimationFrame(tick); })();
+    return { start: start, finish: end };
   })();
   /* 2026-11-17 작은 화면: 아래 실시간 산행 띠를 접어 본문을 넓힘(화면 높이 820px 미만이면 처음부터 접음, 사용자가 고른 값은 기억함) */
   (function lowFold() {
